@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Crown, Eye, Star, Sparkles, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer";
 import type { Template, TemplateData } from "@/types/template";
 import { useRouter, usePathname } from "next/navigation";
 import { User } from "@/types/user";
+import PreviewRenderer from "./PreviewRenderer";
 
 interface TemplateCardProps {
   template: TemplateData;

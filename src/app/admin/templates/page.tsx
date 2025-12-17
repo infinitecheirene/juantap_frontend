@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Edit, Loader2, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
 import { Template, TemplateData } from "@/types/template"
 import { TemplateCard } from "@/components/templates/template-card-2"
+import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 export default function AdminTemplatesPage() {
   const router = useRouter()
@@ -112,13 +112,8 @@ export default function AdminTemplatesPage() {
               >
                 {/* Template Preview / Thumbnail */}
                 <div className="relative w-full h-[300px]  overflow-hidden !m-0 !p-0">
-                  {template.layout === "professional" ? (
                     <PreviewRenderer template={template} />
-                  ) : template.layout === "creative" ? (
-                    <TemplateCard template={template} />
-                  ) : (
-                    <p className="text-gray-500">Unknown layout type</p>
-                  )}
+                 
                 </div>
 
                 {/* Badges */}

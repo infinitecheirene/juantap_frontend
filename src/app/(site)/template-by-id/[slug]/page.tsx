@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState, use } from "react" // use() for unwrapping Promise
 import { useRouter } from "next/navigation"
-import { TemplateCard } from "@/components/templates/template-card-2"
 import { TemplatePreviewHeader } from "@/components/templates/template-preview-header"
 import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
 import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
 import { Loading } from "@/components/loading"
 import { Template, TemplateData } from "@/types/template"
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
+import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 interface SocialLink {
   id: string
@@ -201,7 +200,7 @@ export default function TemplatePage({ params }: Props) {
         {/* Main content */}
         <div className="flex flex-col lg:flex-row gap-6 p-6 relative z-10">
           <main className="flex-1">
-            <TemplateCard template={template} user={user} slug={slug} />
+            <PreviewRenderer template={template} user={user} slug={slug} />
             <div className="container mx-auto px-4 py-10">
               <TemplatePreviewContent template={template} />
             </div>

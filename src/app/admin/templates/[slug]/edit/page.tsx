@@ -13,10 +13,10 @@ import { ArrowLeft } from "lucide-react"
 import { MinimalClean } from "@/components/template-previews/minimal-clean-template"
 import { toast } from "sonner"
 import { TemplateData } from "@/types/template"
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
 import { adminTemplatePlaceholder } from "@/lib/user-data"
 import { TemplateCard } from "@/components/templates/template-card-2"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 type TemplatePayload = Omit<TemplateData, "features" | "colors" | "fonts" | "tags"> & {
   features: string
@@ -150,230 +150,226 @@ export default function EditTemplatePage() {
         <h1 className="text-3xl font-bold text-gray-900">Edit Template</h1>
         <p className="text-gray-600 mt-2">Edit and customize a business card template</p>
       </div>
-
-      {/* Basic Info */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Basic Info</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Slug</Label>
-            <Input value={template.slug} disabled className="bg-gray-100 cursor-not-allowed" />
-          </div>
-          <div>
-            <Label>Name</Label>
-            <Input value={template.name} onChange={(e) => setTemplate({ ...template, name: e.target.value })} />
-          </div>
-          <div>
-            <Label>Description</Label>
-            <Textarea value={template.description} onChange={(e) => setTemplate({ ...template, description: e.target.value })} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Design Customization */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Design Customization</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid lg:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={template.category}
-                onValueChange={(value) => {
-                  updateTemplate("category", value)
-                  updateTemplate("is_premium", value === "premium")
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">Free</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="layout">Layout</Label>
-              <Select value={template.layout} onValueChange={(value) => updateTemplate("layout", value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="creative">Creative</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="connectStyle">Connect Section Style</Label>
-              <Select value={template.connectStyle} onValueChange={(value) => updateTemplate("connectStyle", value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="grid">Grid</SelectItem>
-                  <SelectItem value="list">List</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Colors */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Colors</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {["primary", "secondary", "accent", "background", "text"].map((key) => (
-            <div key={key}>
-              <Label className="capitalize">{key}</Label>
-              <Input
-                type="color"
-                value={template.colors?.[key as keyof typeof template.colors] || (key === "background" ? "#ffffff" : "#000000")}
-                onChange={(e) => updateColor(key, e.target.value)}
-              />
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* Pricing Info */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Pricing</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Premium Toggle */}
-          <div className="md:col-span-2">
-            <Label>Premium?</Label>
-            <select
-              className="border rounded p-2 w-full"
-              value={template.is_premium ? "1" : "0"}
-              onChange={(e) => setTemplate({ ...template, is_premium: e.target.value === "1" })}
-            >
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-
-          {/* Show pricing fields ONLY if Premium */}
-          {template.is_premium && (
-            <>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="space-y-6">
+          {/* Basic Info */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Basic Info</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div>
-                <Label>Price (auto-calculated)</Label>
-                <Input
-                  type="text"
-                  value={
-                    template.price
-                      ? `₱${Number(template.price).toLocaleString("en-PH", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}`
-                      : ""
-                  }
-                  disabled
-                  className="bg-gray-100 cursor-not-allowed"
-                />
+                <Label>Slug</Label>
+                <Input value={template.slug} disabled className="bg-gray-100 cursor-not-allowed" />
+              </div>
+              <div>
+                <Label>Name</Label>
+                <Input value={template.name} onChange={(e) => setTemplate({ ...template, name: e.target.value })} />
+              </div>
+              <div>
+                <Label>Description</Label>
+                <Textarea value={template.description} onChange={(e) => setTemplate({ ...template, description: e.target.value })} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Design Customization */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Design Customization</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid lg:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    value={template.category}
+                    onValueChange={(value) => {
+                      updateTemplate("category", value)
+                      updateTemplate("is_premium", value === "premium")
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="free">Free</SelectItem>
+                      <SelectItem value="premium">Premium</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="layout">Layout</Label>
+                  <Select value={template.layout} onValueChange={(value) => updateTemplate("layout", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professional">Professional</SelectItem>
+                      <SelectItem value="creative">Creative</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="connectStyle">Connect Section Style</Label>
+                  <Select value={template.connectStyle} onValueChange={(value) => updateTemplate("connectStyle", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="grid">Grid</SelectItem>
+                      <SelectItem value="list">List</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Colors */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Colors</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {["primary", "secondary", "accent", "background", "text"].map((key) => (
+                <div key={key}>
+                  <Label className="capitalize">{key}</Label>
+                  <Input
+                    type="color"
+                    value={template.colors?.[key as keyof typeof template.colors] || (key === "background" ? "#ffffff" : "#000000")}
+                    onChange={(e) => updateColor(key, e.target.value)}
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Pricing Info */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Pricing</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Premium Toggle */}
+              <div className="md:col-span-2">
+                <Label>Premium?</Label>
+                <select
+                  className="border rounded p-2 w-full"
+                  value={template.is_premium ? "1" : "0"}
+                  onChange={(e) => setTemplate({ ...template, is_premium: e.target.value === "1" })}
+                >
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
               </div>
 
-              <div>
-                <Label>Original Price</Label>
-                <Input
-                  type="text"
-                  value={
-                    template.original_price
-                      ? Number(template.original_price).toLocaleString("en-PH", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
+              {/* Show pricing fields ONLY if Premium */}
+              {template.is_premium && (
+                <>
+                  <div>
+                    <Label>Price (auto-calculated)</Label>
+                    <Input
+                      type="text"
+                      value={
+                        template.price
+                          ? `₱${Number(template.price).toLocaleString("en-PH", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}`
+                          : ""
+                      }
+                      disabled
+                      className="bg-gray-100 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Original Price</Label>
+                    <Input
+                      type="text"
+                      value={
+                        template.original_price
+                          ? Number(template.original_price).toLocaleString("en-PH", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const rawValue = e.target.value.replace(/[₱,]/g, "") // remove commas and peso sign
+                        const original = Number(rawValue) || 0
+                        const discount = Number(template.discount) || 0
+                        const calculated = original - (original * discount) / 100
+
+                        setTemplate({
+                          ...template,
+                          original_price: original,
+                          price: calculated,
                         })
-                      : ""
-                  }
-                  onChange={(e) => {
-                    const rawValue = e.target.value.replace(/[₱,]/g, "") // remove commas and peso sign
-                    const original = Number(rawValue) || 0
-                    const discount = Number(template.discount) || 0
-                    const calculated = original - (original * discount) / 100
+                      }}
+                    />
+                  </div>
 
-                    setTemplate({
-                      ...template,
-                      original_price: original,
-                      price: calculated,
-                    })
-                  }}
-                />
-              </div>
+                  <div>
+                    <Label>Discount (%)</Label>
+                    <Input
+                      type="number"
+                      value={template.discount || ""}
+                      onChange={(e) => {
+                        const discount = Number(e.target.value) || 0
+                        const original = Number(template.original_price) || 0
+                        const calculated = original - (original * discount) / 100
 
+                        setTemplate({
+                          ...template,
+                          discount,
+                          price: calculated,
+                        })
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Visibility / Hide Template */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Visibility</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div>
-                <Label>Discount (%)</Label>
-                <Input
-                  type="number"
-                  value={template.discount || ""}
-                  onChange={(e) => {
-                    const discount = Number(e.target.value) || 0
-                    const original = Number(template.original_price) || 0
-                    const calculated = original - (original * discount) / 100
-
-                    setTemplate({
-                      ...template,
-                      discount,
-                      price: calculated,
-                    })
-                  }}
-                />
+                <Label>Hide this template?</Label>
+                <select
+                  className="border rounded p-2 w-full"
+                  value={template.is_hidden ? "1" : "0"}
+                  onChange={(e) => setTemplate({ ...template, is_hidden: e.target.value === "1" })}
+                >
+                  <option value="0">No (Visible)</option>
+                  <option value="1">Yes (Hidden)</option>
+                </select>
               </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Visibility / Hide Template */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Visibility</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <Label>Hide this template?</Label>
-            <select
-              className="border rounded p-2 w-full"
-              value={template.is_hidden ? "1" : "0"}
-              onChange={(e) => setTemplate({ ...template, is_hidden: e.target.value === "1" })}
-            >
-              <option value="0">No (Visible)</option>
-              <option value="1">Yes (Hidden)</option>
-            </select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Save Button */}
-      <Button onClick={saveTemplate} disabled={saving} className="mt-6">
-        {saving ? "Saving..." : "Save Changes"}
-      </Button>
-
-      {/* Live Preview */}
-      <div className="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Live Preview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {template.layout === "professional" ? (
+          {/* Save Button */}
+          <Button onClick={saveTemplate} disabled={saving} className="mt-6">
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
+        {/* Live Preview */}
+        <div className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Live Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
               <PreviewRenderer template={template} user={adminTemplatePlaceholder} />
-            ) : template.layout === "creative" ? (
-              <TemplateCard template={template} user={adminTemplatePlaceholder} />
-            ) : (
-              <p className="text-gray-500">Unknown layout type</p>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

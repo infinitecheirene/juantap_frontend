@@ -16,9 +16,9 @@ import { useRouter } from "next/navigation"
 import { MinimalClean } from "@/components/template-previews/minimal-clean-template"
 import { toast } from "sonner"
 import { adminTemplatePlaceholder } from "@/lib/user-data"
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
 import { TemplateData } from "@/types/template"
 import { TemplateCard } from "@/components/templates/template-card-2"
+import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 const defaultTemplate: TemplateData = {
   id: "",
@@ -554,17 +554,8 @@ export default function AddTemplatePage() {
                 <p className="text-sm text-gray-600">Live preview with design customizations</p>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-100 p-2 sm:p-4 rounded-lg flex justify-center">
-                  <div className="scale-100 sm:scale-90 lg:scale-75 origin-top">
-                    {template.layout === "professional" ? (
-                      <PreviewRenderer template={template} user={adminTemplatePlaceholder} />
-                    ) : template.layout === "creative" ? (
-                      <TemplateCard template={template} user={adminTemplatePlaceholder} />
-                    ) : (
-                      <p className="text-gray-500">Unknown layout type</p>
-                    )}
-                  </div>
-                </div>
+                <PreviewRenderer template={template} user={adminTemplatePlaceholder} />
+
                 <Separator className="my-4" />
                 <div className="space-y-2 text-sm">
                   <div>

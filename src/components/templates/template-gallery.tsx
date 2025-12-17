@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { TemplateCard } from "@/components/templates/template-card"
 import { TemplateFilters } from "@/components/templates/template-filters"
 import type { Template } from "@/types/template"
+import PreviewRenderer from "./PreviewRenderer"
 
 // ----- Types -----
 interface SocialLink {
@@ -55,17 +56,9 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
   const [user, setUser] = useState<UserData | null>(null)
 
   // Filter templates
-  const freeTemplates = templates.filter(
-    (t) =>
-      t.category === "free" &&
-      t.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const freeTemplates = templates.filter((t) => t.category === "free" && t.name.toLowerCase().includes(searchQuery.toLowerCase()))
 
-  const premiumTemplates = templates.filter(
-    (t) =>
-      t.category === "premium" &&
-      t.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const premiumTemplates = templates.filter((t) => t.category === "premium" && t.name.toLowerCase().includes(searchQuery.toLowerCase()))
 
   // Fetch logged-in user
   useEffect(() => {
@@ -91,7 +84,7 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
           username: data.username,
           is_admin: data.is_admin,
           avatar_url: data.avatar_url,
-          
+
           profile: {
             bio: data.profile?.bio ?? "",
             phone: data.profile?.phone ?? "",
@@ -108,7 +101,7 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
     fetchUser()
   }, [])
 
-    return (
+  return (
     <section className="relative py-12 px-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-hidden">
       {/* Floating particles */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
@@ -129,30 +122,31 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
         {/* Free Templates */}
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
-           <h2 className="text-3xl font-bold mb-2 leading-tight bg-gradient-to-r from-purple-700 via-purple-700 to-pink-700 bg-clip-text text-transparent drop-shadow-lg animate-puls">
-            Free Templates
-          </h2>
+            <h2 className="text-3xl font-bold mb-2 leading-tight bg-gradient-to-r from-purple-700 via-purple-700 to-pink-700 bg-clip-text text-transparent drop-shadow-lg animate-puls">
+              Free Templates
+            </h2>
             <span className="text-sm text-gray-500">{freeTemplates.length} templates</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {freeTemplates.map((template) => (
-              <TemplateCard key={template.id} template={template} user={user} />
-            ))}
+            {freeTemplates.map((template) =>
+                <TemplateCard key={template.id} template={template} />
+             
+            )}
           </div>
         </div>
 
         {/* Premium Templates */}
         <div>
           <div className="flex items-center justify-between mb-8">
-             <h2 className="text-3xl font-bold mb-2 leading-tight bg-gradient-to-r from-purple-700 via-purple-700 to-pink-700 bg-clip-text text-transparent drop-shadow-lg animate-puls">
-                Premium Templates
-              </h2>
+            <h2 className="text-3xl font-bold mb-2 leading-tight bg-gradient-to-r from-purple-700 via-purple-700 to-pink-700 bg-clip-text text-transparent drop-shadow-lg animate-puls">
+              Premium Templates
+            </h2>
             <span className="text-sm text-gray-500">{premiumTemplates.length} templates</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {premiumTemplates.map((template) => (
-              <TemplateCard key={template.id} template={template} user={user} />
-            ))}
+            {premiumTemplates.map((template) =>
+              <TemplateCard key={template.id} template={template} />
+            )}
           </div>
         </div>
       </div>

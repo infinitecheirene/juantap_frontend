@@ -1,11 +1,11 @@
 "use client"
 import { useParams, notFound } from "next/navigation"
 import { useEffect, useState } from "react"
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
 // ✅ Import your custom Loading component
 import { Loading } from "@/components/loading"
 import type { SocialLink, TemplateData } from "@/types/template"
 import { User, UserData } from "@/types/user"
+import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 export default function PublicProfilePage() {
   const { username } = useParams<{ username: string }>()
@@ -60,11 +60,8 @@ export default function PublicProfilePage() {
   if (!templateData) return notFound()
 
   return (
-    <main className="flex-1">
-      {
-         templateData && userData &&
-        <PreviewRenderer template={templateData} user={userData} slug={username} />
-      }
+    <main className="flex-1 flex items-center justify-center min-h-screen">
+      {templateData && userData && <PreviewRenderer template={templateData} user={userData} slug={username} />}
     </main>
   )
 }

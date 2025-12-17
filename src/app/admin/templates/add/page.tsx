@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
@@ -16,42 +15,10 @@ import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
 import { MinimalClean } from "@/components/template-previews/minimal-clean-template"
 import { toast } from "sonner"
-
-
-interface TemplateData {
-  id: string
-  slug: string
-  name: string
-  description: string
-  preview_url: string
-  thumbnail_url: string
-  is_premium: boolean
-  created_at: string
-  updated_at: string
-  category: "free" | "premium"
-  price: number
-  original_price?: number
-  discount?: number
-  features: string[]
-  colors: {
-    primary: string
-    secondary: string
-    accent: string
-    background: string
-    text: string
-  }
-  fonts: {
-    heading: string
-    body: string
-  }
-  layout: "minimal" | "modern" | "creative" | "professional" | "artistic"
-  tags: string[]
-  is_popular: boolean
-  is_new: boolean
-  downloads: number
-  socialStyle: "default" | "circles" | "fullblock"
-  connectStyle: "grid" | "list" | "compact"
-}
+import { adminTemplatePlaceholder } from "@/lib/user-data"
+import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
+import { TemplateData } from "@/types/template"
+import { TemplateCard } from "@/components/templates/template-card-2"
 
 const defaultTemplate: TemplateData = {
   id: "",
@@ -69,13 +36,13 @@ const defaultTemplate: TemplateData = {
   discount: 0,
   features: [],
   colors: { primary: "", secondary: "", accent: "", background: "", text: "" },
-  fonts: { heading: "", body: "" },
-  layout: "minimal", // must be one of the allowed values
+  fonts: { heading: "Inter", body: "Inter" },
+  layout: "professional", // must be one of the allowed values
   tags: [],
   is_popular: false,
   is_new: false,
   downloads: 0,
-  connectStyle: "grid",
+  connectStyle: "list",
   socialStyle: "default",
 }
 
@@ -94,11 +61,10 @@ export default function AddTemplatePage() {
   const router = useRouter()
 
   const formatPrice = (value: number | string) => {
-  if (!value) return "₱0.00"
-  const num = Number(value)
-  return "₱" + num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
-
+    if (!value) return "₱0.00"
+    const num = Number(value)
+    return "₱" + num.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
 
   const updateTemplate = <K extends keyof TemplateData>(field: K, value: TemplateData[K]) => {
     setTemplate((prev) => ({
@@ -119,7 +85,10 @@ export default function AddTemplatePage() {
   const updateFonts = (fontKey: string, value: string) => {
     setTemplate((prev) => ({
       ...prev,
-      fonts: { ...prev.fonts, [fontKey]: value },
+      fonts: {
+        ...prev.fonts,
+        [fontKey]: value,
+      },
       updated_at: new Date().toISOString(),
     }))
   }
@@ -174,7 +143,7 @@ export default function AddTemplatePage() {
     }
   }
 
-    const saveTemplate = async () => {
+  const saveTemplate = async () => {
     if (!template.name || !template.description) {
       toast.error("Name and description are required!")
       return
@@ -199,16 +168,12 @@ export default function AddTemplatePage() {
 
       console.log("[v2] Sending template data to Laravel backend:", payload)
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/templates/store`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      )
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/templates/store`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
 
       console.log("[v2] Backend response:", response.data)
 
@@ -240,7 +205,6 @@ export default function AddTemplatePage() {
     }
   }
 
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -266,21 +230,11 @@ export default function AddTemplatePage() {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="name">Template Name</Label>
-                  <Input
-                    id="name"
-                    value={template.name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="e.g., Minimal Clean"
-                  />
+                  <Input id="name" value={template.name} onChange={(e) => handleNameChange(e.target.value)} placeholder="e.g., Minimal Clean" />
                 </div>
                 <div>
                   <Label htmlFor="slug">Slug (auto-generated)</Label>
-                  <Input
-                    id="slug"
-                    value={template.slug}
-                    onChange={(e) => updateTemplate("slug", e.target.value)}
-                    placeholder="minimal-clean"
-                  />
+                  <Input id="slug" value={template.slug} onChange={(e) => updateTemplate("slug", e.target.value)} placeholder="minimal-clean" />
                 </div>
                 <div>
                   <Label htmlFor="description">Description</Label>
@@ -291,7 +245,57 @@ export default function AddTemplatePage() {
                     placeholder="A clean and simple design perfect for professionals..."
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4"></div>
+                {template.category === "premium" && (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="price">Price (auto-calculated)</Label>
+                      <Input id="price" value={formatPrice(template.price)} disabled className="bg-gray-100 cursor-not-allowed" />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="original_price">Original Price</Label>
+                      <Input
+                        id="original_price"
+                        type="text"
+                        value={template.original_price ? formatPrice(template.original_price) : ""}
+                        onChange={(e) => {
+                          const unformatted = e.target.value.replace(/[₱,]/g, "")
+                          const original = Number(unformatted) || 0
+                          updateTemplate("original_price", original)
+                          const calculated = original - (original * (template.discount || 0)) / 100
+                          updateTemplate("price", calculated)
+                        }}
+                        placeholder="₱399.00"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="discount">Discount %</Label>
+                      <Input
+                        id="discount"
+                        type="number"
+                        value={template.discount || ""}
+                        onChange={(e) => {
+                          const discount = Number(e.target.value) || 0
+                          updateTemplate("discount", discount)
+                          const calculated = (template.original_price || 0) - ((template.original_price || 0) * discount) / 100
+                          updateTemplate("price", calculated)
+                        }}
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Design Customization */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Design Customization</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid lg:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="category">Category</Label>
                     <Select
@@ -317,105 +321,20 @@ export default function AddTemplatePage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="minimal">Minimal</SelectItem>
-                        <SelectItem value="modern">Modern</SelectItem>
-                        <SelectItem value="creative">Creative</SelectItem>
                         <SelectItem value="professional">Professional</SelectItem>
-                        <SelectItem value="artistic">Artistic</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                {template.category === "premium" && (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="price">Price (auto-calculated)</Label>
-                      <Input
-                        id="price"
-                        value={formatPrice(template.price)}
-                        disabled
-                        className="bg-gray-100 cursor-not-allowed"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="original_price">Original Price</Label>
-                      <Input
-                          id="original_price"
-                          type="text"
-                          value={
-                            template.original_price
-                              ? formatPrice(template.original_price)
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const unformatted = e.target.value.replace(/[₱,]/g, "")
-                            const original = Number(unformatted) || 0
-                            updateTemplate("original_price", original)
-                            const calculated = original - (original * (template.discount || 0)) / 100
-                            updateTemplate("price", calculated)
-                          }}
-                          placeholder="₱399.00"
-                        />
-
-                    </div>
-                    <div>
-                      <Label htmlFor="discount">Discount %</Label>
-                      <Input
-                        id="discount"
-                        type="number"
-                        value={template.discount || ""}
-                        onChange={(e) => {
-                          const discount = Number(e.target.value) || 0
-                          updateTemplate("discount", discount)
-                          const calculated =
-                            (template.original_price || 0) - ((template.original_price || 0) * discount) / 100
-                          updateTemplate("price", calculated)
-                        }}
-                        placeholder="0"
-                      />
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Design Customization */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Design Customization</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="socialStyle">Social Links Style</Label>
-                    <Select
-                      value={template.socialStyle}
-                      onValueChange={(value) => updateTemplate("socialStyle", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="default">Default</SelectItem>
-                        <SelectItem value="circles">Circles</SelectItem>
-                        <SelectItem value="fullblock">Full Block</SelectItem>
+                        <SelectItem value="creative">Creative</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label htmlFor="connectStyle">Connect Section Style</Label>
-                    <Select
-                      value={template.connectStyle}
-                      onValueChange={(value) => updateTemplate("connectStyle", value)}
-                    >
+                    <Select value={template.connectStyle} onValueChange={(value) => updateTemplate("connectStyle", value)}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="grid">Grid</SelectItem>
                         <SelectItem value="list">List</SelectItem>
-                        <SelectItem value="compact">Compact</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -440,11 +359,7 @@ export default function AddTemplatePage() {
                         onChange={(e) => updateColors("primary", e.target.value)}
                         className="w-16 h-10 p-1"
                       />
-                      <Input
-                        value={template.colors.primary}
-                        onChange={(e) => updateColors("primary", e.target.value)}
-                        placeholder="#1f2937"
-                      />
+                      <Input value={template.colors.primary} onChange={(e) => updateColors("primary", e.target.value)} placeholder="#1f2937" />
                     </div>
                   </div>
                   <div>
@@ -457,11 +372,7 @@ export default function AddTemplatePage() {
                         onChange={(e) => updateColors("secondary", e.target.value)}
                         className="w-16 h-10 p-1"
                       />
-                      <Input
-                        value={template.colors.secondary}
-                        onChange={(e) => updateColors("secondary", e.target.value)}
-                        placeholder="#6b7280"
-                      />
+                      <Input value={template.colors.secondary} onChange={(e) => updateColors("secondary", e.target.value)} placeholder="#6b7280" />
                     </div>
                   </div>
                   <div>
@@ -474,11 +385,7 @@ export default function AddTemplatePage() {
                         onChange={(e) => updateColors("accent", e.target.value)}
                         className="w-16 h-10 p-1"
                       />
-                      <Input
-                        value={template.colors.accent}
-                        onChange={(e) => updateColors("accent", e.target.value)}
-                        placeholder="#3b82f6"
-                      />
+                      <Input value={template.colors.accent} onChange={(e) => updateColors("accent", e.target.value)} placeholder="#3b82f6" />
                     </div>
                   </div>
                   <div>
@@ -491,11 +398,7 @@ export default function AddTemplatePage() {
                         onChange={(e) => updateColors("background", e.target.value)}
                         className="w-16 h-10 p-1"
                       />
-                      <Input
-                        value={template.colors.background}
-                        onChange={(e) => updateColors("background", e.target.value)}
-                        placeholder="#ffffff"
-                      />
+                      <Input value={template.colors.background} onChange={(e) => updateColors("background", e.target.value)} placeholder="#ffffff" />
                     </div>
                   </div>
                   <div>
@@ -508,11 +411,7 @@ export default function AddTemplatePage() {
                         onChange={(e) => updateColors("text", e.target.value)}
                         className="w-16 h-10 p-1"
                       />
-                      <Input
-                        value={template.colors.text}
-                        onChange={(e) => updateColors("text", e.target.value)}
-                        placeholder="#111827"
-                      />
+                      <Input value={template.colors.text} onChange={(e) => updateColors("text", e.target.value)} placeholder="#111827" />
                     </div>
                   </div>
                 </div>
@@ -577,12 +476,7 @@ export default function AddTemplatePage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {template.features.map((feature, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="cursor-pointer"
-                      onClick={() => removeFeature(index)}
-                    >
+                    <Badge key={index} variant="secondary" className="cursor-pointer" onClick={() => removeFeature(index)}>
                       {feature} ×
                     </Badge>
                   ))}
@@ -625,23 +519,19 @@ export default function AddTemplatePage() {
                   <Checkbox
                     id="is_popular"
                     checked={template.is_popular}
-                    onCheckedChange={(checked) => updateTemplate("is_popular", checked)}
+                    onCheckedChange={(checked: boolean) => updateTemplate("is_popular", checked)}
                   />
                   <Label htmlFor="is_popular">Mark as Popular</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="is_new"
-                    checked={template.is_new}
-                    onCheckedChange={(checked) => updateTemplate("is_new", checked)}
-                  />
+                  <Checkbox id="is_new" checked={template.is_new} onCheckedChange={(checked: boolean) => updateTemplate("is_new", checked)} />
                   <Label htmlFor="is_new">Mark as New</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="is_premium"
                     checked={template.is_premium}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={(checked: boolean) => {
                       updateTemplate("is_premium", checked)
                       updateTemplate("category", checked ? "premium" : "free")
                     }}
@@ -666,12 +556,13 @@ export default function AddTemplatePage() {
               <CardContent>
                 <div className="bg-gray-100 p-2 sm:p-4 rounded-lg flex justify-center">
                   <div className="scale-100 sm:scale-90 lg:scale-75 origin-top">
-                    <MinimalClean
-                      socialStyle={template.socialStyle}
-                      connectStyle={template.connectStyle}
-                      colors={template.colors}
-                      fonts={template.fonts}
-                    />
+                    {template.layout === "professional" ? (
+                      <PreviewRenderer template={template} user={adminTemplatePlaceholder} />
+                    ) : template.layout === "creative" ? (
+                      <TemplateCard template={template} user={adminTemplatePlaceholder} />
+                    ) : (
+                      <p className="text-gray-500">Unknown layout type</p>
+                    )}
                   </div>
                 </div>
                 <Separator className="my-4" />

@@ -4,9 +4,10 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Eye, X, User } from "lucide-react"
+import { Loader2, Eye, X, User as UserIcon  } from "lucide-react"
 import { toast } from "sonner"
 import Image from "next/image"
+import { User } from "@/types/user"
 
 interface UserProfile {
   bio: string
@@ -15,16 +16,7 @@ interface UserProfile {
   location: string
 }
 
-interface User {
-  id: number
-  firstname: string
-  lastname: string
-  name: string
-  email: string
-  is_admin: boolean
-  avatar_url: string
-  profile?: UserProfile
-}
+
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -157,7 +149,7 @@ export default function AdminUsersPage() {
                                 <div
                                   className="hidden w-10 h-10 rounded-full bg-gray-100 text-gray-500 items-center justify-center"
                                 >
-                                  <User size={20} />
+                                  <UserIcon size={20} />
                                 </div>
 
                                 <span className="text-sm font-medium truncate">{user.name}</span>
@@ -210,7 +202,7 @@ export default function AdminUsersPage() {
 
                           
                           <div className="hidden w-12 h-12 rounded-full bg-gray-100 text-gray-500 items-center justify-center">
-                            <User size={22} />
+                            <UserIcon size={22} />
                           </div>
 
                           <div className="flex-1 min-w-0">
@@ -283,7 +275,7 @@ export default function AdminUsersPage() {
 
                 {/* Fallback user icon */}
                 <div className="hidden w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-100 text-gray-500 items-center justify-center">
-                  <User size={32} />
+                  <UserIcon size={32} />
                 </div>
 
                 <h2 className="text-lg sm:text-xl font-bold text-center">{selectedUser.name}</h2>

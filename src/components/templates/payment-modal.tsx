@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-import type { Template } from "@/lib/template-data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, CreditCard, Smartphone, Building, CheckCircle, AlertCircle, X, FileText } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { Template } from "@/types/template";
 
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   template: Template;
+  onPaymentSuccess: () => void
 }
 
 interface PaymentMethod {
@@ -27,7 +28,7 @@ interface PaymentMethod {
   accountInfo: string;
 }
 
-export function PaymentModal({ isOpen, onClose, template }: PaymentModalProps) {
+export function PaymentModal({ isOpen, onClose, template, onPaymentSuccess }: PaymentModalProps) {
   // 🔑 Move useEffect inside the component
 useEffect(() => {
   const fetchPaymentAccounts = async () => {
@@ -270,10 +271,10 @@ const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'
                   </div>
                 </div>
                 <div className="text-right">
-                  {template.originalPrice && template.discount ? (
+                  {template.original_price && template.discount ? (
                     <div>
                       <span className="text-xl font-bold">₱{template.price}</span>
-                      <span className="text-sm text-gray-500 line-through ml-2">₱{template.originalPrice}</span>
+                      <span className="text-sm text-gray-500 line-through ml-2">₱{template.original_price}</span>
                       <Badge variant="destructive" className="ml-2 bg-red-500">
                         -{template.discount}%
                       </Badge>

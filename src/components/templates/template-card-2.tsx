@@ -2,81 +2,53 @@
 
 import React, { useState, useEffect } from "react"
 import {
-  Mail, MapPin, Globe, Copy, Facebook, Instagram, Twitter,
-  Linkedin, Github, Youtube, Music, QrCode, Share2, Download, Phone,
-  User
+  Mail,
+  MapPin,
+  Globe,
+  Copy,
+  Facebook,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  QrCode,
+  Share2,
+  Download,
+  Phone,
+  User as UserIcon,
 } from "lucide-react"
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { QRCodeSVG } from "qrcode.react"
+import { cn } from "@/lib/utils"
+import { fontClassMap } from "@/const/fontMap"
+import { toast } from "sonner"
+import { User } from "@/types/template"
+import { ListSocialLinks } from "../social-link-style/list"
+import { GridSocialLinks } from "../social-link-style/grid"
 
 interface SocialLink {
   id: string
   platform: string
   username: string
   url: string
-  is_visible?: boolean | number
-}
-
-interface UserData {
-  id: number
-  name: string
-  email: string
-  avatar_url:string
-  profile?: {
-    avatar?: string
-    bio?: string
-    phone?: string
-    website?: string
-    location?: string
-    socialLinks?: SocialLink[]
-  }
+  isVisible?: boolean | number
 }
 
 interface TemplateCardProps {
   template: any
-  user: UserData | null
-  slug: string
+  user?: User | null
+  slug?: string
 }
 
 export const TemplateCard: React.FC<TemplateCardProps> = ({ template, user, slug }) => {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false)
   const [copied, setCopied] = useState(false)
-const [avatarError, setAvatarError] = useState(false)
- const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${user?.username || ''}`
-
-  const socialIconMap: Record<string, React.ReactNode> = {
-    facebook: <Facebook size={16} />,
-    instagram: <Instagram size={16} />,
-    twitter: <Twitter size={16} />,
-    linkedin: <Linkedin size={16} />,
-    github: <Github size={16} />,
-    youtube: <Youtube size={16} />,
-    tiktok: <Music size={16} />,
-  }
-
-  const author = user
-    ? {
-        displayName: user.name,
-       avatar: user.profile?.avatar || user.avatar_url || null,
-        email: user.email ?? null,
-        phone: user.profile?.phone ?? null,
-        website: user.profile?.website ?? null,
-        location: user.profile?.location ?? null,
-        bio: user.profile?.bio ?? null,
-        socialLinks: user.profile?.socialLinks ?? [],
-      }
-    : {
-        displayName: "Anonymous",
-        avatar: null,
-        email: null,
-        phone: null,
-        website: null,
-        location: null,
-        bio: null,
-        socialLinks: [],
-      }
+  const [avatarError, setAvatarError] = useState(false)
+  const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${user?.username || ""}`
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -100,9 +72,50 @@ const [avatarError, setAvatarError] = useState(false)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  return (
- <div className="w-full flex justify-center p-6" style={{ backgroundColor: "transparent" }}>
+  const handleSaveContact = () => {
+    if (!user) return
 
+    let socials: any[] = []
+
+    if (Array.isArray(user?.social_links)) {
+      socials = user.social_links
+    } else if (typeof user?.social_links === "string") {
+      try {
+        socials = JSON.parse(user.social_links)
+      } catch (err) {
+        socials = []
+      }
+    } else if (Array.isArray(user?.social_links)) {
+      socials = user.social_links
+    }
+
+    const socialFields = socials.map((s: any) => `X-SOCIALPROFILE;TYPE=${(s.platform || "social").toLowerCase()}:${s.url}`).join("\n")
+
+    const vcardData = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${user.display_name || user.name || user.username || ""}
+TEL;TYPE=CELL:${user?.profile?.phone || ""}
+EMAIL;TYPE=INTERNET:${user.email || ""}
+URL:${user.profile?.website || ""}
+ADR;TYPE=HOME:;;${user.profile?.location || ""};;;
+NOTE:${user.profile?.bio || ""}
+${socialFields}
+END:VCARD
+    `.trim()
+
+    const blob = new Blob([vcardData], { type: "text/vcard" })
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.download = `${user.display_name || user.username || "contact"}.vcf`
+    link.click()
+    URL.revokeObjectURL(link.href)
+
+    toast.success("Contact saved!")
+  }
+
+  return (
+    <div className="w-full flex justify-center p-6" style={{ backgroundColor: "transparent" }}>
       <div
         className="w-full max-w-lg shadow-lg rounded-2xl overflow-hidden flex flex-col"
         style={{
@@ -121,45 +134,39 @@ const [avatarError, setAvatarError] = useState(false)
         {/* Avatar & Bio */}
         <div className="relative flex flex-col items-center mt-6 px-6">
           <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white/20 -mt-12">
-         {author.avatar && !avatarError ? (
-          <img
-            src={author.avatar}
-            alt={author.displayName}
-            className="w-full h-full object-cover"
-            onError={() => setAvatarError(true)}
-          />
-        ) : (
-          <div className="flex items-center justify-center w-full h-full bg-white/20">
-            <User size={64} className="text-gray-400" />
-          </div>
-        )}
-                  </div>
-            <h1
-              className="mt-4 text-xl font-bold"
-              style={{
-                fontFamily: template?.fonts?.heading,
-                color: template?.colors?.text,
-              }}
-            >
-              {author.displayName}
-            </h1>
-
-            {author.bio && (
-              <p
-                className="text-sm text-center mt-1"
-                style={{
-                  color: template?.colors?.secondary,
-                  fontFamily: template?.fonts?.body,
-                }}
-              >
-                {author.bio}
-              </p>
+            {user?.avatar_url && !avatarError ? (
+              <img src={user.avatar_url} alt={user.display_name} className="w-full h-full object-cover" onError={() => setAvatarError(true)} />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full bg-white/20">
+                <UserIcon size={64} className="text-gray-400" />
+              </div>
             )}
           </div>
+          <h1
+            className="mt-4 text-xl font-bold"
+            style={{
+              fontFamily: template?.fonts?.heading,
+              color: template?.colors?.text,
+            }}
+          >
+            {user?.display_name || user?.name || user?.username}
+          </h1>
 
+          {user?.profile?.bio && (
+            <p
+              className="text-sm text-center mt-1"
+              style={{
+                color: template?.colors?.secondary,
+                fontFamily: template?.fonts?.body,
+              }}
+            >
+              {user?.profile.bio}
+            </p>
+          )}
+        </div>
 
         {/* Contact */}
-        {(author.email || author.phone || author.website || author.location) && (
+        {(user?.email || user?.profile?.phone || user?.profile?.website || user?.profile?.location) && (
           <div className="p-6 space-y-4">
             <h2
               className="text-sm font-semibold uppercase"
@@ -172,7 +179,7 @@ const [avatarError, setAvatarError] = useState(false)
             </h2>
 
             {/* Email */}
-            {author.email && (
+            {user.email && (
               <div
                 className="flex justify-between items-center rounded-lg p-3 text-sm"
                 style={{
@@ -181,12 +188,12 @@ const [avatarError, setAvatarError] = useState(false)
                 }}
               >
                 <div className="flex items-center gap-2" style={{ color: template?.colors?.text }}>
-                  <Mail size={16} style={{ color: template?.colors?.accent }} /> {author.email}
+                  <Mail size={16} style={{ color: template?.colors?.accent }} /> {user.email}
                 </div>
                 <button
                   className="hover:opacity-70"
                   style={{ color: template?.colors?.secondary }}
-                  onClick={() => navigator.clipboard.writeText(author.email!)}
+                  onClick={() => navigator.clipboard.writeText(user.email!)}
                 >
                   <Copy size={16} />
                 </button>
@@ -194,7 +201,7 @@ const [avatarError, setAvatarError] = useState(false)
             )}
 
             {/* Phone */}
-            {author.phone && (
+            {user?.profile?.phone && (
               <div
                 className="flex items-center gap-2 rounded-lg p-3 text-sm"
                 style={{
@@ -203,14 +210,14 @@ const [avatarError, setAvatarError] = useState(false)
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <Phone size={16} style={{ color: template?.colors?.accent }} /> {author.phone}
+                <Phone size={16} style={{ color: template?.colors?.accent }} /> {user?.profile?.phone}
               </div>
             )}
 
             {/* Website */}
-            {author.website && (
+            {user?.profile?.website && (
               <a
-                href={author.website}
+                href={user?.profile?.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-lg p-3 text-sm hover:opacity-80 transition"
@@ -220,12 +227,12 @@ const [avatarError, setAvatarError] = useState(false)
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <Globe size={16} style={{ color: template?.colors?.accent }} /> {author.website}
+                <Globe size={16} style={{ color: template?.colors?.accent }} /> {user?.profile?.website}
               </a>
             )}
 
             {/* Location */}
-            {author.location && (
+            {user?.profile?.location && (
               <div
                 className="flex items-center gap-2 rounded-lg p-3 text-sm"
                 style={{
@@ -234,74 +241,70 @@ const [avatarError, setAvatarError] = useState(false)
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <MapPin size={16} style={{ color: template?.colors?.accent }} /> {author.location}
+                <MapPin size={16} style={{ color: template?.colors?.accent }} /> {user?.profile?.location}
               </div>
             )}
           </div>
         )}
 
         {/* Social Links */}
-        {author.socialLinks?.length > 0 && (
-          <div className="px-6 pb-6">
-            <h2
-              className="text-sm font-semibold uppercase mb-3"
-              style={{
-                color: template?.colors?.secondary,
-                fontFamily: template?.fonts?.heading,
-              }}
-            >
-              Connect with me
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              {author.socialLinks
-              ?.filter((link: SocialLink) => link.is_visible === true || link.is_visible === 1)
-              .map((link: SocialLink) => {
-                const platformKey = link.platform?.toLowerCase()
-                const icon = socialIconMap[platformKey] || <Globe size={14} />
-                return (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition"
-                    style={{
-                      backgroundColor: `${template?.colors?.accent}15`,
-                      color: template?.colors?.text,
-                      fontFamily: template?.fonts?.body,
-                    }}
-                  >
-                    <span style={{ color: template?.colors?.accent }}>{icon}</span>
-                    <span>{link.username}</span>
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-        )}
+        {template.connectStyle === "grid" && <GridSocialLinks user={user} template={template} />}
+        {template.connectStyle === "list" && <ListSocialLinks user={user} template={template} />}
 
         {/* Bottom Actions */}
         <div
-          className="flex justify-around border-t p-4"
+          className={cn(fontClassMap[template.fonts.body], "flex justify-around border-t border-border p-4 bg-card")}
           style={{
-            backgroundColor: `${template?.colors?.primary}08`,
-            borderColor: `${template?.colors?.primary}20`,
-            fontFamily: template?.fonts?.body,
+            background: template.colors.background,
           }}
         >
-          <button
-            onClick={() => setIsQRModalOpen(true)}
-            className="flex flex-col items-center text-sm hover:opacity-70"
-            style={{ color: template?.colors?.text }}
-          >
-            <QrCode className="w-5 h-5 mb-1" style={{ color: template?.colors?.accent }} /> QR Code
+          <button onClick={() => setIsQRModalOpen(true)} className="flex flex-col items-center text-sm hover:scale-110 transition-transform">
+            <QrCode
+              className="w-5 h-5 mb-1"
+              style={{
+                color: template.colors.secondary,
+              }}
+            />
+            <span
+              className={cn(fontClassMap[template.fonts.body], "whitespace-nowrap")}
+              style={{
+                color: template.colors.text,
+              }}
+            >
+              QR Code
+            </span>
           </button>
-          <button
-            onClick={handleShare}
-            className="flex flex-col items-center text-sm hover:opacity-70"
-            style={{ color: template?.colors?.text }}
-          >
-            <Share2 className="w-5 h-5 mb-1" style={{ color: template?.colors?.accent }} /> Share
+          <button onClick={handleShare} className="flex flex-col items-center text-sm hover:scale-110 transition-transform">
+            <Share2
+              className="w-5 h-5 mb-1"
+              style={{
+                color: template.colors.secondary,
+              }}
+            />
+            <span
+              className={cn(fontClassMap[template.fonts.body], "whitespace-nowrap")}
+              style={{
+                color: template.colors.text,
+              }}
+            >
+              Share
+            </span>
+          </button>
+          <button onClick={handleSaveContact} className="flex flex-col items-center text-sm hover:scale-110 transition-transform">
+            <Download
+              className="w-5 h-5 mb-1"
+              style={{
+                color: template.colors.secondary,
+              }}
+            />
+            <span
+              className={cn(fontClassMap[template.fonts.body], "whitespace-nowrap")}
+              style={{
+                color: template.colors.text,
+              }}
+            >
+              Save
+            </span>
           </button>
         </div>
       </div>
@@ -312,16 +315,12 @@ const [avatarError, setAvatarError] = useState(false)
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <QrCode className="w-5 h-5" />
-              QR Code for {author.displayName}
+              QR Code for {user?.display_name}
             </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4 w-full">
             <div className="w-full flex justify-center">
-              <QRCodeSVG
-                value={profileUrl}
-                size={200}
-                className="w-full max-w-[220px] h-auto"
-              />
+              <QRCodeSVG value={profileUrl} size={200} className="w-full max-w-[220px] h-auto" />
             </div>
             <div className="w-full p-3 bg-gray-50 rounded-lg text-xs sm:text-sm">
               <p className="text-gray-600 mb-2">Profile URL:</p>
@@ -343,7 +342,6 @@ const [avatarError, setAvatarError] = useState(false)
               </Button>
             </div>
           </div>
-
         </DialogContent>
       </Dialog>
     </div>

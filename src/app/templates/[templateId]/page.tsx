@@ -22,7 +22,7 @@ export default async function TemplatePage({ params }: TemplatePageProps) {
   return (
     <>
       <header className="w-full bg-gray-50 px-6 py-4 shadow-sm">
-        <TemplatePreviewHeader template={templateData} user={user} />
+        <TemplatePreviewHeader template={templateData} />
       </header>
 
       <div className="min-h-screen bg-gray-50 flex gap-6 p-6">
@@ -31,12 +31,12 @@ export default async function TemplatePage({ params }: TemplatePageProps) {
             {PreviewComponent && <PreviewComponent />}
           </div>
           <div className="container mx-auto px-4 py-8">
-            <TemplatePreviewContent template={templateData} user={user} />
+            <TemplatePreviewContent template={template} />
           </div>
         </main>
 
         <div className="hidden lg:block w-1/3">
-          <TemplatePreviewSidebar template={templateData} user={user} />
+          <TemplatePreviewSidebar template={template} />
         </div>
       </div>
     </>

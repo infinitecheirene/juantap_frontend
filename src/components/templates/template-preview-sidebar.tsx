@@ -1,6 +1,5 @@
 "use client";
 
-import type { Template } from "@/lib/template-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +8,7 @@ import { Download, Share2, Crown, CheckCircle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { toast, Toaster } from "sonner";
+import { Template } from "@/types/template";
 
 interface TemplatePreviewSidebarProps {
   template: Template;
@@ -209,11 +209,11 @@ const handleGetTemplate = () => {
               {isPremium ? (
                 <>
                  <span className="text-3xl font-bold text-gray-900">
-                    {formatPrice(template.price)}
+                    {formatPrice(template.price as number)}
                   </span>
-                  {template.originalPrice && (
+                  {template.original_price && (
                     <span className="ml-2 text-xl text-gray-500 line-through">
-                      {formatPrice(template.originalPrice)}
+                      {formatPrice(template.original_price)}
                     </span>
                   )}
 

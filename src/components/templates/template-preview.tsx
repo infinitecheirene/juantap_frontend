@@ -1,7 +1,8 @@
-import type { Template } from "@/lib/template-data"
+
 import { TemplatePreviewHeader } from "@/components/templates/template-preview-header"
 import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
 import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
+import { Template } from "@/types/template"
 
 interface TemplatePreviewProps {
   template: Template

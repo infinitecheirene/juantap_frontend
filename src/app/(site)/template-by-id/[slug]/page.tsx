@@ -7,6 +7,8 @@ import { TemplatePreviewHeader } from "@/components/templates/template-preview-h
 import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
 import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
 import { Loading } from "@/components/loading"
+import { Template, TemplateData } from "@/types/template"
+import { PreviewRenderer } from "@/components/templates/PreviewRenderer"
 
 interface SocialLink {
   id: string
@@ -44,23 +46,7 @@ interface UserData {
   }
 }
 
-interface TemplateData {
-  name: string
-  description?: string
-  colors: {
-    primary: string
-    secondary: string
-    accent: string
-    background: string
-    text: string
-  }
-  fonts: {
-    heading: string
-    body: string
-  }
-  sections?: Record<string, unknown>[]   // instead of any[]
-  [key: string]: unknown                 // instead of any
-}
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string
 
@@ -84,7 +70,7 @@ interface Props {
 export default function TemplatePage({ params }: Props) {
   const { slug } = use(params) // unwrap Promise
 
-  const [template, setTemplate] = useState<TemplateData | null>(null)
+  const [template, setTemplate] = useState<Template | null>(null)
   const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)

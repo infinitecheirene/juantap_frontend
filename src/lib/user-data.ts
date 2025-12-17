@@ -1,3 +1,5 @@
+import { User } from "@/types/template"
+
 export interface UserProfile {
   id: string
   username: string
@@ -80,6 +82,66 @@ const mockUserProfile: UserProfile = {
   updatedAt: "2024-03-15",
 }
 
+export const adminTemplatePlaceholder: User = {
+  id: 1,
+  name: "John Doe",
+  username: "john.doe",
+  email: "john.doe@example.com",
+  is_admin: true,
+  avatar_url: "",
+  display_name: "John D.",
+
+  profile_image: "https://i.pravatar.cc/300?img=1",
+  profile_image_url: "https://i.pravatar.cc/300?img=1",
+
+  social_links: [
+    {
+      id: "1",
+      platform: "Facebook",
+      username: "john.doe",
+      url: "https://facebook.com/john.doe",
+      isVisible: true,
+    },
+    {
+      id: "2",
+      platform: "Instagram",
+      username: "john_insta",
+      url: "https://instagram.com/john_insta",
+      isVisible: true,
+    },
+    {
+      id: "3",
+      platform: "LinkedIn",
+      username: "john-doe",
+      url: "https://linkedin.com/in/john-doe",
+      isVisible: false,
+    },
+  ],
+
+  profile: {
+    bio: "Developer",
+    phone: "+1 555 123 4567",
+    website: "https://johndoe.dev",
+    location: "New York, USA",
+    socialLinks: [
+      {
+        id: "1",
+        platform: "Facebook",
+        username: "john.doe",
+        url: "https://facebook.com/john.doe",
+        isVisible: true,
+      },
+      {
+        id: "2",
+        platform: "Instagram",
+        username: "john_insta",
+        url: "https://instagram.com/john_insta",
+        isVisible: true,
+      },
+    ],
+  },
+}
+
 export async function getUserProfile(userId: string): Promise<UserProfile> {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 100))
@@ -89,10 +151,10 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
 export async function updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile> {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 500))
-  
+
   // In a real app, this would update the database
   const updatedProfile = { ...mockUserProfile, ...updates, updatedAt: new Date().toISOString() }
   console.log("Profile updated:", updatedProfile)
-  
+
   return updatedProfile
 }

@@ -177,8 +177,8 @@ export const columns: ColumnDef<Payment>[] = [
 
           toast.success(action === "approve" ? "Payment approved successfully!" : "Payment disapproved successfully!")
 
-          if (table.options.meta?.refreshData) {
-            table.options.meta.refreshData()
+          if ((table.options.meta as any)?.refreshData) {
+            (table.options.meta as any).refreshData()
           }
         } catch (error: unknown) {
           if (error instanceof Error) {

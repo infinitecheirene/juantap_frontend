@@ -6,11 +6,12 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Save, User, Globe, MapPin, Phone, Mail, Upload, Plus, ArrowLeft } from 'lucide-react'
+import { Save, User as UserIcon, Globe, MapPin, Phone, Mail, Upload, Plus, ArrowLeft } from 'lucide-react'
 import Link from "next/link"
 import { useEffect, useState, useRef } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation";
+import { User } from "@/types/user"
 
 interface Profile {
   name: string;
@@ -33,18 +34,6 @@ interface SocialLink {
   display_name: string;
   is_visible: boolean;
 }
-
-interface User {
-  profile: Profile;
-  profile_image?: string;
-  email: string;
-  display_name?: string;
-  username?: string;
-  name?: string;
-  firstname?: string;
-  lastname?: string;
-}
-
 
 export default function EditProfilePage() {
 const [isCheckingUsername, setIsCheckingUsername] = useState(false);
@@ -122,7 +111,7 @@ const handleSave = async () => {
       if (err.errors?.username) {
         toast.error("Username is already taken. Please choose another.");
       } else {
-        const firstError = Object.values(err.errors || {})[0]?.[0];
+        const firstError = (Object.values(err.errors || {}) as string[][])[0]?.[0];
         toast.error(firstError || "Validation error. Please check your input.");
       }
     } else {
@@ -266,7 +255,7 @@ if (!profile) return <div className="p-8 text-white">Loading profile...</div>;
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
+                  <UserIcon className="w-5 h-5" />
                   Profile Picture
                 </CardTitle>
               </CardHeader>

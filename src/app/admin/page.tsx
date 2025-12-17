@@ -10,21 +10,21 @@ export default function AdminPage() {
 
   const router = useRouter()
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    const userData = localStorage.getItem("user")
-    if (!userData) {
+  //   const userData = localStorage.getItem("user")
+  //   if (!userData) {
    
-      router.push("/")
-      return
-    }
+  //     router.push("/")
+  //     return
+  //   }
 
-    const user = JSON.parse(userData)
+  //   const user = JSON.parse(userData)
 
-    if (!user.is_admin) {
-      router.push("/")
-    }
-  }, [router])
+  //   if (!user.is_admin) {
+  //     router.push("/")
+  //   }
+  // }, [router])
 
   return (
     <div className="min-h-screen bg-gray-50 flex">

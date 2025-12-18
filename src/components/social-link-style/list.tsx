@@ -51,7 +51,7 @@ export const ListSocialLinks: React.FC<ListSocialLinksProps> = ({ user, template
         Connect with me
       </h2>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {links.map((link) => {
           const platformKey = link.platform?.toLowerCase()
           const icon = socialIconMap[platformKey] || <Globe size={14} />
@@ -70,7 +70,7 @@ export const ListSocialLinks: React.FC<ListSocialLinksProps> = ({ user, template
               }}
             >
               <span style={{ color: template?.colors?.secondary }}>{icon}</span>
-              <span>{link.username}</span>
+              <span className="truncate">{link.username}</span>
             </a>
           )
         })}

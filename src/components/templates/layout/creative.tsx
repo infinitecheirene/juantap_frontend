@@ -29,6 +29,7 @@ import { toast } from "sonner"
 import { User } from "@/types/template"
 import { GridSocialLinks } from "@/components/social-link-style/grid"
 import { ListSocialLinks } from "@/components/social-link-style/list"
+import QRCode from "qrcode"
 interface SocialLink {
   id: string
   platform: string
@@ -48,6 +49,14 @@ export const CreativeLayout: React.FC<CreativeLayoutProps> = ({ template, user, 
   const [copied, setCopied] = useState(false)
   const [avatarError, setAvatarError] = useState(false)
   const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${user?.username || ""}`
+
+  const downloadQR = async () => {
+    const dataUrl = await QRCode.toDataURL(profileUrl, { width: 300 })
+    const link = document.createElement("a")
+    link.href = dataUrl
+    link.download = `${user?.username || "profile"}-qr.png`
+    link.click()
+  }
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -396,7 +405,7 @@ END:VCARD
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2 w-full">
-              <Button variant="outline" className="flex-1">
+              <Button variant="outline" onClick={downloadQR} className="flex-1">
                 <Download className="w-4 h-4 mr-2" />
                 Download
               </Button>

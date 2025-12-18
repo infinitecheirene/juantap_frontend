@@ -11,12 +11,22 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-gray-50 relative">
-      <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
+    <div className="flex h-screen bg-gray-50">
+      <AdminSidebar 
+        isOpen={isSidebarOpen} 
+        setIsOpen={setSidebarOpen}
+        collapsed={isSidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+      />
 
-      <main className="flex-1 md:ml-64 p-4">
+      <main 
+        className={`flex-1 p-4 transition-all duration-300 ${
+          isSidebarCollapsed ? "md:ml-16" : "md:ml-64"
+        }`}
+      >
         {/* Mobile toggle button */}
         <div className="md:hidden mb-4">
           <Button onClick={() => setSidebarOpen(true)}>

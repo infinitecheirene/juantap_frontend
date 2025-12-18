@@ -120,7 +120,7 @@ export const PreviewRenderer: React.FC<PreviewRendererProps> = ({
 
   return (
     <div
-      className="w-full flex justify-center p-6"
+      className="w-full flex justify-center p-5"
       style={{ backgroundColor: "#f9fafb" }}
     >
       <div

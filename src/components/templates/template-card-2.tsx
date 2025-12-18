@@ -1,74 +1,50 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import {
-  Mail,
-  MapPin,
-  Globe,
-  Copy,
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
-  Github,
-  Youtube,
-  Music,
-  QrCode,
-  Share2,
-  Download,
-  Phone,
-  User,
-} from "lucide-react";
+  Mail, MapPin, Globe, Copy, Facebook, Instagram, Twitter,
+  Linkedin, Github, Youtube, Music, QrCode, Share2, Download, Phone,
+  User
+} from "lucide-react"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { QRCodeSVG } from "qrcode.react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { QRCodeSVG } from "qrcode.react"
 
 interface SocialLink {
-  id: string;
-  platform: string;
-  username: string;
-  url: string;
-  is_visible?: boolean | number;
+  id: string
+  platform: string
+  username: string
+  url: string
+  is_visible?: boolean | number
 }
 
 interface UserData {
-  id: number;
-  name: string;
-  email: string;
-  avatar_url: string;
+  id: number
+  name: string
+  email: string
+  avatar_url: string
   profile?: {
-    avatar?: string;
-    bio?: string;
-    phone?: string;
-    website?: string;
-    location?: string;
-    socialLinks?: SocialLink[];
-  };
+    avatar?: string
+    bio?: string
+    phone?: string
+    website?: string
+    location?: string
+    socialLinks?: SocialLink[]
+  }
 }
 
 interface TemplateCardProps {
-  template: any;
-  user: UserData | null;
-  slug: string;
+  template: any
+  user: UserData | null
+  slug: string
 }
 
-export const TemplateCard: React.FC<TemplateCardProps> = ({
-  template,
-  user,
-  slug,
-}) => {
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [avatarError, setAvatarError] = useState(false);
-  const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${
-    user?.username || ""
-  }`;
+export const TemplateCard: React.FC<TemplateCardProps> = ({ template, user, slug }) => {
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [avatarError, setAvatarError] = useState(false)
+  const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${user?.username || ''}`
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={16} />,
@@ -78,29 +54,29 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
     github: <Github size={16} />,
     youtube: <Youtube size={16} />,
     tiktok: <Music size={16} />,
-  };
+  }
 
   const author = user
     ? {
-        displayName: user.name,
-        avatar: user.profile?.avatar || user.avatar_url || null,
-        email: user.email ?? null,
-        phone: user.profile?.phone ?? null,
-        website: user.profile?.website ?? null,
-        location: user.profile?.location ?? null,
-        bio: user.profile?.bio ?? null,
-        socialLinks: user.profile?.socialLinks ?? [],
-      }
+      displayName: user.name,
+      avatar: user.profile?.avatar || user.avatar_url || null,
+      email: user.email ?? null,
+      phone: user.profile?.phone ?? null,
+      website: user.profile?.website ?? null,
+      location: user.profile?.location ?? null,
+      bio: user.profile?.bio ?? null,
+      socialLinks: user.profile?.socialLinks ?? [],
+    }
     : {
-        displayName: "Anonymous",
-        avatar: null,
-        email: null,
-        phone: null,
-        website: null,
-        location: null,
-        bio: null,
-        socialLinks: [],
-      };
+      displayName: "Anonymous",
+      avatar: null,
+      email: null,
+      phone: null,
+      website: null,
+      location: null,
+      bio: null,
+      socialLinks: [],
+    }
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -109,26 +85,24 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
           title: template?.name ?? "My Profile",
           text: template?.description ?? "",
           url: profileUrl,
-        });
+        })
       } catch (err) {
-        console.error("Error sharing:", err);
+        console.error("Error sharing:", err)
       }
     } else {
-      alert("Sharing is not supported on this browser.");
+      alert("Sharing is not supported on this browser.")
     }
-  };
+  }
 
   const copyUrl = () => {
-    navigator.clipboard.writeText(profileUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    navigator.clipboard.writeText(profileUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
-    <div
-      className="w-full flex justify-center p-6"
-      style={{ backgroundColor: "transparent" }}
-    >
+    <div className="w-full flex justify-center p-6" style={{ backgroundColor: "transparent" }}>
+
       <div
         className="w-full max-w-lg shadow-lg rounded-2xl overflow-hidden flex flex-col"
         style={{
@@ -183,11 +157,9 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
           )}
         </div>
 
+
         {/* Contact */}
-        {(author.email ||
-          author.phone ||
-          author.website ||
-          author.location) && (
+        {(author.email || author.phone || author.website || author.location) && (
           <div className="p-6 space-y-4">
             <h2
               className="text-sm font-semibold uppercase"
@@ -208,12 +180,8 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <div
-                  className="flex items-center gap-2"
-                  style={{ color: template?.colors?.text }}
-                >
-                  <Mail size={16} style={{ color: template?.colors?.accent }} />{" "}
-                  {author.email}
+                <div className="flex items-center gap-2" style={{ color: template?.colors?.text }}>
+                  <Mail size={16} style={{ color: template?.colors?.accent }} /> {author.email}
                 </div>
                 <button
                   className="hover:opacity-70"
@@ -235,8 +203,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <Phone size={16} style={{ color: template?.colors?.accent }} />{" "}
-                {author.phone}
+                <Phone size={16} style={{ color: template?.colors?.accent }} /> {author.phone}
               </div>
             )}
 
@@ -253,8 +220,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <Globe size={16} style={{ color: template?.colors?.accent }} />{" "}
-                {author.website}
+                <Globe size={16} style={{ color: template?.colors?.accent }} /> {author.website}
               </a>
             )}
 
@@ -268,8 +234,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
                   fontFamily: template?.fonts?.body,
                 }}
               >
-                <MapPin size={16} style={{ color: template?.colors?.accent }} />{" "}
-                {author.location}
+                <MapPin size={16} style={{ color: template?.colors?.accent }} /> {author.location}
               </div>
             )}
           </div>
@@ -289,21 +254,20 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {author.socialLinks
-                ?.filter(
-                  (link: SocialLink) =>
-                    link.is_visible === true || link.is_visible === 1
-                )
+                ?.filter((link: SocialLink) => {
+                  if (link.is_visible === undefined || link.is_visible === null) return true
+                  return Boolean(Number(link.is_visible))
+                })
                 .map((link: SocialLink) => {
-                  const platformKey = link.platform?.toLowerCase();
-                  const icon = socialIconMap[platformKey] || (
-                    <Globe size={14} />
-                  );
+                  const platformKey = link.platform?.toLowerCase() ?? ""
+                  const icon = socialIconMap[platformKey] ?? <Globe size={14} />
+
                   return (
                     <a
                       key={link.id}
                       href={link.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="flex items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition"
                       style={{
                         backgroundColor: `${template?.colors?.accent}15`,
@@ -311,12 +275,10 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
                         fontFamily: template?.fonts?.body,
                       }}
                     >
-                      <span style={{ color: template?.colors?.accent }}>
-                        {icon}
-                      </span>
+                      <span style={{ color: template?.colors?.accent }}>{icon}</span>
                       <span>{link.username}</span>
                     </a>
-                  );
+                  )
                 })}
             </div>
           </div>
@@ -336,22 +298,14 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
             className="flex flex-col items-center text-sm hover:opacity-70"
             style={{ color: template?.colors?.text }}
           >
-            <QrCode
-              className="w-5 h-5 mb-1"
-              style={{ color: template?.colors?.accent }}
-            />{" "}
-            QR Code
+            <QrCode className="w-5 h-5 mb-1" style={{ color: template?.colors?.accent }} /> QR Code
           </button>
           <button
             onClick={handleShare}
             className="flex flex-col items-center text-sm hover:opacity-70"
             style={{ color: template?.colors?.text }}
           >
-            <Share2
-              className="w-5 h-5 mb-1"
-              style={{ color: template?.colors?.accent }}
-            />{" "}
-            Share
+            <Share2 className="w-5 h-5 mb-1" style={{ color: template?.colors?.accent }} /> Share
           </button>
         </div>
       </div>
@@ -365,32 +319,37 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
               QR Code for {author.displayName}
             </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col items-center space-y-4">
-            <QRCodeSVG value={profileUrl} size={256} />
-            <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-              {profileUrl}
-            </a>
-            <div className="w-full p-3 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
-              <div className="flex items-center justify-between">
-                <code className="text-sm text-gray-800 truncate flex-1 mr-2">
-                  {profileUrl}
-                </code>
-                <Button variant="ghost" size="sm" onClick={copyUrl}>
+          <div className="flex flex-col items-center space-y-4 w-full">
+            <div className="w-full flex justify-center">
+              <QRCodeSVG
+                value={profileUrl}
+                size={200}
+                className="w-full max-w-[220px] h-auto"
+              />
+            </div>
+            <div className="w-full p-3 bg-gray-50 rounded-lg text-xs sm:text-sm">
+              <p className="text-gray-600 mb-2">Profile URL:</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <code className="text-gray-800 truncate flex-1">{profileUrl}</code>
+                <Button variant="ghost" size="sm" onClick={copyUrl} className="self-end sm:self-auto">
                   {copied ? "Copied!" : "Copy"}
                 </Button>
               </div>
             </div>
-            <div className="flex gap-2 w-full">
-              <Button variant="outline">
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              <Button variant="outline" className="flex-1">
                 <Download className="w-4 h-4 mr-2" />
                 Download
               </Button>
-              <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
+              <Button onClick={() => setIsQRModalOpen(false)} className="flex-1">
+                Close
+              </Button>
             </div>
           </div>
+
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
+  )
+}

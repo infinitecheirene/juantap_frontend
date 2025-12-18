@@ -172,7 +172,7 @@ export function MinimalClean() {
 
   return (
     <div
-      className="w-full flex justify-center p-6"
+      className="w-full flex justify-center p-5"
       style={{
         background: backgroundColor,
         color: textColor,
@@ -245,6 +245,7 @@ export function MinimalClean() {
           <h2 className="text-sm font-semibold text-gray-500 uppercase">
             Contact
           </h2>
+          
           {profile.email && (
             <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3 text-sm">
               <div className="flex items-center gap-2">
@@ -258,6 +259,7 @@ export function MinimalClean() {
               </button>
             </div>
           )}
+
           {profile.phone && (
             <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3 text-sm">
               <div className="flex items-center gap-2">

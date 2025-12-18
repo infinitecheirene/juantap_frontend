@@ -224,14 +224,34 @@ export default function AddTemplatePage() {
       alert("Template saved successfully!");
       router.push("/admin/templates");
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        // Check if we got an HTML response instead of JSON
+        const contentType = error.response?.headers['content-type'];
+
+        if (contentType?.includes('text/html')) {
+          console.error('[v2] Server returned HTML instead of JSON');
+          console.error('Response data:', error.response?.data);
+          alert('Server error: The API endpoint returned an HTML error page. Check the console for details.');
+        } else if (error.response) {
+          // The request was made and the server responded with a status code
+          console.error('[v2] Server error:', error.response.status);
+          console.error('Error data:', error.response.data);
+          alert(`Error ${error.response.status}: ${error.response.data.message || 'Failed to save template'}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('[v2] No response received:', error.request);
+          alert('No response from server. Please check your network connection.');
+        } else {
+          // Something happened in setting up the request
+          console.error('[v2] Request setup error:', error.message);
+          alert(`Error: ${error.message}`);
+        }
+      } else if (error instanceof Error) {
         console.error("[v2] Error saving template:", error.message);
         alert(error.message);
       } else {
         console.error("[v2] Unknown error saving template:", error);
-        alert(
-          "Failed to save template. Slug field is required/Slug has already been taken."
-        );
+        alert("Failed to save template. Please try again.");
       }
     } finally {
       setSaving(false);
@@ -264,7 +284,7 @@ export default function AddTemplatePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Template Name</Label>
+                  <Label className="mb-1" htmlFor="name">Template Name</Label>
                   <Input
                     id="name"
                     value={template.name}
@@ -273,7 +293,7 @@ export default function AddTemplatePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="slug">Slug (auto-generated)</Label>
+                  <Label className="mb-1" htmlFor="slug">Slug (auto-generated)</Label>
                   <Input
                     id="slug"
                     value={template.slug}
@@ -282,7 +302,7 @@ export default function AddTemplatePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description">Description</Label>
+                  <Label className="mb-1" htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
                     value={template.description}
@@ -294,7 +314,7 @@ export default function AddTemplatePage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="category">Category</Label>
+                    <Label className="mb-1" htmlFor="category">Category</Label>
                     <Select
                       value={template.category}
                       onValueChange={(value) => {
@@ -312,7 +332,7 @@ export default function AddTemplatePage() {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="layout">Layout</Label>
+                    <Label className="mb-1" htmlFor="layout">Layout</Label>
                     <Select
                       value={template.layout}
                       onValueChange={(value) => updateTemplate("layout", value)}
@@ -335,7 +355,7 @@ export default function AddTemplatePage() {
                 {template.category === "premium" && (
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <Label htmlFor="price">Price (auto-calculated)</Label>
+                      <Label className="mb-1" htmlFor="price">Price (auto-calculated)</Label>
                       <Input
                         id="price"
                         type="number"
@@ -345,7 +365,7 @@ export default function AddTemplatePage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="original_price">Original Price</Label>
+                      <Label className="mb-1" htmlFor="original_price">Original Price</Label>
                       <Input
                         id="original_price"
                         type="number"

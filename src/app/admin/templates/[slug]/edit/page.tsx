@@ -79,18 +79,21 @@ export default function EditTemplatePage() {
 
     try {
       const payload: TemplatePayload = {
-        ...template,
+        id: template.id,
+        slug: template.slug,
+        name: template.name,
+        description: template.description,
+        socialStyle: template.socialStyle,
+        connectStyle: template.connectStyle,
+        is_hidden: template.is_hidden,
+        // Convert to JSON strings for Laravel
         features: JSON.stringify(template.features),
         colors: JSON.stringify(template.colors),
         fonts: JSON.stringify(template.fonts),
         tags: JSON.stringify(template.tags),
       };
 
-      // Convert arrays/objects to JSON strings for Laravel
-      if (payload.features) payload.features = JSON.stringify(payload.features);
-      if (payload.colors) payload.colors = JSON.stringify(payload.colors);
-      if (payload.fonts) payload.fonts = JSON.stringify(payload.fonts);
-      if (payload.tags) payload.tags = JSON.stringify(payload.tags);
+      const token = localStorage.getItem("token");
 
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/templates/${template.id}`,
@@ -99,6 +102,7 @@ export default function EditTemplatePage() {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -107,7 +111,14 @@ export default function EditTemplatePage() {
       router.push("/admin/templates");
     } catch (err) {
       console.error("❌ Failed to update template:", err);
-      alert("Error saving template.");
+      if (axios.isAxiosError(err)) {
+        console.error("Response data:", err.response?.data);
+        alert(
+          `Error saving template: ${err.response?.data?.message || err.message}`
+        );
+      } else {
+        alert("Error saving template.");
+      }
     } finally {
       setSaving(false);
     }

@@ -26,12 +26,12 @@ export function TemplatePreviewHeader({
               </Button>
             </Link>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-800">
                 {template.name}
               </h1>
               <div className="flex flex-wrap gap-2">
                 {isPremium && (
-                  <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
+                  <Badge className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium
                   </Badge>
@@ -39,7 +39,7 @@ export function TemplatePreviewHeader({
                 {template.isNew && (
                   <Badge
                     variant="secondary"
-                    className="bg-green-100 text-green-700 border-green-200"
+                    className="text-2xl bg-green-100 text-green-700 border-green-200"
                   >
                     <Sparkles className="w-3 h-3 mr-1" />
                     New
@@ -48,7 +48,7 @@ export function TemplatePreviewHeader({
                 {template.isPopular && (
                   <Badge
                     variant="secondary"
-                    className="bg-yellow-100 text-yellow-700 border-yellow-200"
+                    className="text-2xl bg-yellow-100 text-yellow-700 border-yellow-200"
                   >
                     <Star className="w-3 h-3 mr-1" />
                     Popular

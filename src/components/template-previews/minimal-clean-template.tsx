@@ -1,11 +1,9 @@
 "use client";
 
-import type React from "react";
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Mail,
   MapPin,
-  Globe,
   Copy,
   Instagram,
   Twitter,
@@ -14,9 +12,12 @@ import {
   Youtube,
   Music,
   Facebook,
+  Globe,
   QrCode,
   Share2,
   Download,
+  Camera,
+  Edit3,
 } from "lucide-react";
 import {
   Dialog,
@@ -60,12 +61,18 @@ export function MinimalClean({
 }: MinimalCleanProps) {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [profileImage, setProfileImage] = useState(
+    "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-1BRclz0vIHgGo4jUqoED4QUElLnLwR.png"
+  );
+  const [coverImage, setCoverImage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const staticProfile = {
     displayName: "example_displayname",
     location: "Manila PH",
     handle: "@username",
-    bio: "this is bui",
+    bio: "this is bio section. you can write about yourself here.",
     email: "admin.example@gmail.com",
     socialLinks: [
       {
@@ -73,6 +80,24 @@ export function MinimalClean({
         platform: "instagram",
         username: "instagram_account",
         url: "https://instagram.com/2eub2e",
+      },
+      {
+        id: "facebook",
+        platform: "facebook",
+        username: "facebook_account",
+        url: "https://facebook.com/2eub2e",
+      },
+      {
+        id: "LinkedIn",
+        platform: "LinkedIn",
+        username: "LinkedIn_account",
+        url: "https://linkedin.com/in/2eub2e",
+      },
+      {
+        id: "indeed",
+        platform: "indeed",
+        username: "indeed_account",
+        url: "https://indeed.com/in/2eub2e",
       },
     ],
   };
@@ -111,6 +136,97 @@ export function MinimalClean({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleCoverClick = () => {
+    coverInputRef.current?.click();
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Preview immediately
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to backend
+      const formData = new FormData();
+      formData.append("profileImage", file);
+
+      try {
+        const token = localStorage.getItem("token");
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/upload-image`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+      } catch (error) {
+        console.error("Failed to upload profile image:", error);
+      }
+    }
+  };
+
+  const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64Image = reader.result as string;
+        setCoverImage(base64Image);
+
+        // Save to backend
+        try {
+          const token = localStorage.getItem("token");
+          await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/update-cover`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              coverImage: base64Image,
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to save cover image:", error);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+
+        if (data.profileImage) {
+          setProfileImage(data.profileImage);
+        }
+        if (data.coverImage) {
+          setCoverImage(data.coverImage);
+        }
+      } catch (error) {
+        console.error("Failed to load profile:", error);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
   const getSocialLinkClass = () => {
     switch (socialStyle) {
       case "circles":
@@ -135,7 +251,7 @@ export function MinimalClean({
 
   return (
     <div
-      className="w-full flex justify-center p-6"
+      className="w-full flex justify-center"
       style={{ backgroundColor: "#f9fafb" }}
     >
       <div
@@ -145,25 +261,75 @@ export function MinimalClean({
           fontFamily: fonts.body,
         }}
       >
-        <div
-          className="w-full h-32"
-          style={{
-            background: `linear-gradient(135deg, ${colors.accent}, ${colors.primary})`,
-          }}
-        ></div>
-
-        {/* Avatar & Bio */}
-        <div className="relative flex flex-col items-center mt-6 px-6">
-          <div
-            className="w-28 h-28 rounded-full border-4 shadow-lg overflow-hidden bg-gray-200 flex items-center justify-center -mt-14"
-            style={{ borderColor: colors.background }}
-          >
+        {/* Cover Photo Section */}
+        <div className="relative w-full h-32 group">
+          {coverImage ? (
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-1BRclz0vIHgGo4jUqoED4QUElLnLwR.png"
-              alt="displaylua"
+              src={coverImage}
+              alt="cover"
               className="w-full h-full object-cover"
             />
+          ) : (
+            <div
+              className="w-full h-full"
+              style={{
+                background: `linear-gradient(135deg, ${colors.accent}, ${colors.primary})`,
+              }}
+            ></div>
+          )}
+
+          {/* Edit Cover Button */}
+          <button
+            onClick={handleCoverClick}
+            className="absolute top-4 right-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-black/50 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+          >
+            <Edit3 size={14} />
+            Edit Cover
+          </button>
+
+          {/* Hidden Cover Input */}
+          <input
+            ref={coverInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleCoverChange}
+            className="hidden"
+          />
+        </div>
+
+        {/* Avatar & Bio */}
+        <div className="relative flex flex-col items-center mt-2 px-6">
+          <div className="relative -mt-14">
+            <div
+              className="w-28 h-28 rounded-full border-4 shadow-lg overflow-hidden bg-gray-200 flex items-center justify-center"
+              style={{ borderColor: colors.background }}
+            >
+              <img
+                src={profileImage}
+                alt="profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Camera Icon Button */}
+            <button
+              onClick={handleImageClick}
+              className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center shadow-lg hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: colors.accent }}
+            >
+              <Camera size={18} className="text-white" />
+            </button>
+
+            {/* Hidden Profile Input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
           </div>
+
           <h1
             className="mt-4 text-xl font-bold"
             style={{
@@ -177,7 +343,7 @@ export function MinimalClean({
             className="flex flex-wrap items-center gap-3 text-xs mt-2 justify-center"
             style={{
               color: colors.secondary,
-              fontFamily: fonts.body, // Added explicit body font to location/handle text
+              fontFamily: fonts.body,
             }}
           >
             <span className="flex items-center gap-1">
@@ -189,7 +355,7 @@ export function MinimalClean({
             className="text-sm text-center mt-1"
             style={{
               color: colors.secondary,
-              fontFamily: fonts.body, // Added explicit body font to bio text
+              fontFamily: fonts.body,
             }}
           >
             {staticProfile.bio}
@@ -211,7 +377,7 @@ export function MinimalClean({
             className="flex justify-between items-center rounded-lg p-3 text-sm"
             style={{
               backgroundColor: `${colors.primary}10`,
-              fontFamily: fonts.body, // Added explicit body font to contact section
+              fontFamily: fonts.body,
             }}
           >
             <div
@@ -256,7 +422,7 @@ export function MinimalClean({
                   style={{
                     backgroundColor: `${colors.accent}15`,
                     color: colors.text,
-                    fontFamily: fonts.body, // Added explicit body font to social links
+                    fontFamily: fonts.body,
                   }}
                 >
                   {socialStyle === "circles" ? (
@@ -281,7 +447,7 @@ export function MinimalClean({
           style={{
             backgroundColor: `${colors.primary}08`,
             borderColor: `${colors.primary}20`,
-            fontFamily: fonts.body, // Added explicit body font to bottom actions
+            fontFamily: fonts.body,
           }}
         >
           <button
@@ -336,7 +502,7 @@ export function MinimalClean({
                 <Download className="w-4 h-4 mr-2" />
                 Download
               </Button>
-              
+
               <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
             </div>
           </div>

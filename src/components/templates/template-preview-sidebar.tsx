@@ -210,10 +210,10 @@ export function TemplatePreviewSidebar({
     <>
       <Toaster position="top-center" richColors />
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-2">
         {/* Purchase Card */}
-        <Card>
-          <CardHeader>
+        <Card className="p-4 mx-6 lg:mx-0">
+          <CardHeader className="flex items-center gap-2">
             <CardTitle className="flex items-center gap-2">
               {isPremium && <Crown className="w-5 h-5 text-yellow-600" />}
               {isPremium ? "Premium Template" : "Free Template"}
@@ -251,7 +251,7 @@ export function TemplatePreviewSidebar({
             <Button
               onClick={handleGetTemplate}
               disabled={isSavingTemplate || isPurchasing || isLoadingStatus} // <-- add isLoadingStatus here
-              className={`w-full ${
+              className={`w-full mt-4 ${
                 isPremium
                   ? savedStatus === "pending"
                     ? "bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700"
@@ -263,9 +263,9 @@ export function TemplatePreviewSidebar({
               size="lg"
             >
               {(isSavingTemplate || isPurchasing) && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               )}
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="w-4 h-4" />
               {isPremium
                 ? savedStatus === "bought"
                   ? "Owned"
@@ -282,7 +282,7 @@ export function TemplatePreviewSidebar({
               <Button
                 onClick={toggleUsed}
                 disabled={isTogglingUsed}
-                className={`w-full mt-2 ${
+                className={`w-full ${
                   usedStatus === "used"
                     ? "bg-red-600 hover:bg-red-700"
                     : "bg-blue-600 hover:bg-blue-700"
@@ -290,21 +290,21 @@ export function TemplatePreviewSidebar({
                 size="lg"
               >
                 {isTogglingUsed && (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 )}
                 {usedStatus === "used" ? "Mark as Unused" : "Mark as Used"}
               </Button>
             )}
 
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 mb-4">
               <Button
                 variant="outline"
                 onClick={handleShare}
                 disabled={isSharing}
-                className="flex-1"
+                className="w-full flex-1"
               >
-                {isSharing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                <Share2 className="w-4 h-4 mr-1" />
+                {isSharing && <Loader2 className="w-4 h-4 animate-spin" />}
+                <Share2 className="w-4 h-4" />
                 Share
               </Button>
             </div>
@@ -312,7 +312,7 @@ export function TemplatePreviewSidebar({
         </Card>
 
         {/* Info Card */}
-        <Card>
+        <Card className="p-4 mx-6 lg:mx-0">
           <CardHeader>
             <CardTitle>Template Information</CardTitle>
           </CardHeader>
@@ -320,7 +320,7 @@ export function TemplatePreviewSidebar({
           <CardContent className="space-y-4">
             <div className="flex justify-between">
               <span className="text-gray-600">Category</span>
-              <Badge variant={isPremium ? "default" : "secondary"}>
+              <Badge className="px-4 pb-1 mt-1 rounded-lg" variant={isPremium ? "default" : "secondary"}>
                 {isPremium ? "Premium" : "Free"}
               </Badge>
             </div>
@@ -347,7 +347,7 @@ export function TemplatePreviewSidebar({
                 "Priority support",
                 "Lifetime updates",
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex items-center gap-2 ml-4">
                   <CheckCircle className="w-4 h-4 text-green-600" />
                   <span className="text-sm">{item}</span>
                 </div>

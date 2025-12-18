@@ -22,10 +22,12 @@ import ProfileModal from "@/components/profile/ProfileModal";
 interface AdminSidebarProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
-export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+export function AdminSidebar({ isOpen, setIsOpen, collapsed, setCollapsed }: AdminSidebarProps) {
+ 
   const [paymentCount, setPaymentCount] = useState<number>(0);
   const [user, setUser] = useState<any>(null);
   const [isProfileModalOpen, setProfileModalOpen] = useState(false);
@@ -132,7 +134,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
 
       <div
         className={cn(
-          "fixed z-50 top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-300 flex flex-col",
+          "fixed z-50 top-0 left-0 m-1 shadow-xl h-full bg-white border-r border-gray-200 transition-all duration-300 flex flex-col transition-all duration-300",
           collapsed ? "w-16" : "w-64",
           isOpen ? "block" : "hidden",
           "md:block"
@@ -143,13 +145,13 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
           <span className="font-semibold text-gray-700">
             {!collapsed && "Admin Panel"}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mr-2 ">
             {/* Collapse Button */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setCollapsed(!collapsed)}
-              className="p-1.5"
+              className=" py-4 px-2"
             >
               {collapsed ? (
                 <ChevronRight className="h-4 w-4" />
@@ -173,7 +175,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 overflow-y-auto">
+        <nav className="flex-1 py-4 px-2 overflow-y-auto">
           <ul className="space-y-2">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
@@ -185,7 +187,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
                       "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                       isActive
                         ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     )}
                     onClick={() => setIsOpen(false)} // close sidebar on mobile
                   >
@@ -208,14 +210,14 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         </nav>
 
         {/* Footer: Profile + Logout */}
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t border-gray-200 py-4 px-2">
           <div
-            className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition"
+            className="flex items-center space-x-3 gap-2 cursor-pointer rounded-2xl transition"
             onClick={() => setProfileModalOpen(true)}
           >
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-8 w-8 mx-2">
               <AvatarImage src={getProfileImageUrl(user?.profile_image)} />
-              <AvatarFallback>
+              <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                 {user?.name
                   ? user.name
                       .split(" ")
@@ -240,10 +242,10 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="w-full flex items-center justify-center"
+              className="w-full flex items-center justify-center  hover:bg-gray-100 py-2 rounded-lg "
               onClick={handleLogout}
             >
-              <LogOut className="h-4 w-4 mr-1" />
+              <LogOut className="h-4 w-4" />
               {!collapsed && "Logout"}
             </Button>
           </div>

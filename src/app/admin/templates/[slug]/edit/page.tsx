@@ -68,9 +68,8 @@ export default function EditTemplatePage() {
           connectStyle: data.connectStyle,
           socialStyle: data.socialStyle,
         })
-        console.log(data)
       } catch (err) {
-        console.error("❌ Failed to fetch template:", err)
+        console.error("Failed to fetch template:", err)
         toast.error("Failed to load template.")
       } finally {
         setLoading(false)
@@ -105,7 +104,7 @@ export default function EditTemplatePage() {
       toast.success("Template updated successfully!")
       router.push("/admin/templates")
     } catch (err: any) {
-      console.error("❌ Failed to update template:", err.response?.data || err)
+      console.error("Failed to update template:", err.response?.data || err)
       toast.error("Error saving template.")
     } finally {
       setSaving(false)

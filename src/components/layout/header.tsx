@@ -79,7 +79,7 @@ const [loadingAction, setLoadingAction] = useState<string | null>(null);
  const getProfileImageUrl = (path?: string) => {
   if (!path) return "/placeholder.svg?height=40&width=40"
   if (path.startsWith("http")) return path
-  return `${process.env.NEXT_PUBLIC_IMAGE_URL}/${path}` // ✅ no `/storage`
+  return `${process.env.NEXT_PUBLIC_IMAGE_URL}/${path}` // no `/storage`
 }
 
   

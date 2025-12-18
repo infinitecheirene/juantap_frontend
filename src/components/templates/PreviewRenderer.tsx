@@ -3,6 +3,7 @@ import { CreativeLayout } from "./layout/creative"
 import { ProfessionalLayout } from "./layout/professional"
 import { TemplateData } from "@/types/template"
 import { User } from "@/types/user"
+import { AnimatedBackground } from "./background/animated-bg"
 
 interface PreviewRendererProps {
   template: TemplateData

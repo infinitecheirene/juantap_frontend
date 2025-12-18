@@ -46,7 +46,6 @@ export default function AdminUsersPage() {
       if (!res.ok) throw new Error("Failed to fetch users")
 
       const data = await res.json()
-      console.log("[v0] Users data:", data.users)
       setUsers(Array.isArray(data.users) ? data.users : [])
     } catch (error: unknown) {
       if (error instanceof Error) {

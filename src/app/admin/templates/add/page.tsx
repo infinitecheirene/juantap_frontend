@@ -13,11 +13,9 @@ import Link from "next/link"
 import { ArrowLeft, Shuffle } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
-import { MinimalClean } from "@/components/template-previews/minimal-clean-template"
 import { toast } from "sonner"
 import { adminTemplatePlaceholder } from "@/lib/user-data"
 import { TemplateData } from "@/types/template"
-import { TemplateCard } from "@/components/templates/template-card-2"
 import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 const defaultTemplate: TemplateData = {
@@ -30,14 +28,14 @@ const defaultTemplate: TemplateData = {
   is_premium: false,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
-  category: "free", // must be "free" or "premium"
+  category: "free", 
   price: 0,
   original_price: 0,
   discount: 0,
   features: [],
   colors: { primary: "", secondary: "", accent: "", background: "", text: "" },
   fonts: { heading: "Inter", body: "Inter" },
-  layout: "professional", // must be one of the allowed values
+  layout: "professional", 
   tags: [],
   is_popular: false,
   is_new: false,
@@ -175,16 +173,12 @@ export default function AddTemplatePage() {
         tags: JSON.stringify(template.tags),
       }
 
-      console.log("[v2] Sending template data to Laravel backend:", payload)
-
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/templates/store`, payload, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
       })
-
-      console.log("[v2] Backend response:", response.data)
 
       setTemplate({
         ...defaultTemplate,
@@ -195,8 +189,6 @@ export default function AddTemplatePage() {
       toast.success("Template saved successfully!")
       router.push("/admin/templates")
     } catch (error: any) {
-      console.error("[v2] Error saving template:", error.response?.data || error)
-
       if (error.response?.status === 422) {
         const errors = error.response.data.errors
         if (errors) {
@@ -209,7 +201,6 @@ export default function AddTemplatePage() {
         toast.error("Failed to save template. Please try again.")
       }
     } finally {
-      // ✅ This line ensures the button resets after *any* outcome
       setSaving(false)
     }
   }
@@ -370,11 +361,8 @@ export default function AddTemplatePage() {
                           className="w-16 h-10 p-1"
                         />
                         <Input value={template.colors[colorKey]} onChange={(e) => updateColors(colorKey, e.target.value)} placeholder="#000000" />
-                        <button
-                          type="button"
-                          onClick={() => updateColors(colorKey, getRandomColor())}
-                        >
-                          <Shuffle className="w-4 h-4"/>
+                        <button type="button" onClick={() => updateColors(colorKey, getRandomColor())}>
+                          <Shuffle className="w-4 h-4" />
                         </button>
                       </div>
                     </div>

@@ -51,33 +51,33 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
   // Path already includes 'avatars/' prefix from backend
   return `${process.env.NEXT_PUBLIC_IMAGE_URL}/${path}`;
 };
-  // const fetchUserData = async () => {
-  //   const token = localStorage.getItem("token");
-  //   if (!token) {
-  //     setUser(null);
-  //     router.replace("/login");
-  //     return;
-  //   }
+  const fetchUserData = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      router.replace("/login");
+      return;
+    }
 
-  //   try {
-  //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         Accept: "application/json",
-  //       },
-  //     });
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
 
-  //     if (res.ok) {
-  //       const userData = await res.json();
-  //       setUser(userData);
-  //     } else {
-  //       handleLogout();
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user:", error);
-  //     handleLogout();
-  //   }
-  // };
+      if (res.ok) {
+        const userData = await res.json();
+        setUser(userData);
+      } else {
+        handleLogout();
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      handleLogout();
+    }
+  };
 
   const fetchPaymentCount = async () => {
     const token = localStorage.getItem("token");
@@ -101,7 +101,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
   };
 
   useEffect(() => {
-    // fetchUserData();
+    fetchUserData();
     fetchPaymentCount();
   }, []);
 
@@ -267,7 +267,7 @@ export function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
           open={isProfileModalOpen}
           onClose={() => setProfileModalOpen(false)}
           user={user}
-          // refreshUser={fetchUserData}
+          refreshUser={fetchUserData}
         />
       </div>
     </>

@@ -14,7 +14,7 @@ export default async function TemplatePage({ params }: TemplatePageProps) {
   const template = await getTemplateBySlug(params.templateId)
   if (!template) notFound()
 
-  // 🔑 fetch user (requires valid token)
+  // fetch user (requires valid token)
   const user = await getCurrentUser()
 
   const { previewComponent: PreviewComponent, ...templateData } = template

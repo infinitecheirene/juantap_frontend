@@ -1,11 +1,11 @@
 "use client"
 import { useParams, notFound } from "next/navigation"
 import { useEffect, useState } from "react"
-// ✅ Import your custom Loading component
 import { Loading } from "@/components/loading"
-import type { SocialLink, TemplateData } from "@/types/template"
-import { User, UserData } from "@/types/user"
+import type { TemplateData } from "@/types/template"
+import { User } from "@/types/user"
 import PreviewRenderer from "@/components/templates/PreviewRenderer"
+import { AnimatedBackground } from "@/components/templates/background/animated-bg"
 
 export default function PublicProfilePage() {
   const { username } = useParams<{ username: string }>()
@@ -56,17 +56,18 @@ export default function PublicProfilePage() {
     fetchData()
   }, [username])
 
-  if (loading) return <Loading /> // ✅ Use custom Loading component
+  if (loading) return <Loading />
   if (!templateData) return notFound()
 
   return (
     <main
-      className="flex-1 flex items-center justify-center min-h-screen px-4"
+      className="relative flex-1 flex items-center justify-center min-h-screen px-4"
       style={{
         background: `${templateData?.colors?.primary}15`,
       }}
     >
-      <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-2/5">
+      {templateData.is_premium && <AnimatedBackground template={templateData} />}
+      <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-2/5 z-50">
         {templateData && userData && <PreviewRenderer template={templateData} user={userData} slug={username} />}
       </div>
     </main>

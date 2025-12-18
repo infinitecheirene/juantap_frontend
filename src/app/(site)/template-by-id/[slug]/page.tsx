@@ -76,7 +76,7 @@ export default function TemplatePage({ params }: Props) {
 
   const router = useRouter()
 
-  // 🔑 Check authentication
+  // Check authentication
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
     if (!token) {
@@ -86,7 +86,7 @@ export default function TemplatePage({ params }: Props) {
     }
   }, [router])
 
-  // 🔄 Fetch template data
+  // Fetch template data
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
@@ -126,7 +126,7 @@ export default function TemplatePage({ params }: Props) {
     fetchTemplate()
   }, [slug])
 
-  // 🔄 Fetch logged-in user
+  // Fetch logged-in user
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -166,7 +166,7 @@ export default function TemplatePage({ params }: Props) {
     fetchUser()
   }, [])
 
-  // 🌀 Show loading state using custom Loading component
+  // Show loading state using custom Loading component
   if (isAuthenticated === null || loading) {
     return <Loading />
   }

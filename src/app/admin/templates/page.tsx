@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Loader2, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { Template, TemplateData } from "@/types/template"
-import { TemplateCard } from "@/components/templates/template-card-2"
+import { TemplateData } from "@/types/template"
 import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 export default function AdminTemplatesPage() {
@@ -37,18 +36,17 @@ export default function AdminTemplatesPage() {
       if (!res.ok) throw new Error("Failed to fetch templates")
 
       const data = await res.json()
-      console.log("✅ Templates API response:", data)
 
       setTemplates(Array.isArray(data) ? data : [])
     } catch (error: unknown) {
-      console.error("❌ Fetch error:", error)
+      console.error("Fetch error:", error)
       if (error instanceof Error) {
         toast.error(error.message)
       } else {
         toast.error("Failed to fetch templates")
       }
     } finally {
-      // ✅ Always stop loading, even if there’s an error
+      // Always stop loading, even if there’s an error
       setIsLoading(false)
     }
   }

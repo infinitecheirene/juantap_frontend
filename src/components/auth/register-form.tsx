@@ -104,7 +104,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     await register(payload)
 
-    // ✅ Only success toast here
     toast.success("Registration successful", {
       description: `Welcome, ${formData.firstName}!`,
     })
@@ -122,7 +121,6 @@ const handleSubmit = async (e: React.FormEvent) => {
       setErrors({ general: "Registration failed. Please try again." })
     }
 
-    // ✅ Only error toast here
     toast.error("Something went wrong", {
       description: "Registration failed. Please try again.",
     })
@@ -238,7 +236,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <Button
           type="submit"
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-          disabled={isLoading || !formData.agreeToTerms} // 🔹 disabled if checkbox not checked
+          disabled={isLoading || !formData.agreeToTerms} 
         >
           {isLoading ? (
             <>

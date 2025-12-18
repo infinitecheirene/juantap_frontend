@@ -95,7 +95,6 @@ export default function EditProfilePage() {
       formData.append(`social_links[${index}][display_name]`, link.display_name || "")
       formData.append(`social_links[${index}][is_visible]`, link.is_visible ? "1" : "0")
     })
-    console.log(JSON.stringify(formData, null, 2))
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
         method: "POST",

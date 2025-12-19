@@ -8,31 +8,25 @@ import { Edit, Trash, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PreviewRenderer } from "@/components/templates/PreviewRenderer";
+import type { Template, User } from "@/types/template";
 
-interface Template {
-  id: number;
-  slug?: string;
-  name: string;
-  description: string;
-  category: string;
-  price: number;
-  createdAt?: string;
-  created_at?: string;
-  preview?: string;
-  thumbnail?: string;
-  tags?: string[];
-  isNew?: boolean;
-  isPopular?: boolean;
-  discount?: number;
-  original_price?: number;
+interface AdminTemplatesPageProps {
+  template: Template;
+  user?: User;
 }
 
-export default function AdminTemplatesPage() {
+export default function AdminTemplatesPage({
+  template,
+  user,
+}: AdminTemplatesPageProps) {
   const router = useRouter();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showHidden, setShowHidden] = useState(false);
+
+  const [showRealPreview, setShowRealPreview] = useState(false);
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   useEffect(() => {
     fetchTemplates();
@@ -141,7 +135,11 @@ export default function AdminTemplatesPage() {
               <div className="relative">
                 {/* Live Preview / Thumbnail */}
                 <div className="aspect-[3/4] bg-gray-100 overflow-hidden">
-                  <PreviewRenderer template={template} slug={template.slug} />
+                  <PreviewRenderer
+                    template={template}
+                    user={user}
+                    slug={template.slug}
+                  />
                 </div>
 
                 {/* Badges */}
@@ -199,7 +197,7 @@ export default function AdminTemplatesPage() {
                 </p>
 
                 <div className="flex flex-wrap gap-1">
-                  {template.tags?.slice(0, 3).map((tag) => (
+                  {template.tags?.slice(0, 3).map((tag: string) => (
                     <Badge key={tag} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
@@ -209,7 +207,7 @@ export default function AdminTemplatesPage() {
 
               <CardFooter className="p-4 pt-0 flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  {template.created_at || template.createdAt}
+                  {template.created_at}
                 </span>
                 {isPremium ? (
                   hasDiscount ? (

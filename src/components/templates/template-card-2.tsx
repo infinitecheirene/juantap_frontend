@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Mail,
   MapPin,
@@ -17,7 +17,7 @@ import {
   Share2,
   Download,
   Phone,
-  User,
+  UserIcon,
 } from "lucide-react";
 
 import {
@@ -26,9 +26,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
-import { Template } from "@/types/template";
+import { Template, User } from "@/types/template";
 
 interface SocialLink {
   id: string;
@@ -38,32 +39,23 @@ interface SocialLink {
   is_visible?: boolean | number;
 }
 
-interface UserData {
-  id: number
-  name: string
-  email: string
-  avatar_url:string
-  profile?: {
-    avatar?: string;
-    bio?: string;
-    phone?: string;
-    website?: string;
-    location?: string;
-    socialLinks?: SocialLink[];
-  };
-}
-
 interface TemplateCardProps {
   template: Template;
-  user: UserData | null;
+  user: User | null;
   slug: string;
 }
 
-export const TemplateCard: React.FC<TemplateCardProps> = ({ template, user, slug }) => {
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
-const [avatarError, setAvatarError] = useState(false)
- const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${user?.username || ''}`
+export const TemplateCard: React.FC<TemplateCardProps> = ({
+  template,
+  user,
+  slug,
+}) => {
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+  const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${
+    user?.username || ""
+  }`;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={16} />,
@@ -78,7 +70,7 @@ const [avatarError, setAvatarError] = useState(false)
   const author = user
     ? {
         displayName: user.name,
-       avatar: user.profile?.avatar || user.avatar_url || null,
+        avatar: user.profile?.avatar || user.avatar_url || null,
         email: user.email ?? null,
         phone: user.profile?.phone ?? null,
         website: user.profile?.website ?? null,
@@ -95,7 +87,7 @@ const [avatarError, setAvatarError] = useState(false)
         location: null,
         bio: null,
         socialLinks: [],
-      }
+      };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -120,8 +112,10 @@ const [avatarError, setAvatarError] = useState(false)
   };
 
   return (
- <div className="w-full flex justify-center p-6" style={{ backgroundColor: "transparent" }}>
-
+    <div
+      className="w-full flex justify-center p-6"
+      style={{ backgroundColor: "transparent" }}
+    >
       <div
         className="w-full max-w-lg shadow-lg rounded-2xl overflow-hidden flex flex-col"
         style={{
@@ -149,7 +143,7 @@ const [avatarError, setAvatarError] = useState(false)
               />
             ) : (
               <div className="flex items-center justify-center w-full h-full bg-white/20">
-                <User size={64} className="text-gray-400" />
+                <UserIcon size={64} className="text-gray-400" />
               </div>
             )}
           </div>
@@ -272,37 +266,62 @@ const [avatarError, setAvatarError] = useState(false)
         {author.socialLinks?.length > 0 && (
           <div className="px-6 pb-6">
             <h2
-              className="text-sm font-semibold uppercase mb-3 w-auto"
+              className={`text-sm font-semibold uppercase mb-3 w-auto ${
+                template.social_style === "circles" &&
+                template.connection_style === "list"
+                  ? "flex flex-row"
+                  : "grid grid-cols-1"
+              } 
+                 gap-3`}
               style={{
                 color: template?.colors?.secondary,
                 fontFamily: template?.fonts?.heading,
               }}
             >
               Connect with me
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              {author.socialLinks
-              ?.filter((link: SocialLink) => link.is_visible === true || link.is_visible === 1)
-              .map((link: SocialLink) => {
-                const platformKey = link.platform?.toLowerCase()
-                const icon = socialIconMap[platformKey] || <Globe size={14} />
+            </h2>{" "}
+            <div
+              className={`${
+                template.connection_style === "list"
+                  ? ""
+                  : "grid grid-cols-2"
+              }  gap-3`}
+            >
+              {author.socialLinks.map((link: SocialLink) => {
+                const platformKey = link.platform?.toLowerCase();
+                const icon = socialIconMap[platformKey] || <Globe size={14} />;
                 return (
                   <a
                     key={link.id}
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition"
+                    className={` ${
+                      template.social_style === "circles"
+                        ? "w-full h-full rounded-lg"
+                        : "w-8 h-8 rounded-full"
+                    } justify-center items-center gap-2 p-2 text-sm hover:opacity-80 transition`}
                     style={{
                       backgroundColor: `${template?.colors?.accent}15`,
                       color: template?.colors?.text,
                       fontFamily: template?.fonts?.body,
                     }}
                   >
-                    <span style={{ color: template?.colors?.accent }}>{icon}</span>
-                    <span>{link.username}</span>
+                    <span style={{ color: template?.colors?.accent }}>
+                      {icon}
+                    </span>
+
+                    <span
+                      className={`hidden  ${
+                        template.connection_style === "circles"
+                          ? "hidden"
+                          : "inline-block"
+                      }`}
+                    >
+                      {link.username}
+                    </span>
                   </a>
-                )
+                );
               })}
             </div>
           </div>

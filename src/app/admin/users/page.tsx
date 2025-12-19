@@ -108,11 +108,11 @@ export default function AdminUsersPage() {
 
       <Card>
         <CardContent>
-          {isLoading ? (
+          {/* {isLoading ? (
             <div className="flex justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
             </div>
-          ) : (
+          ) : ( */}
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b">
@@ -167,7 +167,7 @@ export default function AdminUsersPage() {
                 )}
               </tbody>
             </table>
-          )}
+          {/* )} */}
         </CardContent>
       </Card>
 

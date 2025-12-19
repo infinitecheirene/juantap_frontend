@@ -27,9 +27,6 @@ export interface ProfileData {
     accentColor: string;
     fontFamily: string;
   };
-  isActive: boolean;
-  createdAt: string;
-  viewCount: number;
 }
 
 // Mock data - replace with actual database calls

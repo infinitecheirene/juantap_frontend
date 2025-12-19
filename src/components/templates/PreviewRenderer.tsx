@@ -41,14 +41,12 @@ interface SocialLink {
 
 interface PreviewRendererProps {
   template: Template;
-  user: User | null;
-  slug: string;
+  user: User;
 }
 
 export const PreviewRenderer: React.FC<PreviewRendererProps> = ({
   template,
   user,
-  slug,
 }) => {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -141,17 +139,18 @@ export const PreviewRenderer: React.FC<PreviewRendererProps> = ({
         {/* Avatar & Bio */}
         <div className="relative flex flex-col items-center mt-6 px-6">
           <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white/20 -mt-12">
-            {user?.avatar_url && !avatarError ? (
+            {template.user?.avatar_url ? (
               <img
-                src={avatarUrl}
-                alt="User avatar"
-                className="w-full h-full object-cover"
-                onError={() => setAvatarError(true)}
+                src={template.user.avatar_url}
+                alt={template.user.name || "Author"}
+                className="w-6 h-6 rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.style.display = "none"; // hide broken image
+                }}
               />
             ) : (
-              <div className="flex items-center justify-center w-full h-full bg-white/20">
-                <UserIcon size={64} className="text-gray-400" />
-              </div>
+              <UserIcon size={24} className="text-gray-400" />
             )}
           </div>
 
@@ -307,52 +306,53 @@ export const PreviewRenderer: React.FC<PreviewRendererProps> = ({
         </div>
 
         {/* Social Links */}
-        {user?.profile?.socialLinks?.length > 0 && (
-          <div className="px-6 pb-6">
-            <h2
-              className="text-sm font-semibold uppercase mb-3"
-              style={{
-                color: template?.colors?.secondary,
-                fontFamily: template?.fonts?.heading,
-              }}
-            >
-              Connect with me
-            </h2>
+        {user?.profile?.socialLinks &&
+          user?.profile?.socialLinks?.length > 0 && (
+            <div className="px-6 pb-6">
+              <h2
+                className="text-sm font-semibold uppercase mb-3"
+                style={{
+                  color: template?.colors?.secondary,
+                  fontFamily: template?.fonts?.heading,
+                }}
+              >
+                Connect with me
+              </h2>
 
-            <div className="grid grid-cols-2 gap-3">
-              {user?.profile?.socialLinks
-                ?.filter(
-                  (link: SocialLink) =>
-                    link.isVisible === true || link.isVisible === 1
-                )
-                .map((link: SocialLink) => {
-                  const platformKey = link.platform?.toLowerCase();
-                  const icon = socialIconMap[platformKey] || (
-                    <Globe size={14} />
-                  );
-                  return (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition"
-                      style={{
-                        backgroundColor: `${template?.colors?.accent}15`,
-                        color: template?.colors?.text,
-                        fontFamily: template?.fonts?.body,
-                      }}
-                    >
-                      <span style={{ color: template?.colors?.accent }}>
-                        {icon}
-                      </span>
-                      <span>{link.username}</span>
-                    </a>
-                  );
-                })}
+              <div className="grid grid-cols-2 gap-3">
+                {user?.profile?.socialLinks
+                  ?.filter(
+                    (link) => link.isVisible === true || link.isVisible === 1
+                  )
+
+                  .map((link: SocialLink) => {
+                    const platformKey = link.platform?.toLowerCase();
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
+                    return (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition"
+                        style={{
+                          backgroundColor: `${template?.colors?.accent}15`,
+                          color: template?.colors?.text,
+                          fontFamily: template?.fonts?.body,
+                        }}
+                      >
+                        <span style={{ color: template?.colors?.accent }}>
+                          {icon}
+                        </span>
+                        <span>{link.username}</span>
+                      </a>
+                    );
+                  })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Bottom Actions */}
         <div
@@ -410,7 +410,7 @@ export const PreviewRenderer: React.FC<PreviewRendererProps> = ({
             <a href={profileUrl} target="_blank" rel="noopener noreferrer">
               {profileUrl}
             </a>
-            
+
             <div className="w-full p-3 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
 

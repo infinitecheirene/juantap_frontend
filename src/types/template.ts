@@ -3,8 +3,9 @@ export interface SocialLink {
   platform: string;
   username: string;
   url: string;
-  isVisible?: boolean;
+  isVisible?: boolean | number;
 }
+
 
 export interface User {
   id: number;
@@ -19,11 +20,12 @@ export interface User {
   profile_image?: string;
   profile_image_url?: string;
 
-  profile?: {
-    bio?: string;
-    phone?: string;
-    website?: string;
-    location?: string;
+  profile: {
+    bio: string;
+    phone: string;
+    avatar: string;
+    website: string;
+    location: string;
     socialLinks?: SocialLink[];
   };
 }
@@ -58,4 +60,10 @@ export interface Template {
 
   unlocks?: number; // downloads
   saves?: number; // views
+
+  isActive: boolean;
+  isNew?: boolean;
+  isPopular: boolean;
+  createdAt?: string;
+
 }

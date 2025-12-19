@@ -7,17 +7,41 @@ import { PreviewRenderer } from "@/components/templates/PreviewRenderer";
 import { Loading } from "@/components/loading";
 import type { Template } from "@/types/template";
 
+interface SocialLink {
+  id: string;
+  platform: string;
+  username: string;
+  url: string;
+  is_visible?: boolean | number;
+}
+
 interface UserData {
   id: number;
-  username: string;
+  slug?: string;
   name: string;
-  email: string;
+  firstname?: string;
+  lastname?: string;
   display_name?: string;
-  is_admin?: boolean;
-  avatar_url?: string;
-  title?: string;
-  address?: string;
-  social_links?: Record<string, string>;
+  username: string;
+  email: string;
+  is_admin: boolean;
+  avatar_url: string;
+  profile?: {
+    bio?: string;
+    phone?: string;
+    website?: string;
+    location?: string;
+    template_id?: number;
+    background_type?: string;
+    background_value?: string;
+    font_style?: string;
+    font_size?: string;
+    button_style?: string;
+    accent_color?: string;
+    nfc_redirect_url?: string;
+    is_published?: boolean;
+    socialLinks?: SocialLink[];
+  };
 }
 
 export default function PublicProfilePage() {
@@ -59,7 +83,6 @@ export default function PublicProfilePage() {
       }
 
       setTemplateData(finalTemplate);
-
       if (user) {
         setUserData({
           ...user,
@@ -67,10 +90,13 @@ export default function PublicProfilePage() {
           title: user.profile?.bio ?? "",
           address: user.profile?.location ?? "",
           social_links:
-            user.profile?.socialLinks?.reduce((acc, link) => {
-              acc[link.platform.toLowerCase()] = link.url;
-              return acc;
-            }, {}) ?? {},
+            user.profile?.socialLinks?.reduce(
+              (acc: Record<string, string>, link: SocialLink) => {
+                acc[link.platform.toLowerCase()] = link.url;
+                return acc;
+              },
+              {}
+            ) ?? {},
         });
       }
 
@@ -85,7 +111,11 @@ export default function PublicProfilePage() {
   return (
     <main className="flex-1">
       {templateData && userData && (
-        <PreviewRenderer template={templateData} user={userData} />
+        <PreviewRenderer
+          template={templateData}
+          user={userData}
+          slug={templateData.slug}
+        />
       )}
     </main>
   );

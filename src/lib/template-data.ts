@@ -1,8 +1,45 @@
 // src/lib/template-data.ts
 import axios from "axios";
 
-import { Template, User } from "@/types/template";
+import { User } from "@/types/template";
 
+export interface Template {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  category: string;
+  is_premium: boolean;
+  price: number | null;
+  original_price?: number | null;
+  discount?: number | null;
+  preview_url: string;
+  thumbnail_url: string;
+  features?: any;
+  colors?: any;
+  fonts?: any;
+  layout?: string;
+  social_style?: string;
+  connection_style?: string;
+  tags?: any;
+  is_popular: boolean;
+  is_new: boolean;
+  created_at?: string;
+  updated_at?: string;
+  downloads?: number;
+  status?: "saved" | "bought" | string;
+
+  user?: User;
+
+  unlocks?: number; // downloads
+  saves?: number; // views
+
+
+  isActive: boolean;
+  isNew?: boolean;
+  isPopular: boolean;
+  createdAt?: string;
+}
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL!;
 const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL!;

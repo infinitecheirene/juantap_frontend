@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { TemplatePreviewHeader } from "@/components/templates/template-preview-header"
 import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
 import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
-import { Loading } from "@/components/loading"
+import Loading from "@/app/loading"
 import { Template, TemplateData } from "@/types/template"
 import PreviewRenderer from "@/components/templates/PreviewRenderer"
 

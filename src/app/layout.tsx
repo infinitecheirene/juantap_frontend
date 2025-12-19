@@ -1,6 +1,6 @@
 // app/layout.tsx
+import { Toaster } from "sonner"
 import "./globals.css"
-import ClientWrapper from "@/components/client-wrapper"
 
 export const metadata = {
   title: "JuanTap",
@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-gray-50">
         {children}
-        <ClientWrapper />
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   )

@@ -320,8 +320,9 @@ END:VCARD
         )}
 
         {/* Social Links */}
-        {template.connectStyle === "grid" && <GridSocialLinks user={user} template={template} />}
-        {template.connectStyle === "list" && <ListSocialLinks user={user} template={template} />}
+        {user && template.connectStyle === "grid" && <GridSocialLinks user={user} template={template} />}
+        {user && template.connectStyle === "list" && <ListSocialLinks user={user} template={template} />}
+
 
         {/* Bottom Actions */}
         <div

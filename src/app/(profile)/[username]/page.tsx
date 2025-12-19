@@ -1,7 +1,7 @@
 "use client"
 import { useParams, notFound } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Loading } from "@/components/loading"
+import Loading from "@/app/loading"
 import type { TemplateData } from "@/types/template"
 import { User } from "@/types/user"
 import PreviewRenderer from "@/components/templates/PreviewRenderer"

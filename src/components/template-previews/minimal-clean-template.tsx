@@ -6,8 +6,8 @@ import { Mail, Globe, Copy, Instagram, Twitter, Linkedin, Github, Youtube, Music
 import { QRCodeSVG } from "qrcode.react"
 
 interface MinimalCleanProps {
-  socialStyle?: "default" | "circles" | "fullblock"
-  connectStyle?: "grid" | "list" | "compact"
+  socialStyle?: "default" | "circles" | "fullblock" | string
+  connectStyle?: "grid" | "list" | "compact" | string
 }
 
 export function MinimalClean({

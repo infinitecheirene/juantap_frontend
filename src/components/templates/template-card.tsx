@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Crown, Eye, Star, Sparkles, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PreviewRenderer } from "@/components/templates/PreviewRenderer";
-import type { Template, User } from "@/types/template";
+import type { Template, TemplateData } from "@/types/template";
 import { useRouter, usePathname } from "next/navigation";
+import { User } from "@/types/user";
+import PreviewRenderer from "./PreviewRenderer";
 
 interface TemplateCardProps {
-  template: Template;
+  template: TemplateData;
   user?: User;
 }
 
@@ -62,7 +63,7 @@ export function TemplateCard({ template, user }: TemplateCardProps) {
       />
     ) : (
       <img
-        src={template.thumbnail || "/placeholder.svg"}
+        src={template.thumbnail_url || "/placeholder.svg"}
         alt={template.name}
         className="w-full h-full object-cover"
       />
@@ -77,13 +78,13 @@ export function TemplateCard({ template, user }: TemplateCardProps) {
               Premium
             </Badge>
           )}
-          {template.isNew && (
+          {template.is_new && (
             <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
               <Sparkles className="w-3 h-3 mr-1" />
               New
             </Badge>
           )}
-          {template.isPopular && (
+          {template.is_popular && (
             <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 border-yellow-200">
               <Star className="w-3 h-3 mr-1" />
               Popular
@@ -131,7 +132,7 @@ export function TemplateCard({ template, user }: TemplateCardProps) {
         <p className="text-sm text-gray-600 mb-3 line-clamp-2">{template.description}</p>
 
         <div className="flex flex-wrap gap-1 mb-3">
-          {template.tags?.slice(0, 3).map((tag) => (
+          {template.tags?.slice(0, 3).map((tag: any) => (
             <Badge key={tag} variant="outline" className="text-xs">
               {tag}
             </Badge>
@@ -162,15 +163,15 @@ export function TemplateCard({ template, user }: TemplateCardProps) {
               hasDiscount ? (
                 <>
                   <span className="text-lg font-bold text-gray-900">
-                    {formatPrice(template.price)}
+                    {formatPrice(template.price as number)}
                   </span>
                   <span className="text-sm text-gray-500 line-through">
-                    {formatPrice(template.original_price)}
+                    {formatPrice(template.original_price as number)}
                   </span>
                 </>
               ) : (
                 <span className="text-lg font-bold text-gray-900">
-                  {formatPrice(template.price)}
+                  {formatPrice(template.price as number)}
                 </span>
               )
             ) : (

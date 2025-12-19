@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { login } from "@/lib/api/auth"
-import { toast } from "sonner"   // <-- import toast here
+import { toast } from "sonner"   
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -91,7 +91,6 @@ export function LoginForm() {
       setErrors({ general: "Something went wrong. Please try again." })
     }
   } finally {
-    // ✅ Always stop loading here
     setIsLoading(false)
   }
 }

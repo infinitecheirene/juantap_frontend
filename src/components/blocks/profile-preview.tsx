@@ -55,7 +55,7 @@ export function ProfilePreview({ user: propUser, imageUrl }: ProfilePreviewProps
     tiktok: <Music size={14} />,
   }
 
-  // ✅ Fetch user if not passed as prop
+  // Fetch user if not passed as prop
   useEffect(() => {
     if (!propUser) {
       const fetchUser = async () => {
@@ -70,7 +70,7 @@ export function ProfilePreview({ user: propUser, imageUrl }: ProfilePreviewProps
     }
   }, [propUser])
 
-  // ✅ Check if user has used a template
+  // Check if user has used a template
   useEffect(() => {
     const checkUsedTemplate = async () => {
       if (!user?.username) return

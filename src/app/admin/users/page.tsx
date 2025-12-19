@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Eye, X, User } from "lucide-react"
+import { Loader2, Eye, X, User as UserIcon } from "lucide-react"
 import { toast } from "sonner"
 import Image from "next/image"
+import { User } from "@/types/user"
 
 interface UserProfile {
   bio: string
@@ -15,22 +16,15 @@ interface UserProfile {
   location: string
 }
 
-interface User {
-  id: number
-  firstname: string
-  lastname: string
-  name: string
-  email: string
-  is_admin: boolean
-  avatar_url: string
-  profile?: UserProfile
-}
-
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [loadingProfile, setLoadingProfile] = useState(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const pageSize = 10
+  const totalPages = Math.ceil(users.length / pageSize)
+  const paginatedUsers = users.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   useEffect(() => {
     fetchUsers()
@@ -52,7 +46,6 @@ export default function AdminUsersPage() {
       if (!res.ok) throw new Error("Failed to fetch users")
 
       const data = await res.json()
-      console.log("[v0] Users data:", data.users?.[0])
       setUsers(Array.isArray(data.users) ? data.users : [])
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -104,14 +97,12 @@ export default function AdminUsersPage() {
     // Otherwise, prepend the API base URL
     return `${process.env.NEXT_PUBLIC_API_URL}/${avatarUrl}`
   }
-
+               
   return (
     <div className="space-y-4 sm:space-y-6 px-3 sm:px-6 py-4 sm:py-6">
-      <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-        User Management
-      </h1>
+      <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">User Management</h1>
 
-      <Card>
+      <Card className="p-0 gap-0 sm:p-6">
         <CardContent className="p-0 sm:p-6">
           {isLoading ? (
             <div className="flex justify-center py-10">
@@ -119,6 +110,7 @@ export default function AdminUsersPage() {
             </div>
           ) : (
             <>
+              {/* Desktop / Tablet Table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -131,43 +123,41 @@ export default function AdminUsersPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.length > 0 ? (
-                      users.map((user, idx) => (
+                    {paginatedUsers.length > 0 ? (
+                      paginatedUsers.map((user, idx) => (
+                        
                         <tr key={user.id} className="border-b hover:bg-gray-50 transition-colors">
-                          <td className="py-3 px-4 text-sm">{idx + 1}</td>
+                          <td className="py-3 px-4 text-sm">{(currentPage - 1) * pageSize + idx + 1}</td>
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                                {user.avatar_url ? (
-                                  <Image
-                                    src={getImageUrl(user.avatar_url)}
-                                    alt={user.name}
-                                    width={40}
-                                    height={40}
-                                    className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                                    onError={(e) => {
-                                      const target = e.target as HTMLImageElement
-                                      target.style.display = "none"
-                                      const fallback = target.nextElementSibling as HTMLElement
-                                      if (fallback) fallback.style.display = "flex"
-                                    }}
-                                  />
-                                ) : null}
+                              
+                              {user.avatar_url ? (
+                                <Image
+                                  src={getImageUrl(user.avatar_url)}
+                                  alt={user.name}
+                                  width={40}
+                                  height={40}
+                                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement
+                                    target.style.display = "none"
+                                    const fallback = target.nextElementSibling as HTMLElement
+                                    if (fallback) fallback.style.display = "flex"
+                                  }}
+                                />
+                              ) : null}
 
-                                {/* Fallback icon */}
-                                <div
-                                  className="hidden w-10 h-10 rounded-full bg-gray-100 text-gray-500 items-center justify-center"
-                                >
-                                  <User size={20} />
-                                </div>
-
-                                <span className="text-sm font-medium truncate">{user.name}</span>
+                              {/* Fallback icon */}
+                              <div className="hidden w-10 h-10 rounded-full bg-gray-100 text-gray-500 items-center justify-center">
+                                <UserIcon size={20} />
                               </div>
 
+                              <span className="text-sm font-medium truncate">{user.name}</span>
+                            </div>
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600 max-w-[200px] truncate">{user.email}</td>
-                          <td className="py-3 px-4">
-                            {user.is_admin ? <Badge variant="destructive">Admin</Badge> : <Badge>User</Badge>}
-                          </td>
+                          <td className="py-3 px-4">{user.is_admin ? <Badge variant="destructive">Admin</Badge> : <Badge>User</Badge>}</td>
+      
                           <td className="py-3 px-4">
                             <Button size="sm" variant="outline" onClick={() => fetchUserProfile(user.id)}>
                               <Eye size={16} />
@@ -186,13 +176,14 @@ export default function AdminUsersPage() {
                 </table>
               </div>
 
+              {/* Mobile Cards */}
               <div className="md:hidden space-y-3 p-3">
-                {users.length > 0 ? (
-                  users.map((user, idx) => (
-                    <Card key={user.id} className="overflow-hidden">
-                      <CardContent className="p-4">
+                {paginatedUsers.length > 0 ? (
+                  paginatedUsers.map((user) => (
+                    <Card key={user.id} className="overflow-hidden p-0">
+                      <CardContent className="p-3">
                         <div className="flex items-start gap-3">
-                           {user.avatar_url ? (
+                          {user.avatar_url ? (
                             <Image
                               src={getImageUrl(user.avatar_url)}
                               alt={user.name}
@@ -208,9 +199,8 @@ export default function AdminUsersPage() {
                             />
                           ) : null}
 
-                          
                           <div className="hidden w-12 h-12 rounded-full bg-gray-100 text-gray-500 items-center justify-center">
-                            <User size={22} />
+                            <UserIcon size={22} />
                           </div>
 
                           <div className="flex-1 min-w-0">
@@ -225,12 +215,7 @@ export default function AdminUsersPage() {
                               )}
                             </div>
                             <p className="text-xs text-gray-600 truncate mb-3">{user.email}</p>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => fetchUserProfile(user.id)}
-                              className="w-full"
-                            >
+                            <Button size="sm" variant="outline" onClick={() => fetchUserProfile(user.id)} className="w-full">
                               <Eye size={14} className="mr-2" />
                               View Profile
                             </Button>
@@ -246,6 +231,22 @@ export default function AdminUsersPage() {
             </>
           )}
         </CardContent>
+
+        <CardFooter>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-end space-x-2 py-2 md:py-4">
+              <Button variant="outline" disabled={currentPage === 1} onClick={() => setCurrentPage((prev) => prev - 1)} className="text-xs md:text-sm h-8 md:h-9">
+                Previous
+              </Button>
+              <span className="px-2 py-1 text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button variant="outline" disabled={currentPage === totalPages} onClick={() => setCurrentPage((prev) => prev + 1)} className="text-xs md:text-sm h-8 md:h-9">
+                Next
+              </Button>
+            </div>
+          )}
+        </CardFooter>
       </Card>
 
       {selectedUser && (
@@ -283,30 +284,22 @@ export default function AdminUsersPage() {
 
                 {/* Fallback user icon */}
                 <div className="hidden w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-100 text-gray-500 items-center justify-center">
-                  <User size={32} />
+                  <UserIcon size={32} />
                 </div>
 
                 <h2 className="text-lg sm:text-xl font-bold text-center">{selectedUser.name}</h2>
                 <p className="text-sm sm:text-base text-gray-600 text-center break-all">{selectedUser.email}</p>
 
                 {selectedUser.username ? (
-                  <a
-                    href={`/${selectedUser.username}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 sm:mt-4 w-full"
-                  >
+                  <a href={`/${selectedUser.username}`} target="_blank" rel="noopener noreferrer" className="mt-2 sm:mt-4 w-full">
                     <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm sm:text-base">
                       View Public Profile
                     </Button>
                   </a>
                 ) : (
-                  <p className="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4 text-center px-2">
-                    This user has not set a username yet.
-                  </p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-2 sm:mt-4 text-center px-2">This user has not set a username yet.</p>
                 )}
               </div>
-
             )}
           </div>
         </div>

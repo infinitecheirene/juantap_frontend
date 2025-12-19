@@ -16,7 +16,7 @@ export function Logo({ variant = "light", className }: LogoProps) {
       {/* Gradient JuanTap text */}
       <span
         className={cn(
-          "text-xl font-bold", // <- changed from font-semibold to font-bold
+          "text-xl font-bold", 
           variant === "light"
             ? "bg-gradient-to-r from-cyan-500 to-indigo-300 bg-clip-text text-transparent"
             : "text-white"

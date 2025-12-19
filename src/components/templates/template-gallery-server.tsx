@@ -4,5 +4,5 @@ import { TemplateGallery } from "./template-gallery"
 
 export default async function TemplateGalleryServer() {
   const templates = await getAllTemplates()
-  return <TemplateGallery templates={templates} />
+  return <TemplateGallery key="template-gallery" templates={templates} />
 }

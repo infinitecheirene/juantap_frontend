@@ -19,7 +19,7 @@ interface PricingCardProps {
   badge?: string
   borderClass?: string
   iconColor?: string
-  onClick?: () => void // ✅ ADDED: Optional onClick handler
+  onClick?: () => void 
    loadingBtn?: string
 }
 

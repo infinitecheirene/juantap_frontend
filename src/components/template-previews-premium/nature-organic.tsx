@@ -292,7 +292,7 @@ const profileUrl = profile?.username
         )}
 
         {/* Social Links */}
-        {profile?.socialLinks?.length > 0 && (
+        {profile?.socialLinks?.length && (
           <>
             <div className="border-t border-gray-200"></div>
             <div className="px-6 py-3">

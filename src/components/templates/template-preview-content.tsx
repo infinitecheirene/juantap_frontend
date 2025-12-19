@@ -1,7 +1,7 @@
-import type { Template } from "@/lib/template-data"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Palette, Type, Layout, Smartphone } from 'lucide-react'
+import { Template } from "@/types/template"
 
 interface TemplatePreviewContentProps {
   template: Template
@@ -76,7 +76,7 @@ export function TemplatePreviewContent({ template }: TemplatePreviewContentProps
         </div>
         <div className="grid md:grid-cols-2 gap-3">
           {(template?.features ?? []).length > 0 ? (
-            (template?.features ?? []).map((feature) => (
+            (template?.features ?? []).map((feature: any) => (
               <div key={feature} className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full" />
                 <span className="text-gray-700">{feature}</span>
@@ -96,7 +96,7 @@ export function TemplatePreviewContent({ template }: TemplatePreviewContentProps
         </div>
         <div className="flex flex-wrap gap-2">
           {(template?.tags ?? []).length > 0 ? (
-            (template?.tags ?? []).map((tag) => (
+            (template?.tags ?? []).map((tag: any) => (
               <Badge key={tag} variant="outline">
                 {tag}
               </Badge>

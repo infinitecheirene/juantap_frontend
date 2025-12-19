@@ -1,195 +1,188 @@
-"use client";
+"use client"
 
-import type { Template } from "@/lib/template-data";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { PaymentModal } from "@/components/templates/payment-modal";
-import { Download, Share2, Crown, CheckCircle, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { toast, Toaster } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { PaymentModal } from "@/components/templates/payment-modal"
+import { Download, Share2, Crown, CheckCircle, Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
+import { toast, Toaster } from "sonner"
+import { Template } from "@/types/template"
 
 interface TemplatePreviewSidebarProps {
-  template: Template;
+  template: Template
 }
 
 export function TemplatePreviewSidebar({ template }: TemplatePreviewSidebarProps) {
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-const [isPurchasing, setIsPurchasing] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [isPurchasing, setIsPurchasing] = useState(false)
   // Separate loading states
-  const [isLoadingStatus, setIsLoadingStatus] = useState(true);
-  const [isSavingTemplate, setIsSavingTemplate] = useState(false);
-  const [isTogglingUsed, setIsTogglingUsed] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(true)
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false)
+  const [isTogglingUsed, setIsTogglingUsed] = useState(false)
+  const [isSharing, setIsSharing] = useState(false)
 
   const formatPrice = (value: number | string | undefined) => {
-  if (!value) return "₱0.00";
-  const num = Number(value);
-  return (
-    "₱" +
-    num.toLocaleString("en-PH", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-  );
-};
-
+    if (!value) return "₱0.00"
+    const num = Number(value)
+    return (
+      "₱" +
+      num.toLocaleString("en-PH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    )
+  }
 
   // Backend statuses
-  const [savedStatus, setSavedStatus] = useState<"saved" | "bought" | "pending" | "free" | null>(
-    template.category === "premium" ? null : "free"
-  );
-  const [usedStatus, setUsedStatus] = useState<"used" | "unused">("unused");
+  const [savedStatus, setSavedStatus] = useState<"saved" | "bought" | "pending" | "free" | null>(template.category === "premium" ? null : "free")
+  const [usedStatus, setUsedStatus] = useState<"used" | "unused">("unused")
 
-  const isPremium = template.category === "premium";
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const pathname = usePathname();
+  const isPremium = template.category === "premium"
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+  const pathname = usePathname()
 
   const authHeaders = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")
     return {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-    };
-  };
+    }
+  }
 
   // --- Fetch initial statuses ---
   useEffect(() => {
     const fetchSavedTemplates = async () => {
       try {
-        const res = await fetch(`${API_URL}/templates1/saved`, { headers: authHeaders() });
-        if (!res.ok) throw new Error("Failed to fetch saved templates");
-        const data = await res.json();
-        const found = data.find((t: any) => t.slug === template.slug);
-        if (found) setSavedStatus(found.status);
+        const res = await fetch(`${API_URL}/templates1/saved`, { headers: authHeaders() })
+        if (!res.ok) throw new Error("Failed to fetch saved templates")
+        const data = await res.json()
+        const found = data.find((t: any) => t.slug === template.slug)
+        if (found) setSavedStatus(found.status)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
-    };
+    }
 
     const fetchBoughtedTemplates = async () => {
       try {
-        const res = await fetch(`${API_URL}/templates1/boughted`, { headers: authHeaders() });
-        if (!res.ok) throw new Error("Failed to fetch bought templates");
-        const result = await res.json();
-        const bought = result.data || [];
-        const found = bought.find((t: any) => t.slug === template.slug);
-        if (found) setSavedStatus(found.status);
+        const res = await fetch(`${API_URL}/templates1/boughted`, { headers: authHeaders() })
+        if (!res.ok) throw new Error("Failed to fetch bought templates")
+        const result = await res.json()
+        const bought = result.data || []
+        const found = bought.find((t: any) => t.slug === template.slug)
+        if (found) setSavedStatus(found.status)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
-    };
+    }
 
     const fetchUsedTemplates = async () => {
       try {
-        const res = await fetch(`${API_URL}/templates1/used`, { headers: authHeaders() });
-        if (!res.ok) throw new Error("Failed to fetch used templates");
-        const data = await res.json();
-        const isUsed = data.some((t: any) => t.slug === template.slug);
-        setUsedStatus(isUsed ? "used" : "unused");
+        const res = await fetch(`${API_URL}/templates1/used`, { headers: authHeaders() })
+        if (!res.ok) throw new Error("Failed to fetch used templates")
+        const data = await res.json()
+        const isUsed = data.some((t: any) => t.slug === template.slug)
+        setUsedStatus(isUsed ? "used" : "unused")
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
-    };
+    }
 
-      Promise.all([
-    fetchSavedTemplates(),
-    fetchBoughtedTemplates(),
-    fetchUsedTemplates()
-  ]).finally(() => setIsLoadingStatus(false));
-}, [API_URL, template.slug]);
+    Promise.all([fetchSavedTemplates(), fetchBoughtedTemplates(), fetchUsedTemplates()]).finally(() => setIsLoadingStatus(false))
+  }, [API_URL, template.slug])
 
   // --- Actions ---
   const saveTemplate = async () => {
-    setIsSavingTemplate(true);
+    setIsSavingTemplate(true)
     try {
-      const res = await fetch(`${API_URL}/templates/saved/${template.slug}`, { method: "POST", headers: authHeaders() });
-      if (!res.ok) throw new Error("Failed to save template");
-      toast.success("Template saved!");
-      setSavedStatus("saved");
+      const res = await fetch(`${API_URL}/templates/saved/${template.slug}`, { method: "POST", headers: authHeaders() })
+      if (!res.ok) throw new Error("Failed to save template")
+      toast.success("Template saved!")
+      setSavedStatus("saved")
     } catch {
-      toast.error("Error saving template");
+      toast.error("Error saving template")
     } finally {
-      setIsSavingTemplate(false);
+      setIsSavingTemplate(false)
     }
-  };
+  }
 
   const unsaveTemplate = async () => {
-    setIsSavingTemplate(true);
+    setIsSavingTemplate(true)
     try {
-      const res = await fetch(`${API_URL}/templates/saved/${template.slug}`, { method: "DELETE", headers: authHeaders() });
-      if (!res.ok) throw new Error("Failed to unsave template");
-      toast.success("Template removed from saved.");
-      setSavedStatus("free");
+      const res = await fetch(`${API_URL}/templates/saved/${template.slug}`, { method: "DELETE", headers: authHeaders() })
+      if (!res.ok) throw new Error("Failed to unsave template")
+      toast.success("Template removed from saved.")
+      setSavedStatus("free")
     } catch {
-      toast.error("Error removing template");
+      toast.error("Error removing template")
     } finally {
-      setIsSavingTemplate(false);
+      setIsSavingTemplate(false)
     }
-  };
+  }
 
   const markUsed = async () => {
-    setIsTogglingUsed(true);
+    setIsTogglingUsed(true)
     try {
-      const res = await fetch(`${API_URL}/templates/used/${template.slug}`, { method: "POST", headers: authHeaders() });
-      if (!res.ok) throw new Error("Failed to mark as used");
-      toast.success("Template marked as used!");
-      setUsedStatus("used");
+      const res = await fetch(`${API_URL}/templates/used/${template.slug}`, { method: "POST", headers: authHeaders() })
+      if (!res.ok) throw new Error("Failed to mark as used")
+      toast.success("Template marked as used!")
+      setUsedStatus("used")
     } catch {
-      toast.error("Error marking template as used");
+      toast.error("Error marking template as used")
     } finally {
-      setIsTogglingUsed(false);
+      setIsTogglingUsed(false)
     }
-  };
+  }
 
   const markUnused = async () => {
-    setIsTogglingUsed(true);
+    setIsTogglingUsed(true)
     try {
-      const res = await fetch(`${API_URL}/templates/used/${template.slug}`, { method: "DELETE", headers: authHeaders() });
-      if (!res.ok) throw new Error("Failed to mark as unused");
-      toast.success("Template marked as unused.");
-      setUsedStatus("unused");
+      const res = await fetch(`${API_URL}/templates/used/${template.slug}`, { method: "DELETE", headers: authHeaders() })
+      if (!res.ok) throw new Error("Failed to mark as unused")
+      toast.success("Template marked as unused.")
+      setUsedStatus("unused")
     } catch {
-      toast.error("Error marking template as unused");
+      toast.error("Error marking template as unused")
     } finally {
-      setIsTogglingUsed(false);
+      setIsTogglingUsed(false)
     }
-  };
+  }
 
-  const toggleUsed = () => usedStatus === "used" ? markUnused() : markUsed();
+  const toggleUsed = () => (usedStatus === "used" ? markUnused() : markUsed())
 
   const handleShare = async () => {
-    setIsSharing(true);
-    const url = `${window.location.origin}/templates/${template.slug}`;
+    setIsSharing(true)
+    const url = `${window.location.origin}/templates/${template.slug}`
     try {
       if (navigator.share) {
-        await navigator.share({ title: `${template.name} Template - JuanTap`, text: template.description, url });
+        await navigator.share({ title: `${template.name} Template - JuanTap`, text: template.description, url })
       } else {
-        await navigator.clipboard.writeText(url);
-        toast.success("Template link copied!");
+        await navigator.clipboard.writeText(url)
+        toast.success("Template link copied!")
       }
     } catch {
-      console.log("Share cancelled");
+      console.log("Share cancelled")
     } finally {
-      setIsSharing(false);
+      setIsSharing(false)
     }
-  };
-
-const handleGetTemplate = () => {
-  if (isPremium) {
-    if (savedStatus === "bought") {
-      toast.info("You already own this template.");
-    } else if (savedStatus === "pending") {
-      toast.info("Payment pending approval.");
-    } else {
-      setIsPurchasing(true); // Start loader
-      setShowPaymentModal(true);
-    }
-  } else {
-    savedStatus === "saved" ? unsaveTemplate() : saveTemplate();
   }
-};
+
+  const handleGetTemplate = () => {
+    if (isPremium) {
+      if (savedStatus === "bought") {
+        toast.info("You already own this template.")
+      } else if (savedStatus === "pending") {
+        toast.info("Payment pending approval.")
+      } else {
+        setIsPurchasing(true) // Start loader
+        setShowPaymentModal(true)
+      }
+    } else {
+      savedStatus === "saved" ? unsaveTemplate() : saveTemplate()
+    }
+  }
 
   return (
     <>
@@ -208,14 +201,8 @@ const handleGetTemplate = () => {
             <div className="text-center">
               {isPremium ? (
                 <>
-                 <span className="text-3xl font-bold text-gray-900">
-                    {formatPrice(template.price)}
-                  </span>
-                  {template.originalPrice && (
-                    <span className="ml-2 text-xl text-gray-500 line-through">
-                      {formatPrice(template.originalPrice)}
-                    </span>
-                  )}
+                  <span className="text-3xl font-bold text-gray-900">{formatPrice(template.price as number)}</span>
+                  {template.original_price && <span className="ml-2 text-xl text-gray-500 line-through">{formatPrice(template.original_price)}</span>}
 
                   <p className="text-sm text-gray-600">One-time payment</p>
                 </>
@@ -229,7 +216,7 @@ const handleGetTemplate = () => {
 
             <Button
               onClick={handleGetTemplate}
-              disabled={isSavingTemplate || isPurchasing || isLoadingStatus}  // <-- add isLoadingStatus here
+              disabled={isSavingTemplate || isPurchasing || isLoadingStatus} // <-- add isLoadingStatus here
               className={`w-full ${
                 isPremium
                   ? savedStatus === "pending"
@@ -241,7 +228,7 @@ const handleGetTemplate = () => {
               }`}
               size="lg"
             >
-                          {(isSavingTemplate || isPurchasing) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {(isSavingTemplate || isPurchasing) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               <Download className="w-4 h-4 mr-2" />
               {isPremium
                 ? savedStatus === "bought"
@@ -310,20 +297,20 @@ const handleGetTemplate = () => {
           </Card>
         )}
       </div>
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => {
-            setShowPaymentModal(false);
-            setIsPurchasing(false); // Stop loader if modal closed
-          }}
-          template={template}
-          onPaymentSuccess={() => {
-            setShowPaymentModal(false);
-            setSavedStatus("bought");
-            setIsPurchasing(false); // Stop loader
-            toast.success("Payment successful! Template unlocked.");
-          }}
-          />
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => {
+          setShowPaymentModal(false)
+          setIsPurchasing(false) // Stop loader if modal closed
+        }}
+        template={template}
+        onPaymentSuccess={() => {
+          setShowPaymentModal(false)
+          setSavedStatus("bought")
+          setIsPurchasing(false) // Stop loader
+          toast.success("Payment successful! Template unlocked.")
+        }}
+      />
     </>
-  );
+  )
 }

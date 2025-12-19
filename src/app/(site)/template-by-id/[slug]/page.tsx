@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState, use } from "react" // use() for unwrapping Promise
 import { useRouter } from "next/navigation"
-import { TemplateCard } from "@/components/templates/template-card-2"
 import { TemplatePreviewHeader } from "@/components/templates/template-preview-header"
 import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
 import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
 import { Loading } from "@/components/loading"
+import { Template, TemplateData } from "@/types/template"
+import PreviewRenderer from "@/components/templates/PreviewRenderer"
 
 interface SocialLink {
   id: string
@@ -44,23 +45,7 @@ interface UserData {
   }
 }
 
-interface TemplateData {
-  name: string
-  description?: string
-  colors: {
-    primary: string
-    secondary: string
-    accent: string
-    background: string
-    text: string
-  }
-  fonts: {
-    heading: string
-    body: string
-  }
-  sections?: Record<string, unknown>[]   // instead of any[]
-  [key: string]: unknown                 // instead of any
-}
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string
 
@@ -84,14 +69,14 @@ interface Props {
 export default function TemplatePage({ params }: Props) {
   const { slug } = use(params) // unwrap Promise
 
-  const [template, setTemplate] = useState<TemplateData | null>(null)
+  const [template, setTemplate] = useState<Template | null>(null)
   const [user, setUser] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
   const router = useRouter()
 
-  // 🔑 Check authentication
+  // Check authentication
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
     if (!token) {
@@ -101,7 +86,7 @@ export default function TemplatePage({ params }: Props) {
     }
   }, [router])
 
-  // 🔄 Fetch template data
+  // Fetch template data
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
@@ -141,7 +126,7 @@ export default function TemplatePage({ params }: Props) {
     fetchTemplate()
   }, [slug])
 
-  // 🔄 Fetch logged-in user
+  // Fetch logged-in user
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -181,7 +166,7 @@ export default function TemplatePage({ params }: Props) {
     fetchUser()
   }, [])
 
-  // 🌀 Show loading state using custom Loading component
+  // Show loading state using custom Loading component
   if (isAuthenticated === null || loading) {
     return <Loading />
   }
@@ -214,8 +199,8 @@ export default function TemplatePage({ params }: Props) {
 
         {/* Main content */}
         <div className="flex flex-col lg:flex-row gap-6 p-6 relative z-10">
-          <main className="flex-1">
-            <TemplateCard template={template} user={user} slug={slug} />
+          <main className="flex-1 mx-auto">
+            <PreviewRenderer template={template} user={user} slug={slug} />
             <div className="container mx-auto px-4 py-10">
               <TemplatePreviewContent template={template} />
             </div>

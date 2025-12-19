@@ -17,7 +17,7 @@ export default async function ProfileWithUsedTemplate({ params }: TemplatePagePr
     notFound();
   }
 
-  const { previewComponent: PreviewComponent, ...templateData } = template;
+  const { previewComponent: PreviewComponent, ...templateData } = template as any;
 
   return (
     <>

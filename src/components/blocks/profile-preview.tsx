@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import api from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import { QRCodeCanvas } from "qrcode.react";
 import {
@@ -35,9 +33,11 @@ interface UserData {
   };
 }
 
-export function ProfilePreview() {
-  const [user, setUser] = useState<UserData | null>(null);
+interface ProfilePreviewProps {
+  user: UserData;
+}
 
+export function ProfilePreview({ user }: ProfilePreviewProps) {
   const socialIconMap: Record<string, JSX.Element> = {
     facebook: <Facebook size={14} />,
     instagram: <Instagram size={14} />,
@@ -48,33 +48,13 @@ export function ProfilePreview() {
     tiktok: <Music size={14} />,
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/user");
-        setUser(res.data);
-      } catch (error) {
-        console.error("Failed to fetch user", error);
-      }
-    };
-    fetchUser();
-  }, []);
-
-  if (!user) {
-    return (
-      <div className="text-center text-sm text-gray-500">
-        Loading user data...
-      </div>
-    );
-  }
-
   const visibleLinks =
     user.profile?.socialLinks?.filter((link) => link.isVisible) || [];
 
   return (
     <div className="relative">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-auto border">
-        {/* Profile Icon (Default User Icon) */}
+        {/* Profile Icon */}
         <div className="flex items-center space-x-3 mb-6">
           <div className="w-16 h-16 rounded-full border flex items-center justify-center bg-gray-100">
             <User size={32} className="text-gray-500" />

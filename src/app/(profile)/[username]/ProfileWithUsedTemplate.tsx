@@ -10,16 +10,14 @@ interface TemplatePageProps {
   };
 }
 
-export default async function ProfileWithUsedTemplate({
-  params,
-}: TemplatePageProps) {
+export default async function ProfileWithUsedTemplate({ params }: TemplatePageProps) {
   const template = await getTemplateById(params.templateId);
 
   if (!template) {
     notFound();
   }
 
-  const { previewComponent: PreviewComponent, ...templateData } = template;
+  const { previewComponent: PreviewComponent, ...templateData } = template as any;
 
   return (
     <>

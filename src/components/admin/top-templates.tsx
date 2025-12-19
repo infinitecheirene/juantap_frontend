@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Download, Eye, ArrowUp, ArrowDown } from "lucide-react"
-import { Button } from "@/components/ui/button" // if you're using shadcn/ui
+import { Button } from "@/components/ui/button"
 
 const ITEMS_PER_PAGE = 7
 
@@ -42,7 +42,7 @@ export function TopTemplates() {
         data = data.sort((a, b) => (b.unlocks ?? 0) - (a.unlocks ?? 0))
 
         setTopTemplates(data)
-        setCurrentPage(1) // reset to first page on load
+        setCurrentPage(1)
       } catch (err) {
         console.error("Failed to fetch top templates:", err)
         setTopTemplates([])
@@ -63,7 +63,9 @@ export function TopTemplates() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Top Performing Templates</CardTitle>
+        <CardTitle className="text-xl font-bold bg-gradient-to-br from-blue-500 via-blue-600 to-blue-600 bg-clip-text text-transparent">
+          Top Performing Templates
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {paginatedTemplates.length === 0 ? (
@@ -73,56 +75,58 @@ export function TopTemplates() {
             {paginatedTemplates.map((template, index) => (
               <div
                 key={template.id}
-                className="flex items-center space-x-4 p-4 border rounded-lg"
+                className="relative flex items-center space-x-4 p-4 rounded-lg bg-gradient-to-br from-blue-100 via-pink-200blue to-blue-600 p-[2px]"
               >
-                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">
-                  {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="text-sm font-medium text-gray-900 truncate">
-                      {template.name}
-                    </h3>
-                    <Badge
-                      variant={
-                        template.category === "Premium" ? "default" : "secondary"
-                      }
-                    >
-                      {template.category}
-                    </Badge>
+                <div className="flex items-center space-x-4 w-full bg-white rounded-lg p-4">
+                  <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 text-white rounded-full text-sm font-semibold">
+                    {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                   </div>
 
-                  <div className="flex items-center space-x-4 mt-1 text-xs text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <Download className="h-3 w-3" />
-                      <span>{(template.unlocks ?? 0).toLocaleString()}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                        {template.name}
+                      </h3>
+                      <Badge
+                        variant={
+                          template.category === "Premium" ? "default" : "secondary"
+                        }
+                      >
+                        {template.category}
+                      </Badge>
                     </div>
 
-                    <div className="flex items-center space-x-1">
-                      <Eye className="h-3 w-3" />
-                      <span>{(template.saves ?? 0).toLocaleString()}</span>
-                    </div>
-
-                    {Number(template.revenue) > 0 && (
+                    <div className="flex items-center space-x-4 mt-1 text-xs text-gray-500">
                       <div className="flex items-center space-x-1">
-                        <span className="text-xs font-bold">₱</span>
-                        <span>
-                          {Number(template.revenue).toLocaleString("en-PH", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </span>
+                        <Download className="h-3 w-3" />
+                        <span>{(template.unlocks ?? 0).toLocaleString()}</span>
                       </div>
+
+                      <div className="flex items-center space-x-1">
+                        <Eye className="h-3 w-3" />
+                        <span>{(template.saves ?? 0).toLocaleString()}</span>
+                      </div>
+
+                      {Number(template.revenue) > 0 && (
+                        <div className="flex items-center space-x-1">
+                          <span className="text-xs font-bold">₱</span>
+                          <span>
+                            {Number(template.revenue).toLocaleString("en-PH", {
+                              minimumFractionDigits: 2,
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    {template.trend === "up" ? (
+                      <ArrowUp className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <ArrowDown className="h-4 w-4 text-red-600" />
                     )}
                   </div>
-                </div>
-
-                <div className="flex items-center">
-                  {template.trend === "up" ? (
-                    <ArrowUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <ArrowDown className="h-4 w-4 text-red-600" />
-                  )}
                 </div>
               </div>
             ))}

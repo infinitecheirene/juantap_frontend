@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, FileText, Eye } from "lucide-react";
+import { Users, FileText, ShoppingBag, Eye } from "lucide-react";
 
 export function StatsCards() {
   const [totalUsers, setTotalUsers] = useState<string>("...");
@@ -105,11 +105,11 @@ export function StatsCards() {
     {
       title: "Revenue",
       value: revenue,
-      icon: () => <span className="text-md font-sm text-white">₱</span>,
+      icon: ShoppingBag,
       bgColor: "from-green-400 to-green-700",
     },
     {
-      title: "Number of Pending Payments",
+      title: "Pending Payments",
       value: pendingPayments,
       icon: Eye,
       bgColor: "from-yellow-400 to-yellow-700",
@@ -121,18 +121,28 @@ export function StatsCards() {
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
-          <Card key={stat.title} className={`bg-gradient-to-b  ${stat.bgColor}`}>
-            <CardHeader className="flex h-[50px] flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-200">
-                {stat.title}
-              </CardTitle>
-              <Icon className={`h-4 w-4 text-md text-gray-400 text-white`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-white">
-                {stat.value}
+          <Card key={stat.title} className={`bg-gradient-to-b bg-gradient-to-br from-pink-200 via-pink-500 to-purple-500 p-6`}>
+            <div className="flex items-center gap-3 my-5 mx-5">
+              <Icon className={`h-12 w-12 text-white flex-shrink-0`} />
+              <div className="flex flex-col">
+                <CardTitle className="text-sm font-medium text-white">
+                  {stat.title}
+                </CardTitle>
+                <div className="text-3xl font-bold text-white">
+                  {stat.value}
+                </div>
               </div>
-            </CardContent>
+            </div>
+
+            {/* Floating particles (reused from Hero) */}
+            <div className="relative inset-0 opacity-30 pointer-events-none">
+              <div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <div className="absolute top-20 right-20 w-1 h-1 bg-whiye rounded-full animate-ping"></div>
+              <div className="absolute bottom-20 left-0 w-1 h-1 bg-white rounded-full animate-ping"></div>
+              <div className="absolute bottom-20 right-1 w-3 h-3 bg-white rounded-full animate-bounce"></div>
+              <div className="absolute top-1/2 right-10 w-2 h-2 bg-white rounded-full animate-pulse delay-1000"></div>
+              <div className="absolute bottom-10 right-3 w-1 h-1 bg-white rounded-full animate-ping delay-500"></div>
+            </div>
           </Card>
         );
       })}

@@ -299,13 +299,13 @@ export default function EditProfilePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4">
-                  <Avatar className="w-20 h-20">
+                  <Avatar className="w-32 h-32">
                     <AvatarImage
                       src={
                         previewURL ||
                         (profile.profile_image
                           ? `${process.env.NEXT_PUBLIC_IMAGE_URL}/storage/${profile.profile_image}`
-                          : "/avatar.png")
+                          : "/avatar.png") 
                       }
                     />
                     <AvatarFallback className="text-lg">

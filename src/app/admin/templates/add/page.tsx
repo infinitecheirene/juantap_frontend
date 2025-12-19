@@ -224,14 +224,34 @@ export default function AddTemplatePage() {
       alert("Template saved successfully!");
       router.push("/admin/templates");
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        // Check if we got an HTML response instead of JSON
+        const contentType = error.response?.headers['content-type'];
+
+        if (contentType?.includes('text/html')) {
+          console.error('[v2] Server returned HTML instead of JSON');
+          console.error('Response data:', error.response?.data);
+          alert('Server error: The API endpoint returned an HTML error page. Check the console for details.');
+        } else if (error.response) {
+          // The request was made and the server responded with a status code
+          console.error('[v2] Server error:', error.response.status);
+          console.error('Error data:', error.response.data);
+          alert(`Error ${error.response.status}: ${error.response.data.message || 'Failed to save template'}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('[v2] No response received:', error.request);
+          alert('No response from server. Please check your network connection.');
+        } else {
+          // Something happened in setting up the request
+          console.error('[v2] Request setup error:', error.message);
+          alert(`Error: ${error.message}`);
+        }
+      } else if (error instanceof Error) {
         console.error("[v2] Error saving template:", error.message);
         alert(error.message);
       } else {
         console.error("[v2] Unknown error saving template:", error);
-        alert(
-          "Failed to save template. Slug field is required/Slug has already been taken."
-        );
+        alert("Failed to save template. Please try again.");
       }
     } finally {
       setSaving(false);

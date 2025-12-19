@@ -39,10 +39,10 @@ interface SocialLink {
 }
 
 interface UserData {
-  id: number;
-  name: string;
-  email: string;
-  avatar_url: string;
+  id: number
+  name: string
+  email: string
+  avatar_url:string
   profile?: {
     avatar?: string;
     bio?: string;
@@ -59,17 +59,11 @@ interface TemplateCardProps {
   slug: string;
 }
 
-export const TemplateCard: React.FC<TemplateCardProps> = ({
-  template,
-  user,
-  slug,
-}) => {
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [avatarError, setAvatarError] = useState(false);
-  const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${
-    user?.username || ""
-  }`;
+export const TemplateCard: React.FC<TemplateCardProps> = ({ template, user, slug }) => {
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+const [avatarError, setAvatarError] = useState(false)
+ const profileUrl = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/${user?.username || ''}`
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={16} />,
@@ -84,7 +78,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
   const author = user
     ? {
         displayName: user.name,
-        avatar: user.profile?.avatar || user.avatar_url || null,
+       avatar: user.profile?.avatar || user.avatar_url || null,
         email: user.email ?? null,
         phone: user.profile?.phone ?? null,
         website: user.profile?.website ?? null,
@@ -101,28 +95,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
         location: null,
         bio: null,
         socialLinks: [],
-      };
-  const getConnectGridClass = () => {
-    switch (template.connection_style) {
-      case "list":
-        return "flex flex-col gap-2";
-      case "compact":
-        return "flex flex-wrap gap-2";
-      default:
-        return "grid grid-cols-1 gap-3";
-    }
-  };
-
-  const getSocialLinkClass = () => {
-    switch (template.social_style) {
-      case "circles":
-        return "flex w-10 h-10 items-center justify-center rounded-full hover:opacity-80 transition";
-      case "fullblock":
-        return "flex w-full h-full items-center gap-3 rounded-lg p-4 text-sm hover:opacity-80 transition w-full";
-      default:
-        return "flex w-full h-full items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition";
-    }
-  };
+      }
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -147,10 +120,8 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
   };
 
   return (
-    <div
-      className="w-full flex justify-center p-6"
-      style={{ backgroundColor: "transparent" }}
-    >
+ <div className="w-full flex justify-center p-6" style={{ backgroundColor: "transparent" }}>
+
       <div
         className="w-full max-w-lg shadow-lg rounded-2xl overflow-hidden flex flex-col"
         style={{
@@ -309,37 +280,29 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
             >
               Connect with me
             </h2>
-            <div className={getConnectGridClass()}>
-              {author.socialLinks.map((link: SocialLink) => {
-                const platformKey = link.platform?.toLowerCase();
-                const icon = socialIconMap[platformKey] || <Globe size={14} />;
+            <div className="grid grid-cols-2 gap-3">
+              {author.socialLinks
+              ?.filter((link: SocialLink) => link.is_visible === true || link.is_visible === 1)
+              .map((link: SocialLink) => {
+                const platformKey = link.platform?.toLowerCase()
+                const icon = socialIconMap[platformKey] || <Globe size={14} />
                 return (
                   <a
                     key={link.id}
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className={getSocialLinkClass()}
+                    className="flex items-center gap-2 rounded-lg p-2 text-sm hover:opacity-80 transition"
                     style={{
                       backgroundColor: `${template?.colors?.accent}15`,
                       color: template?.colors?.text,
                       fontFamily: template?.fonts?.body,
                     }}
                   >
-                    <span style={{ color: template?.colors?.accent }}>
-                      {icon}
-                    </span>
-                    <span
-                      className={`text-xs   ${
-                        template.social_style === "circles"
-                          ? "hidden"
-                          : "inline-block"
-                      }`}
-                    >
-                      {link.username}
-                    </span>
+                    <span style={{ color: template?.colors?.accent }}>{icon}</span>
+                    <span>{link.username}</span>
                   </a>
-                );
+                )
               })}
             </div>
           </div>

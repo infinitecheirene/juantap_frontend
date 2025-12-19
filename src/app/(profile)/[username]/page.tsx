@@ -13,11 +13,17 @@ interface UserData {
   name: string
   email: string
   display_name?: string
-  is_admin?: boolean
+  is_admin: boolean
   avatar_url?: string
   title?: string
   address?: string
-  social_links?: Record<string, string>
+  social_links: Record<string, string>
+}
+
+
+interface SocialLink {
+  platform: string
+  url: string
 }
 
 export default function PublicProfilePage() {
@@ -61,14 +67,18 @@ export default function PublicProfilePage() {
       if (user) {
         setUserData({
           ...user,
+          is_admin: user.is_admin ?? false,
           avatar_url: user.avatar_url,
           title: user.profile?.bio ?? "",
           address: user.profile?.location ?? "",
           social_links:
-            user.profile?.socialLinks?.reduce((acc, link) => {
-              acc[link.platform.toLowerCase()] = link.url
-              return acc
-            }, {}) ?? {},
+            user.profile?.socialLinks?.reduce(
+              (acc: Record<string, string>, link: SocialLink) => {
+                acc[link.platform.toLowerCase()] = link.url
+                return acc
+              },
+              {} as Record<string, string>
+            ) ?? {},
         })
       }
 

@@ -3,15 +3,32 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  Mail, Phone, MapPin, Globe, Copy,
-  Instagram, Twitter, Linkedin, Github, Youtube, Music,
-  Facebook, QrCode, Share2, Heart, Download, User
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Copy,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  Facebook,
+  QrCode,
+  Share2,
+  Download,
+  User,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { usePathname } from "next/navigation";
-
 
 interface SocialLink {
   id: string;
@@ -48,19 +65,18 @@ export function GradientModern() {
   const [error, setError] = useState("");
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liked, setLiked] = useState(false);
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
   const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-const profileUrl = profile?.username
-  ? `${frontendUrl}/${profile.username}`
-  : profile?.displayName
-  ? `${frontendUrl}/${profile.displayName}`
-  : frontendUrl;
+  const profileUrl = profile?.username
+    ? `${frontendUrl}/${profile.username}`
+    : profile?.displayName
+    ? `${frontendUrl}/${profile.displayName}`
+    : frontendUrl;
 
-const pathname = usePathname();
+  const pathname = usePathname();
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={14} />,
@@ -164,18 +180,17 @@ const pathname = usePathname();
 
   return (
     <div
-  className={`w-full p-4 flex justify-center items-center ${
-    pathname.startsWith("/profile/") ? "min-h-screen" : ""
-  }`}
-  style={{
-    background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
-    color: textColor,
-    fontFamily: fontFamily,
-  }}
->
+      className={`w-full p-4 flex justify-center items-center ${
+        pathname.startsWith("/profile/") ? "min-h-screen" : ""
+      }`}
+      style={{
+        background: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
+        color: textColor,
+        fontFamily: fontFamily,
+      }}
+    >
       {/* Card Container */}
       <div className="w-full max-w-xs bg-white/10 backdrop-blur-lg shadow-xl rounded-2xl overflow-hidden border border-white/20 transition hover:shadow-2xl hover:-translate-y-1 duration-300">
-        
         {/* Cover Image */}
         <div className="h-28 w-full">
           {profile.coverImage ? (
@@ -185,10 +200,10 @@ const pathname = usePathname();
               className="w-full h-full object-cover"
             />
           ) : (
-            <div 
+            <div
               className="w-full h-full"
               style={{
-                background: `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`
+                background: `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`,
               }}
             />
           )}
@@ -212,12 +227,14 @@ const pathname = usePathname();
           <h1 className="mt-4 text-lg font-semibold text-white">
             {profile.displayName || "Display Name"}
           </h1>
+
           {profile.location && (
             <div className="flex items-center gap-1 mt-1">
               <MapPin size={12} className="text-white/80" />
               <p className="text-xs text-white/80">{profile.location}</p>
             </div>
           )}
+
           {profile.bio && (
             <p className="mt-2 text-xs text-white/80 text-center leading-snug">
               {profile.bio}
@@ -240,6 +257,7 @@ const pathname = usePathname();
                   {profile.website}
                 </a>
               </div>
+
               <button
                 onClick={() => copyToClipboard(profile.website!)}
                 className="text-white/60 hover:text-white/80 transition"
@@ -254,6 +272,7 @@ const pathname = usePathname();
                 <Mail size={14} />
                 <span className="truncate">{profile.email}</span>
               </div>
+
               <button
                 onClick={() => copyToClipboard(profile.email!)}
                 className="text-white/60 hover:text-white/80 transition"
@@ -268,6 +287,7 @@ const pathname = usePathname();
                 <Phone size={14} />
                 <span>{profile.phone}</span>
               </div>
+
               <button
                 onClick={() => copyToClipboard(profile.phone!)}
                 className="text-white/60 hover:text-white/80 transition"
@@ -286,12 +306,17 @@ const pathname = usePathname();
                 Connect
               </h3>
               <div className="flex flex-wrap gap-2">
-                 {profile.socialLinks
-                              .filter(link => link.isVisible)
-                              .map(link => {
-                                // normalize key: lowercase and trim
-                                const platformKey = (link.platform || link.id || "").trim().toLowerCase();
-                                const icon = socialIconMap[platformKey] || <Globe size={14} />;
+                {profile.socialLinks
+                  .filter((link) => link.isVisible)
+                  .map((link) => {
+                    // normalize key: lowercase and trim
+                    const platformKey = (link.platform || link.id || "")
+                      .trim()
+                      .toLowerCase();
+
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
 
                     return (
                       <a
@@ -320,6 +345,7 @@ const pathname = usePathname();
             <QrCode className="w-4 h-4 mb-1" />
             QR Code
           </button>
+          
           <button
             onClick={handleShare}
             className="flex flex-col items-center text-xs text-white/80 hover:text-white transition"
@@ -327,46 +353,45 @@ const pathname = usePathname();
             <Share2 className="w-4 h-4 mb-1" />
             Share
           </button>
-       
         </div>
       </div>
 
-       {/* QR Modal */}
-           <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
-             <DialogContent className="sm:max-w-md">
-               <DialogHeader>
-                 <DialogTitle className="flex items-center gap-2">
-                   <QrCode className="w-5 h-5" />
-                   QR Code for {profile.displayName}
-                 </DialogTitle>
-               </DialogHeader>
-               <div className="flex flex-col items-center space-y-4">
-             <QRCodeSVG value={profileUrl} size={256} />
-     
-           <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-             {profileUrl}
-           </a>
-                 <div className="w-full p-3 bg-gray-50 rounded-lg">
-                   <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
-                   <div className="flex items-center justify-between">
-                     <code className="text-sm text-gray-800 truncate flex-1 mr-2">
-                       {profileUrl}
-                     </code>
-                     <Button variant="ghost" size="sm" onClick={copyUrl}>
-                       {copied ? "Copied!" : "Copy"}
-                     </Button>
-                   </div>
-                 </div>
-                 <div className="flex gap-2 w-full">
-                   <Button variant="outline">
-                     <Download className="w-4 h-4 mr-2" />
-                     Download
-                   </Button>
-                   <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
-                 </div>
-               </div>
-             </DialogContent>
-           </Dialog>
-         </div>
-       );
-     }
+      {/* QR Modal */}
+      <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <QrCode className="w-5 h-5" />
+              QR Code for {profile.displayName}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4">
+            <QRCodeSVG value={profileUrl} size={256} />
+
+            <a href={profileUrl} target="_blank" rel="noopener noreferrer">
+              {profileUrl}
+            </a>
+            <div className="w-full p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
+              <div className="flex items-center justify-between">
+                <code className="text-sm text-gray-800 truncate flex-1 mr-2">
+                  {profileUrl}
+                </code>
+                <Button variant="ghost" size="sm" onClick={copyUrl}>
+                  {copied ? "Copied!" : "Copy"}
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-2 w-full">
+              <Button variant="outline">
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
+              <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

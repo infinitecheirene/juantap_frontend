@@ -1,9 +1,9 @@
-import type { ProfileData } from "@/lib/profile-data"
-import { SocialLinkCard } from "@/components/profile/social-link-card"
-import { ContactInfo } from "@/components/profile/contact-info"
+import type { ProfileData } from "@/lib/profile-data";
+import { SocialLinkCard } from "@/components/profile/social-link-card";
+import { ContactInfo } from "@/components/profile/contact-info";
 
 interface ProfileContentProps {
-  profile: ProfileData
+  profile: ProfileData;
 }
 
 export function ProfileContent({ profile }: ProfileContentProps) {
@@ -20,7 +20,9 @@ export function ProfileContent({ profile }: ProfileContentProps) {
       {/* Social Links */}
       {profile.socialLinks.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Connect with me</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Connect with me
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {profile.socialLinks.map((link) => (
               <SocialLinkCard key={link.platform} link={link} />
@@ -29,5 +31,5 @@ export function ProfileContent({ profile }: ProfileContentProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

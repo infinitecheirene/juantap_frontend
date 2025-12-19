@@ -1,53 +1,68 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState, use } from "react" // use() for unwrapping Promise
-import { useRouter } from "next/navigation"
-import { TemplatePreviewHeader } from "@/components/templates/template-preview-header"
-import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
-import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
-import Loading from "@/app/loading"
-import { Template, TemplateData } from "@/types/template"
-import PreviewRenderer from "@/components/templates/PreviewRenderer"
+import React, { useEffect, useState, use } from "react"; // use() for unwrapping Promise
+import { useRouter } from "next/navigation";
+import { TemplateCard } from "@/components/templates/template-card-2";
+import { TemplatePreviewHeader } from "@/components/templates/template-preview-header";
+import { TemplatePreviewContent } from "@/components/templates/template-preview-content";
+import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar";
+import { Loading } from "@/components/loading";
 
 interface SocialLink {
-  id: string
-  platform: string
-  username: string
-  url: string
-  isVisible?: boolean
+  id: string;
+  platform: string;
+  username: string;
+  url: string;
+  isVisible?: boolean;
 }
 
 interface UserData {
-  id: number
-  name: string
-  firstname?: string
-  lastname?: string
-  display_name?: string
-  username: string
-  email: string
-  is_admin: boolean
-  avatar_url: string
+  id: number;
+  name: string;
+  firstname?: string;
+  lastname?: string;
+  display_name?: string;
+  username: string;
+  email: string;
+  is_admin: boolean;
+  avatar_url: string;
   profile?: {
-    bio?: string
-    phone?: string
-    website?: string
-    location?: string
-    template_id?: number
-    background_type?: string
-    background_value?: string
-    font_style?: string
-    font_size?: string
-    button_style?: string
-    accent_color?: string
-    nfc_redirect_url?: string
-    is_published?: boolean
-    socialLinks?: SocialLink[]
-  }
+    bio?: string;
+    phone?: string;
+    website?: string;
+    location?: string;
+    template_id?: number;
+    background_type?: string;
+    background_value?: string;
+    font_style?: string;
+    font_size?: string;
+    button_style?: string;
+    accent_color?: string;
+    nfc_redirect_url?: string;
+    is_published?: boolean;
+    socialLinks?: SocialLink[];
+  };
 }
 
+interface TemplateData {
+  name: string;
+  description?: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    text: string;
+  };
+  fonts: {
+    heading: string;
+    body: string;
+  };
+  sections?: Record<string, unknown>[]; // instead of any[]
+  [key: string]: unknown; // instead of any
+}
 
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL as string
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 const defaultColors = {
   primary: "#1f2937",
@@ -55,51 +70,52 @@ const defaultColors = {
   accent: "#3b82f6",
   background: "#ffffff",
   text: "#111827",
-}
+};
 
 const defaultFonts = {
   heading: "Inter",
   body: "Inter",
-}
+};
 
 interface Props {
-  params: Promise<{ slug: string }> // params is a Promise
+  params: Promise<{ slug: string }>; // params is a Promise
 }
 
 export default function TemplatePage({ params }: Props) {
-  const { slug } = use(params) // unwrap Promise
+  const { slug } = use(params); // unwrap Promise
 
-  const [template, setTemplate] = useState<Template | null>(null)
-  const [user, setUser] = useState<UserData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [template, setTemplate] = useState<TemplateData | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  const router = useRouter()
+  const router = useRouter();
 
-  // Check authentication
+  // 🔑 Check authentication
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) {
-      router.push("/login")
+      router.push("/login");
     } else {
-      setIsAuthenticated(true)
+      setIsAuthenticated(true);
     }
-  }, [router])
+  }, [router]);
 
-  // Fetch template data
+  // 🔄 Fetch template data
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token");
         const res = await fetch(`${API_URL}/templates/${slug}`, {
           headers: {
             Authorization: token ? `Bearer ${token}` : "",
             Accept: "application/json",
           },
-        })
+        });
 
-        if (!res.ok) throw new Error("Template not found")
-        const data = await res.json()
+        if (!res.ok) throw new Error("Template not found");
+        const data = await res.json();
 
         setTemplate({
           ...data,
@@ -115,33 +131,33 @@ export default function TemplatePage({ params }: Props) {
             body: data.fonts?.body ?? defaultFonts.body,
           },
           sections: data.sections ?? [],
-        })
+        });
       } catch (err) {
-        console.error("Error fetching template:", err)
+        console.error("Error fetching template:", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchTemplate()
-  }, [slug])
+    fetchTemplate();
+  }, [slug]);
 
-  // Fetch logged-in user
+  // 🔄 Fetch logged-in user
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token")
-        if (!token) return
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
         const res = await fetch(`${API_URL}/user-profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
-        })
+        });
 
-        if (!res.ok) throw new Error("Failed to fetch user")
-        const data = await res.json()
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = await res.json();
 
         setUser({
           id: data.id,
@@ -157,22 +173,24 @@ export default function TemplatePage({ params }: Props) {
             location: data.profile?.location ?? "",
             socialLinks: data.profile?.socialLinks ?? [],
           },
-        })
+        });
       } catch (err) {
-        console.error("Error fetching user:", err)
+        console.error("Error fetching user:", err);
       }
-    }
+    };
 
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
-  // Show loading state using custom Loading component
+  // 🌀 Show loading state using custom Loading component
   if (isAuthenticated === null || loading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (!template) {
-    return <div className="p-6 text-center text-gray-600">Template not found.</div>
+    return (
+      <div className="p-6 text-center text-gray-600">Template not found.</div>
+    );
   }
 
   return (
@@ -183,7 +201,6 @@ export default function TemplatePage({ params }: Props) {
 
       {/* Background wrapper with gradient + orbs */}
       <div className="min-h-screen relative bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-hidden">
-
         {/* Animated orbs */}
         <div className="absolute inset-0 opacity-30 pointer-events-none">
           <div className="absolute top-10 left-10 w-2 h-2 bg-gray-800 rounded-full animate-pulse"></div>
@@ -199,8 +216,8 @@ export default function TemplatePage({ params }: Props) {
 
         {/* Main content */}
         <div className="flex flex-col lg:flex-row gap-6 p-6 relative z-10">
-          <main className="flex-1 mx-auto">
-            <PreviewRenderer template={template} user={user} slug={slug} />
+          <main className="flex-1">
+            <TemplateCard template={template} user={user} slug={slug} />
             <div className="container mx-auto px-4 py-10">
               <TemplatePreviewContent template={template} />
             </div>
@@ -210,8 +227,7 @@ export default function TemplatePage({ params }: Props) {
             <TemplatePreviewSidebar template={template} />
           </aside>
         </div>
-
       </div>
     </>
-  )
+  );
 }

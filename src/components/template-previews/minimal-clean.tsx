@@ -3,18 +3,36 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  Mail, Phone, MapPin, Globe, Copy,
-  Instagram, Twitter, Linkedin, Github, Youtube, Music,
-  Facebook, QrCode, Share2, Heart, Download, User
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Copy,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  Facebook,
+  QrCode,
+  Share2,
+  Download,
+  User,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 
 interface SocialLink {
   id: string;
   username: string;
-  platform: string; 
+  platform: string;
   url: string;
   isVisible: boolean;
 }
@@ -46,17 +64,17 @@ export function MinimalClean() {
   const [error, setError] = useState("");
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liked, setLiked] = useState(false);
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-const profileUrl = profile?.username
-  ? `${frontendUrl}/${profile.username}`
-  : profile?.displayName
-  ? `${frontendUrl}/${profile.displayName}`
-  : frontendUrl;
+  const profileUrl = profile?.username
+    ? `${frontendUrl}/${profile.username}`
+    : profile?.displayName
+    ? `${frontendUrl}/${profile.displayName}`
+    : frontendUrl;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={16} />,
@@ -152,10 +170,9 @@ const profileUrl = profile?.username
   const { backgroundColor, textColor, fontFamily, gradientFrom, gradientTo } =
     profile.template || {};
 
-
   return (
     <div
-      className="w-full flex justify-center p-6"
+      className="w-full flex justify-center p-5"
       style={{
         background: backgroundColor,
         color: textColor,
@@ -168,12 +185,18 @@ const profileUrl = profile?.username
           className="w-full"
           style={{
             background: !profile.coverImage
-              ? `linear-gradient(135deg, ${gradientFrom || "#667eea"}, ${gradientTo || "#764ba2"})`
+              ? `linear-gradient(135deg, ${gradientFrom || "#667eea"}, ${
+                  gradientTo || "#764ba2"
+                })`
               : undefined,
           }}
         >
           {profile.coverImage && (
-            <img src={profile.coverImage} alt="Cover" className="w-full object-cover" />
+            <img
+              src={profile.coverImage}
+              alt="Cover"
+              className="w-full object-cover"
+            />
           )}
         </div>
 
@@ -181,12 +204,18 @@ const profileUrl = profile?.username
         <div className="relative flex flex-col items-center mt-6 px-6">
           <div className="w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-200 flex items-center justify-center">
             {profile.avatar ? (
-              <img src={`${imageUrl}/storage/${profile.avatar}`} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover" />
+              <img
+                src={`${imageUrl}/storage/${profile.avatar}`}
+                alt={profile.displayName || "Avatar"}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <User size={32} className="text-gray-500" />
             )}
           </div>
-          <h1 className="mt-4 text-xl font-bold">{profile.displayName || "Display Name"}</h1>
+          <h1 className="mt-4 text-xl font-bold">
+            {profile.displayName || "Display Name"}
+          </h1>
           <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mt-2 justify-center">
             {profile.location && (
               <span className="flex items-center gap-1">
@@ -194,34 +223,52 @@ const profileUrl = profile?.username
               </span>
             )}
             {profile.website && (
-              <a href={profile.website} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-blue-500">
+              <a
+                href={profile.website}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1 text-blue-500"
+              >
                 <Globe size={12} /> {profile.website}
               </a>
             )}
           </div>
-          {profile.bio && <p className="text-sm text-gray-600 text-center mt-1">{profile.bio}</p>}
-          
+          {profile.bio && (
+            <p className="text-sm text-gray-600 text-center mt-1">
+              {profile.bio}
+            </p>
+          )}
         </div>
 
         {/* Contact */}
         <div className="p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase">Contact</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase">
+            Contact
+          </h2>
+          
           {profile.email && (
             <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3 text-sm">
               <div className="flex items-center gap-2">
                 <Mail size={16} /> {profile.email}
               </div>
-              <button className="text-gray-400 hover:text-gray-600" onClick={() => navigator.clipboard.writeText(profile.email)}>
+              <button
+                className="text-gray-400 hover:text-gray-600"
+                onClick={() => navigator.clipboard.writeText(profile.email)}
+              >
                 <Copy size={16} />
               </button>
             </div>
           )}
+
           {profile.phone && (
             <div className="flex justify-between items-center bg-gray-50 rounded-lg p-3 text-sm">
               <div className="flex items-center gap-2">
                 <Phone size={16} /> {profile.phone}
               </div>
-              <button className="text-gray-400 hover:text-gray-600" onClick={() => navigator.clipboard.writeText(profile.phone)}>
+              <button
+                className="text-gray-400 hover:text-gray-600"
+                onClick={() => navigator.clipboard.writeText(profile.phone)}
+              >
                 <Copy size={16} />
               </button>
             </div>
@@ -231,14 +278,20 @@ const profileUrl = profile?.username
         {/* Social Links */}
         {profile.socialLinks?.length ? (
           <div className="px-6 pb-6">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase mb-3">Connect with me</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase mb-3">
+              Connect with me
+            </h2>
             <div className="grid grid-cols-2 gap-3">
-            {profile.socialLinks
-                         .filter(link => link.isVisible)
-                         .map(link => {
-                           // normalize key: lowercase and trim
-                           const platformKey = (link.platform || link.id || "").trim().toLowerCase();
-                           const icon = socialIconMap[platformKey] || <Globe size={14} />;
+              {profile.socialLinks
+                .filter((link) => link.isVisible)
+                .map((link) => {
+                  // normalize key: lowercase and trim
+                  const platformKey = (link.platform || link.id || "")
+                    .trim()
+                    .toLowerCase();
+                  const icon = socialIconMap[platformKey] || (
+                    <Globe size={14} />
+                  );
                   return (
                     <a
                       key={link.id}
@@ -258,55 +311,57 @@ const profileUrl = profile?.username
 
         {/* Bottom Actions */}
         <div className="flex justify-around border-t bg-gray-50 p-4">
-          <button onClick={() => setIsQRModalOpen(true)} className="flex flex-col items-center text-sm">
+          <button
+            onClick={() => setIsQRModalOpen(true)}
+            className="flex flex-col items-center text-sm"
+          >
             <QrCode className="w-5 h-5 mb-1" /> QR Code
           </button>
           <button
-      onClick={handleShare}
-      className="flex flex-col items-center text-sm"
-    >
-      <Share2 className="w-5 h-5 mb-1" /> Share
-    </button>
-         
+            onClick={handleShare}
+            className="flex flex-col items-center text-sm"
+          >
+            <Share2 className="w-5 h-5 mb-1" /> Share
+          </button>
         </div>
       </div>
 
       {/* QR Modal */}
-     <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
-             <DialogContent className="sm:max-w-md">
-               <DialogHeader>
-                 <DialogTitle className="flex items-center gap-2">
-                   <QrCode className="w-5 h-5" />
-                   QR Code for {profile.displayName}
-                 </DialogTitle>
-               </DialogHeader>
-               <div className="flex flex-col items-center space-y-4">
-             <QRCodeSVG value={profileUrl} size={256} />
-     
-           <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-             {profileUrl}
-           </a>
-                 <div className="w-full p-3 bg-gray-50 rounded-lg">
-                   <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
-                   <div className="flex items-center justify-between">
-                     <code className="text-sm text-gray-800 truncate flex-1 mr-2">
-                       {profileUrl}
-                     </code>
-                     <Button variant="ghost" size="sm" onClick={copyUrl}>
-                       {copied ? "Copied!" : "Copy"}
-                     </Button>
-                   </div>
-                 </div>
-                 <div className="flex gap-2 w-full">
-                   <Button variant="outline">
-                     <Download className="w-4 h-4 mr-2" />
-                     Download
-                   </Button>
-                   <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
-                 </div>
-               </div>
-             </DialogContent>
-           </Dialog>
-         </div>
-       );
-     }
+      <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <QrCode className="w-5 h-5" />
+              QR Code for {profile.displayName}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4">
+            <QRCodeSVG value={profileUrl} size={256} />
+
+            <a href={profileUrl} target="_blank" rel="noopener noreferrer">
+              {profileUrl}
+            </a>
+            <div className="w-full p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
+              <div className="flex items-center justify-between">
+                <code className="text-sm text-gray-800 truncate flex-1 mr-2">
+                  {profileUrl}
+                </code>
+                <Button variant="ghost" size="sm" onClick={copyUrl}>
+                  {copied ? "Copied!" : "Copy"}
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-2 w-full">
+              <Button variant="outline">
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
+              <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

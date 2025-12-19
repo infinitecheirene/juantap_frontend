@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
-import { DataTable } from "@/components/ui/data-table"
-import { columns, type Payment } from "./columns"
-const API_URL = process.env.NEXT_PUBLIC_API_URL!
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
+import { columns, Payment } from "./columns";
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export default function AdminPaymentsPage() {
-  const [payments, setPayments] = useState<Payment[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchPayments()
-  }, [])
+    fetchPayments();
+  }, []);
 
   const fetchPayments = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const res = await fetch(`${API_URL}/admin/payments`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      const data = await res.json()
-      setPayments(data)
+      });
+      const data = await res.json();
+      setPayments(data);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -41,10 +41,14 @@ export default function AdminPaymentsPage() {
               <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
             </div>
           ) : (
-            <DataTable columns={columns} data={payments} refreshData={fetchPayments} />
+            <DataTable
+              columns={columns}
+              data={payments}
+              refreshData={fetchPayments}
+            />
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Logo } from "@/components/blocks/logo"
-import Link from "next/link"
-import { X } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Logo } from "@/components/blocks/logo";
+import Link from "next/link";
+import { X } from "lucide-react";
 
 export default function TermsPage() {
   return (
@@ -28,7 +28,8 @@ export default function TermsPage() {
             <Logo className="mx-auto h-12 w-auto" />
           </Link>
           <p className="text-gray-700 text-sm">
-            Welcome to JuanTap! By usivccxng our services, you agree to the following terms:
+            Welcome to JuanTap! By usivccxng our services, you agree to the
+            following terms:
           </p>
         </div>
 
@@ -39,12 +40,19 @@ export default function TermsPage() {
             <li>All information provided must be accurate and up-to-date.</li>
             <li>You are responsible for keeping your account secure.</li>
             <li>Do not use our platform for illegal or harmful activities.</li>
-            <li>We reserve the right to suspend or terminate accounts that violate these terms.</li>
-            <li>Your data is protected and used in accordance with our privacy policy.</li>
+            <li>
+              We reserve the right to suspend or terminate accounts that violate
+              these terms.
+            </li>
+            <li>
+              Your data is protected and used in accordance with our privacy
+              policy.
+            </li>
           </ul>
 
           <p className="text-gray-500 text-xs text-center mt-4">
-            These terms may be updated at any time. Continued use of the platform constitutes your acceptance of the updated terms.
+            These terms may be updated at any time. Continued use of the
+            platform constitutes your acceptance of the updated terms.
           </p>
 
           <p className="mt-2 text-center text-xs text-gray-400">
@@ -53,5 +61,5 @@ export default function TermsPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

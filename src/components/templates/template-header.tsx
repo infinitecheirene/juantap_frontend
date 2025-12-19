@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Palette, Crown, Sparkles } from "lucide-react"
+import { Badge } from "@/components/ui/badge";
+import { Palette, Crown, Sparkles } from "lucide-react";
 
 export function TemplateHeader() {
   return (
@@ -29,13 +29,15 @@ export function TemplateHeader() {
         </Badge>
 
         <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent drop-shadow-2xl animate-pulse">
-          Stand Out with<br />
+          Stand Out with
+          <br />
           Premium Designs
         </h1>
 
         <p className="text-xl md:text-2xl text-purple-100/90 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-          Choose from our collection of professionally designed templates. From minimalist to bold,
-          find the perfect style that represents your unique personality and brand.
+          Choose from our collection of professionally designed templates. From
+          minimalist to bold, find the perfect style that represents your unique
+          personality and brand.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 text-sm">
@@ -43,6 +45,7 @@ export function TemplateHeader() {
             <Crown className="w-4 h-4 text-yellow-400" />
             <span>Premium Quality</span>
           </div>
+
           <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white">
             <Sparkles className="w-4 h-4 text-purple-300" />
             <span>Unique Designs</span>
@@ -50,5 +53,5 @@ export function TemplateHeader() {
         </div>
       </div>
     </section>
-  )
+  );
 }

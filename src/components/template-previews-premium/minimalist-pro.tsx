@@ -3,11 +3,29 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  Mail, Phone, MapPin, Globe, Copy,
-  Instagram, Twitter, Linkedin, Github, Youtube, Music,
-  Facebook, QrCode, Share2, Heart, Download, User
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Copy,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  Facebook,
+  QrCode,
+  Share2,
+  Download,
+  User,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { usePathname } from "next/navigation";
@@ -48,18 +66,18 @@ export function MinimalistPro() {
   const [error, setError] = useState("");
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liked, setLiked] = useState(false);
   const pathname = usePathname();
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-const profileUrl = profile?.username
-  ? `${frontendUrl}/${profile.username}`
-  : profile?.displayName
-  ? `${frontendUrl}/${profile.displayName}`
-  : frontendUrl;
+  const profileUrl = profile?.username
+    ? `${frontendUrl}/${profile.username}`
+    : profile?.displayName
+    ? `${frontendUrl}/${profile.displayName}`
+    : frontendUrl;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={14} />,
@@ -163,9 +181,10 @@ const profileUrl = profile?.username
 
   return (
     <div
- className={`w-full p-4 flex justify-center items-center ${
-    pathname.startsWith("/profile/") ? "min-h-screen" : ""
-  }`}      style={{
+      className={`w-full p-4 flex justify-center items-center ${
+        pathname.startsWith("/profile/") ? "min-h-screen" : ""
+      }`}
+      style={{
         background: backgroundColor,
         color: textColor,
         fontFamily: fontFamily,
@@ -179,9 +198,7 @@ const profileUrl = profile?.username
         }}
       >
         {/* Cover Image */}
-        <div className="h-28 w-full bg-gray-100">
-          
-        </div>
+        <div className="h-28 w-full bg-gray-100"></div>
 
         {/* Avatar */}
         <div className="flex flex-col items-center px-6 -mt-12 relative">
@@ -211,12 +228,14 @@ const profileUrl = profile?.username
           >
             {profile.displayName || "Display Name"}
           </h1>
+
           {profile.location && (
             <div className="flex items-center gap-1 mt-1">
               <MapPin size={14} className="text-gray-500" />
               <p className="text-sm text-gray-500">{profile.location}</p>
             </div>
           )}
+
           {profile.bio && (
             <p className="mt-2 text-sm text-gray-600 text-center leading-snug">
               {profile.bio}
@@ -240,6 +259,7 @@ const profileUrl = profile?.username
                   {profile.website}
                 </a>
               </div>
+
               <button
                 onClick={() => copyToClipboard(profile.website!)}
                 className="text-gray-400 hover:text-gray-600"
@@ -254,6 +274,7 @@ const profileUrl = profile?.username
                 <Mail size={16} className="text-gray-500" />
                 <span className="truncate text-gray-700">{profile.email}</span>
               </div>
+
               <button
                 onClick={() => copyToClipboard(profile.email!)}
                 className="text-gray-400 hover:text-gray-600"
@@ -268,6 +289,7 @@ const profileUrl = profile?.username
                 <Phone size={16} className="text-gray-500" />
                 <span className="text-gray-700">{profile.phone}</span>
               </div>
+
               <button
                 onClick={() => copyToClipboard(profile.phone!)}
                 className="text-gray-400 hover:text-gray-600"
@@ -285,13 +307,18 @@ const profileUrl = profile?.username
               <h3 className="text-xs font-medium text-gray-600 mb-3 uppercase tracking-wide">
                 Connect
               </h3>
+
               <div className="grid grid-cols-2 gap-2">
-                 {profile.socialLinks
-                              .filter(link => link.isVisible)
-                              .map(link => {
-                                // normalize key: lowercase and trim
-                                const platformKey = (link.platform || link.id || "").trim().toLowerCase();
-                                const icon = socialIconMap[platformKey] || <Globe size={14} />;
+                {profile.socialLinks
+                  .filter((link) => link.isVisible)
+                  .map((link) => {
+                    // normalize key: lowercase and trim
+                    const platformKey = (link.platform || link.id || "")
+                      .trim()
+                      .toLowerCase();
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
                     return (
                       <a
                         key={link.id}
@@ -314,7 +341,10 @@ const profileUrl = profile?.username
         )}
 
         {/* Bottom Actions */}
-        <div className="flex justify-around border-t bg-gray-50/50 p-4" style={{ borderColor: "#e5e7eb" }}>
+        <div
+          className="flex justify-around border-t bg-gray-50/50 p-4"
+          style={{ borderColor: "#e5e7eb" }}
+        >
           <button
             onClick={() => setIsQRModalOpen(true)}
             className="flex flex-col items-center text-xs text-gray-600 hover:text-gray-800 transition"
@@ -322,6 +352,7 @@ const profileUrl = profile?.username
             <QrCode className="w-5 h-5 mb-1" />
             QR Code
           </button>
+
           <button
             onClick={handleShare}
             className="flex flex-col items-center text-xs text-gray-600 hover:text-gray-800 transition"
@@ -329,55 +360,51 @@ const profileUrl = profile?.username
             <Share2 className="w-5 h-5 mb-1" />
             Share
           </button>
-          {/* <button
-            className={`flex flex-col items-center text-xs transition ${
-              liked ? "text-red-500" : "text-gray-600 hover:text-gray-800"
-            }`}
-            onClick={() => setLiked(!liked)}
-          >
-            <Heart className={`w-5 h-5 mb-1 ${liked ? "fill-red-500" : ""}`} />
-            Like
-          </button> */}
-        
         </div>
       </div>
 
       {/* QR Modal */}
-     <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
-                 <DialogContent className="sm:max-w-md">
-                   <DialogHeader>
-                     <DialogTitle className="flex items-center gap-2">
-                       <QrCode className="w-5 h-5" />
-                       QR Code for {profile.displayName}
-                     </DialogTitle>
-                   </DialogHeader>
-                   <div className="flex flex-col items-center space-y-4">
-                 <QRCodeSVG value={profileUrl} size={256} />
-         
-               <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-                 {profileUrl}
-               </a>
-                     <div className="w-full p-3 bg-gray-50 rounded-lg">
-                       <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
-                       <div className="flex items-center justify-between">
-                         <code className="text-sm text-gray-800 truncate flex-1 mr-2">
-                           {profileUrl}
-                         </code>
-                         <Button variant="ghost" size="sm" onClick={copyUrl}>
-                           {copied ? "Copied!" : "Copy"}
-                         </Button>
-                       </div>
-                     </div>
-                     <div className="flex gap-2 w-full">
-                       <Button variant="outline">
-                         <Download className="w-4 h-4 mr-2" />
-                         Download
-                       </Button>
-                       <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
-                     </div>
-                   </div>
-                 </DialogContent>
-               </Dialog>
-             </div>
-           );
-         }
+      <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <QrCode className="w-5 h-5" />
+              QR Code for {profile.displayName}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center space-y-4">
+            <QRCodeSVG value={profileUrl} size={256} />
+
+            <a href={profileUrl} target="_blank" rel="noopener noreferrer">
+              {profileUrl}
+            </a>
+
+            <div className="w-full p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
+
+              <div className="flex items-center justify-between">
+                <code className="text-sm text-gray-800 truncate flex-1 mr-2">
+                  {profileUrl}
+                </code>
+
+                <Button variant="ghost" size="sm" onClick={copyUrl}>
+                  {copied ? "Copied!" : "Copy"}
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex gap-2 w-full">
+              <Button variant="outline">
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
+
+              <Button onClick={() => setIsQRModalOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

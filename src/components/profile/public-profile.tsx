@@ -1,16 +1,18 @@
-import type { ProfileData } from "@/lib/profile-data"
-import { ProfileHeader } from "@/components/profile/profile-header"
-import { ProfileContent } from "@/components/profile/profile-content"
-import { ProfileActions } from "@/components/profile/profile-actions"
+import type { ProfileData } from "@/lib/profile-data";
+import { ProfileHeader } from "@/components/profile/profile-header";
+import { ProfileContent } from "@/components/profile/profile-content";
+import { ProfileActions } from "@/components/profile/profile-actions";
 
 interface PublicProfileProps {
-  profile: ProfileData
+  profile: ProfileData;
 }
 
 export function PublicProfile({ profile }: PublicProfileProps) {
-  const backgroundStyle = profile.template.backgroundColor.startsWith("linear-gradient")
+  const backgroundStyle = profile.template.backgroundColor.startsWith(
+    "linear-gradient"
+  )
     ? { background: profile.template.backgroundColor }
-    : { backgroundColor: profile.template.backgroundColor }
+    : { backgroundColor: profile.template.backgroundColor };
 
   return (
     <div className="min-h-screen" style={backgroundStyle}>
@@ -22,5 +24,5 @@ export function PublicProfile({ profile }: PublicProfileProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

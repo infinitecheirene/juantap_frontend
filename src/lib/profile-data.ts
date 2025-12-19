@@ -2,34 +2,31 @@
 // For now, we'll use mock data
 
 export interface SocialLink {
-  platform: string
-  url: string
-  username: string
-  icon: string
+  platform: string;
+  url: string;
+  username: string;
+  icon: string;
 }
 
 export interface ProfileData {
-  username: string
-  displayName: string
-  bio?: string
-  avatar?: string
-  coverImage?: string
-  location?: string
-  website?: string
-  email?: string
-  phone?: string
-  socialLinks: SocialLink[]
+  username: string;
+  displayName: string;
+  bio?: string;
+  avatar?: string;
+  coverImage?: string;
+  location?: string;
+  website?: string;
+  email?: string;
+  phone?: string;
+  socialLinks: SocialLink[];
   template: {
-    id: string
-    name: string
-    backgroundColor: string
-    textColor: string
-    accentColor: string
-    fontFamily: string
-  }
-  isActive: boolean
-  createdAt: string
-  viewCount: number
+    id: string;
+    name: string;
+    backgroundColor: string;
+    textColor: string;
+    accentColor: string;
+    fontFamily: string;
+  };
 }
 
 // Mock data - replace with actual database calls
@@ -141,75 +138,76 @@ const mockProfiles: Record<string, ProfileData> = {
     viewCount: 892,
   },
   shekinahvaldez: {
-  username: "shekinahvaldez",
-  displayName: "Shekinah Valdez",
-  bio: "Creative UI/UX Designer focused on elegant simplicity and user-first experiences. Believer in clean design. ✨",
-  avatar: "/placeholder.svg?height=120&width=120",
-  coverImage: "/placeholder.svg?height=300&width=800",
-  location: "Manila, Philippines",
-  website: "https://shekinahvaldez.com",
-  email: "hello@shekinahvaldez.com",
-  phone: "+63 912 345 6789",
-  socialLinks: [
-    {
-      platform: "Instagram",
-      url: "https://instagram.com/shek.design",
-      username: "@shek.design",
-      icon: "instagram",
+    username: "shekinahvaldez",
+    displayName: "Shekinah Valdez",
+    bio: "Creative UI/UX Designer focused on elegant simplicity and user-first experiences. Believer in clean design. ✨",
+    avatar: "/placeholder.svg?height=120&width=120",
+    coverImage: "/placeholder.svg?height=300&width=800",
+    location: "Manila, Philippines",
+    website: "https://shekinahvaldez.com",
+    email: "hello@shekinahvaldez.com",
+    phone: "+63 912 345 6789",
+    socialLinks: [
+      {
+        platform: "Instagram",
+        url: "https://instagram.com/shek.design",
+        username: "@shek.design",
+        icon: "instagram",
+      },
+      {
+        platform: "LinkedIn",
+        url: "https://linkedin.com/in/shekinahvaldez",
+        username: "Shekinah Valdez",
+        icon: "linkedin",
+      },
+      {
+        platform: "Dribbble",
+        url: "https://dribbble.com/shekinah",
+        username: "shekinah",
+        icon: "dribbble",
+      },
+      {
+        platform: "Facebook",
+        url: "https://facebook.com/shekinah.design",
+        username: "Shekinah Valdez",
+        icon: "facebook",
+      },
+    ],
+    template: {
+      id: "minimal-clean",
+      name: "Minimal Clean",
+      backgroundColor: "#ffffff",
+      textColor: "#111827",
+      accentColor: "#8b5cf6",
+      fontFamily: "Inter",
     },
-    {
-      platform: "LinkedIn",
-      url: "https://linkedin.com/in/shekinahvaldez",
-      username: "Shekinah Valdez",
-      icon: "linkedin",
-    },
-    {
-      platform: "Dribbble",
-      url: "https://dribbble.com/shekinah",
-      username: "shekinah",
-      icon: "dribbble",
-    },
-    {
-      platform: "Facebook",
-      url: "https://facebook.com/shekinah.design",
-      username: "Shekinah Valdez",
-      icon: "facebook",
-    },
-  ],
-  template: {
-    id: "minimal-clean",
-    name: "Minimal Clean",
-    backgroundColor: "#ffffff",
-    textColor: "#111827",
-    accentColor: "#8b5cf6",
-    fontFamily: "Inter",
+    isActive: true,
+    createdAt: "2024-06-10",
+    viewCount: 351,
   },
-  isActive: true,
-  createdAt: "2024-06-10",
-  viewCount: 351,
-},
+};
 
-}
-
-export async function getPublicProfile(username: string): Promise<ProfileData | null> {
+export async function getPublicProfile(
+  username: string
+): Promise<ProfileData | null> {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 100))
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  const profile = mockProfiles[username.toLowerCase()]
+  const profile = mockProfiles[username.toLowerCase()];
 
   if (!profile || !profile.isActive) {
-    return null
+    return null;
   }
 
   // Increment view count (in real app, this would be a separate API call)
-  profile.viewCount += 1
+  profile.viewCount += 1;
 
-  return profile
+  return profile;
 }
 
 export async function getAllPublicProfiles(): Promise<ProfileData[]> {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 100))
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-  return Object.values(mockProfiles).filter((profile) => profile.isActive)
+  return Object.values(mockProfiles).filter((profile) => profile.isActive);
 }

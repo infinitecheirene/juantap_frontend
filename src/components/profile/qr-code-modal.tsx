@@ -1,7 +1,12 @@
 "use client";
 
 import type { ProfileData } from "@/lib/profile-data";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QrCode, Download, Copy } from "lucide-react";
 import { useState } from "react";
@@ -18,7 +23,9 @@ export function QRCodeModal({ isOpen, onClose, profile }: QRCodeModalProps) {
 
   const profileUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/${profile.username || profile.displayName || ""}`
+      ? `${window.location.origin}/${
+          profile.username || profile.displayName || ""
+        }`
       : "";
 
   const copyUrl = async () => {
@@ -34,7 +41,9 @@ export function QRCodeModal({ isOpen, onClose, profile }: QRCodeModalProps) {
   // Download QR code as PNG
   const downloadQR = () => {
     try {
-      const svg = document.getElementById("qr-code-svg") as SVGSVGElement | null;
+      const svg = document.getElementById(
+        "qr-code-svg"
+      ) as SVGSVGElement | null;
       if (!svg) return;
 
       const serializer = new XMLSerializer();
@@ -44,7 +53,9 @@ export function QRCodeModal({ isOpen, onClose, profile }: QRCodeModalProps) {
       const ctx = canvas.getContext("2d");
       const img = new Image();
 
-      const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const svgBlob = new Blob([svgString], {
+        type: "image/svg+xml;charset=utf-8",
+      });
       const url = URL.createObjectURL(svgBlob);
 
       img.onload = () => {
@@ -97,7 +108,9 @@ export function QRCodeModal({ isOpen, onClose, profile }: QRCodeModalProps) {
           <div className="w-full p-3 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
             <div className="flex items-center justify-between">
-              <code className="text-sm text-gray-800 truncate flex-1 mr-2">{profileUrl}</code>
+              <code className="text-sm text-gray-800 truncate flex-1 mr-2">
+                {profileUrl}
+              </code>
               <Button
                 variant="ghost"
                 size="sm"
@@ -112,7 +125,11 @@ export function QRCodeModal({ isOpen, onClose, profile }: QRCodeModalProps) {
 
           {/* Actions */}
           <div className="flex gap-2 w-full">
-            <Button variant="outline" onClick={downloadQR} className="flex-1 bg-transparent">
+            <Button
+              variant="outline"
+              onClick={downloadQR}
+              className="flex-1 bg-transparent"
+            >
               <Download className="w-4 h-4 mr-2" />
               Download
             </Button>

@@ -3,11 +3,29 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  Mail, Phone, MapPin, Globe, Copy,
-  Instagram, Twitter, Linkedin, Github, Youtube, Music,
-  Facebook, QrCode, Share2, Heart, Download, User
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Copy,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  Facebook,
+  QrCode,
+  Share2,
+  Download,
+  User,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { usePathname } from "next/navigation";
@@ -48,17 +66,17 @@ export function ClassicBlue() {
   const [error, setError] = useState("");
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liked, setLiked] = useState(false);
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-const profileUrl = profile?.username
-  ? `${frontendUrl}/${profile.username}`
-  : profile?.displayName
-  ? `${frontendUrl}/${profile.displayName}`
-  : frontendUrl;
+  const profileUrl = profile?.username
+    ? `${frontendUrl}/${profile.username}`
+    : profile?.displayName
+    ? `${frontendUrl}/${profile.displayName}`
+    : frontendUrl;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={14} />,
@@ -69,7 +87,7 @@ const profileUrl = profile?.username
     youtube: <Youtube size={14} />,
     tiktok: <Music size={14} />,
   };
-const pathname = usePathname();
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -90,6 +108,7 @@ const pathname = usePathname();
         if (!res.ok) throw new Error("Failed to fetch profile");
 
         const data = await res.json();
+        
         setProfile({
           username: data.username,
           displayName: data.display_name,
@@ -163,9 +182,10 @@ const pathname = usePathname();
 
   return (
     <div
- className={`w-full p-4 flex justify-center items-center ${
-    pathname.startsWith("/profile/") ? "min-h-screen" : ""
-  }`}      style={{
+      className={`w-full p-4 flex justify-center items-center ${
+        pathname.startsWith("/profile/") ? "min-h-screen" : ""
+      }`}
+      style={{
         background: backgroundColor,
         color: textColor,
         fontFamily: fontFamily,
@@ -173,7 +193,6 @@ const pathname = usePathname();
     >
       {/* Card Container */}
       <div className="w-full max-w-sm bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200 transition hover:shadow-xl hover:-translate-y-1 duration-300">
-        
         {/* Cover Image */}
         <div className="h-28 w-full" style={{ backgroundColor: primary }}>
           {profile.coverImage ? (
@@ -183,7 +202,7 @@ const pathname = usePathname();
               className="w-full h-full object-cover"
             />
           ) : (
-            <div 
+            <div
               className="w-full h-full flex items-center justify-center text-white/80 text-sm"
               style={{ backgroundColor: primary }}
             />
@@ -283,37 +302,41 @@ const pathname = usePathname();
           <div className="px-6 pb-4">
             <div className="border-t border-gray-200 pt-4">
               <h3 className="text-xs font-medium text-gray-600 mb-3 uppercase tracking-wide">
-                Connect with me
+                Connect with meaaaa
               </h3>
               <div className="grid grid-cols-2 gap-2">
-            {profile.socialLinks
-              .filter(link => link.isVisible)
-              .map(link => {
-                // normalize key: lowercase and trim
-                const platformKey = (link.platform || link.id || "").trim().toLowerCase();
-                const icon = socialIconMap[platformKey] || <Globe size={14} />;
+                {profile.socialLinks
+                  .filter((link) => link.isVisible)
+                  .map((link) => {
+                    // normalize key: lowercase and trim
+                    const platformKey = (link.platform || link.id || "")
+                      .trim()
+                      .toLowerCase();
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
 
-                   return (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:opacity-90 transition text-white"
-                      style={{ backgroundColor: secondary }}
-                    >
-                      {icon}
-                      {link.username}
-                    </a>
-                  );
-                })}
+                    return (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 text-xs rounded-lg hover:opacity-90 transition text-white"
+                        style={{ backgroundColor: secondary }}
+                      >
+                        {icon}
+                        {link.username}
+                      </a>
+                    );
+                  })}
               </div>
             </div>
           </div>
         )}
 
         {/* Bottom Actions */}
-        <div 
+        <div
           className="flex justify-around border-t p-4"
           style={{ borderColor: accent + "30" }}
         >
@@ -331,7 +354,6 @@ const pathname = usePathname();
             <Share2 className="w-5 h-5 mb-1" style={{ color: secondary }} />
             Share
           </button>
-        
         </div>
       </div>
 
@@ -345,11 +367,11 @@ const pathname = usePathname();
             </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4">
-        <QRCodeSVG value={profileUrl} size={256} />
+            <QRCodeSVG value={profileUrl} size={256} />
 
-      <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-        {profileUrl}
-      </a>
+            <a href={profileUrl} target="_blank" rel="noopener noreferrer">
+              {profileUrl}
+            </a>
             <div className="w-full p-3 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
               <div className="flex items-center justify-between">

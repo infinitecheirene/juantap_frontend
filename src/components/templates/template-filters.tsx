@@ -4,9 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { Search } from "lucide-react";
 
 interface TemplateFiltersProps {
@@ -14,11 +12,11 @@ interface TemplateFiltersProps {
   setSearchQuery: (value: string) => void;
 }
 
-export function TemplateFilters({ searchQuery, setSearchQuery }: TemplateFiltersProps) {
+export function TemplateFilters({
+  searchQuery,
+  setSearchQuery,
+}: TemplateFiltersProps) {
   const pathname = usePathname();
-  const [activeCategory, setActiveCategory] = useState("all");
-
-
 
   return (
     <div className="mb-12">
@@ -31,6 +29,7 @@ export function TemplateFilters({ searchQuery, setSearchQuery }: TemplateFilters
               Back
             </Button>
           </Link>
+
           <div>
             <h1 className="text-3xl font-bold text-gray-900">My Templates</h1>
             <p className="text-gray-600">
@@ -41,18 +40,18 @@ export function TemplateFilters({ searchQuery, setSearchQuery }: TemplateFilters
       )}
 
       {/* Search */}
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-        <Input
-          placeholder="Search templates..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 bg-white text-gray-900"
-        />
-      </div>
-    </div>
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
 
+          <Input
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-white text-gray-900"
+          />
+        </div>
+      </div>
     </div>
   );
 }

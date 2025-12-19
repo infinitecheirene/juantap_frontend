@@ -3,11 +3,29 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  Mail, Phone, MapPin, Globe, Copy,
-  Instagram, Twitter, Linkedin, Github, Youtube, Music,
-  Facebook, QrCode, Share2, Heart, Download, User
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Copy,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  Facebook,
+  QrCode,
+  Share2,
+  Download,
+  User,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { usePathname } from "next/navigation";
@@ -15,7 +33,7 @@ import { usePathname } from "next/navigation";
 interface SocialLink {
   id: string;
   username: string;
-  platform: string; 
+  platform: string;
   url: string;
   isVisible: boolean;
 }
@@ -48,18 +66,18 @@ export function NatureOrganic() {
   const [error, setError] = useState("");
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liked, setLiked] = useState(false);
-const pathname = usePathname();
+  const pathname = usePathname();
 
-   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-const profileUrl = profile?.username
-  ? `${frontendUrl}/${profile.username}`
-  : profile?.displayName
-  ? `${frontendUrl}/${profile.displayName}`
-  : frontendUrl;
+  const profileUrl = profile?.username
+    ? `${frontendUrl}/${profile.username}`
+    : profile?.displayName
+    ? `${frontendUrl}/${profile.displayName}`
+    : frontendUrl;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={14} />,
@@ -107,7 +125,8 @@ const profileUrl = profile?.username
           template: {
             backgroundColor: data.profile?.background_value || "#f0fdf4",
             textColor: data.profile?.textColor || "#14532d",
-            fontFamily: data.profile?.font_style || "'Source Sans Pro', sans-serif",
+            fontFamily:
+              data.profile?.font_style || "'Source Sans Pro', sans-serif",
             primary: data.profile?.primary || "#22c55e",
             secondary: data.profile?.secondary || "#16a34a",
             accent: data.profile?.accent || "#84cc16",
@@ -163,9 +182,10 @@ const profileUrl = profile?.username
 
   return (
     <div
- className={`w-full p-4 flex justify-center items-center ${
-    pathname.startsWith("/profile/") ? "min-h-screen" : ""
-  }`}      style={{
+      className={`w-full p-4 flex justify-center items-center ${
+        pathname.startsWith("/profile/") ? "min-h-screen" : ""
+      }`}
+      style={{
         background: bg,
         color: text,
         fontFamily: font,
@@ -173,7 +193,6 @@ const profileUrl = profile?.username
     >
       {/* Card Container */}
       <div className="w-full max-w-xs bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200 transition hover:shadow-xl hover:-translate-y-1 duration-300">
-        
         {/* Cover Image */}
         <div className="h-28 w-full" style={{ backgroundColor: primary }}>
           {profile?.coverImage ? (
@@ -183,13 +202,12 @@ const profileUrl = profile?.username
               className="w-full h-full object-cover"
             />
           ) : (
-            <div 
+            <div
               className="w-full h-full flex items-center justify-center text-white/80 text-sm"
-              style={{ 
-                background: `linear-gradient(135deg, ${primary}, ${secondary})` 
+              style={{
+                background: `linear-gradient(135deg, ${primary}, ${secondary})`,
               }}
-            >
-            </div>
+            ></div>
           )}
         </div>
 
@@ -211,7 +229,7 @@ const profileUrl = profile?.username
           </div>
 
           {/* Online Status */}
-          <span 
+          <span
             className="absolute top-16 right-[35%] text-white text-xs px-2 py-0.5 rounded-full"
             style={{ backgroundColor: accent }}
           >
@@ -219,7 +237,10 @@ const profileUrl = profile?.username
           </span>
 
           {/* Name & Bio */}
-          <h1 className="mt-4 text-lg font-semibold" style={{ color: secondary }}>
+          <h1
+            className="mt-4 text-lg font-semibold"
+            style={{ color: secondary }}
+          >
             {profile?.displayName || "Display Name"}
           </h1>
           {profile?.location && (
@@ -239,16 +260,19 @@ const profileUrl = profile?.username
           <>
             <div className="border-t border-gray-200 mt-4"></div>
             <div className="px-6 py-3 space-y-2">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Contact</h3>
-              
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                Contact
+              </h3>
+
               {profile?.email && (
                 <div className="flex items-center justify-between bg-gray-50 rounded-lg p-2 text-xs">
                   <div className="flex items-center gap-2 text-gray-700">
                     <Mail size={14} style={{ color: secondary }} />
                     <span>{profile.email}</span>
                   </div>
-                  <button 
-                    className="text-gray-400 hover:text-gray-600" 
+
+                  <button
+                    className="text-gray-400 hover:text-gray-600"
                     onClick={() => copyToClipboard(profile.email!)}
                   >
                     <Copy size={12} />
@@ -262,8 +286,9 @@ const profileUrl = profile?.username
                     <Phone size={14} style={{ color: secondary }} />
                     <span>{profile.phone}</span>
                   </div>
-                  <button 
-                    className="text-gray-400 hover:text-gray-600" 
+
+                  <button
+                    className="text-gray-400 hover:text-gray-600"
                     onClick={() => copyToClipboard(profile.phone!)}
                   >
                     <Copy size={12} />
@@ -292,18 +317,24 @@ const profileUrl = profile?.username
         )}
 
         {/* Social Links */}
-        {profile?.socialLinks?.length && (
+        {profile?.socialLinks?.length > 0 && (
           <>
             <div className="border-t border-gray-200"></div>
             <div className="px-6 py-3">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Connect</h3>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Connect
+              </h3>
               <div className="flex flex-wrap gap-2">
-                 {profile.socialLinks
-                              .filter(link => link.isVisible)
-                              .map(link => {
-                                // normalize key: lowercase and trim
-                                const platformKey = (link.platform || link.id || "").trim().toLowerCase();
-                                const icon = socialIconMap[platformKey] || <Globe size={14} />;
+                {profile.socialLinks
+                  .filter((link) => link.isVisible)
+                  .map((link) => {
+                    // normalize key: lowercase and trim
+                    const platformKey = (link.platform || link.id || "")
+                      .trim()
+                      .toLowerCase();
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
                     return (
                       <a
                         key={link.id}
@@ -326,14 +357,15 @@ const profileUrl = profile?.username
         {/* Bottom Actions */}
         <div className="border-t border-gray-200 bg-gray-50">
           <div className="flex justify-around p-3">
-            <button 
-              onClick={() => setIsQRModalOpen(true)} 
+            <button
+              onClick={() => setIsQRModalOpen(true)}
               className="flex flex-col items-center text-xs hover:opacity-70 transition"
               style={{ color: secondary }}
             >
               <QrCode className="w-4 h-4 mb-1" />
               <span>QR Code</span>
             </button>
+
             <button
               onClick={handleShare}
               className="flex flex-col items-center text-xs hover:opacity-70 transition"
@@ -342,7 +374,6 @@ const profileUrl = profile?.username
               <Share2 className="w-4 h-4 mb-1" />
               <span>Share</span>
             </button>
-          
           </div>
         </div>
       </div>
@@ -351,10 +382,14 @@ const profileUrl = profile?.username
       <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2" style={{ color: secondary }}>
+            <DialogTitle
+              className="flex items-center gap-2"
+              style={{ color: secondary }}
+            >
               <QrCode className="w-5 h-5" /> QR Code for {profile.displayName}
             </DialogTitle>
           </DialogHeader>
+
           <div className="flex flex-col items-center space-y-4">
             <QRCodeSVG
               value={profileUrl}
@@ -369,13 +404,17 @@ const profileUrl = profile?.username
                 excavate: true,
               }}
             />
+
             <div className="w-full p-3 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600 mb-2">Profile URL:</p>
               <div className="flex items-center justify-between">
-                <code className="text-sm text-gray-800 truncate flex-1 mr-2">{profileUrl}</code>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <code className="text-sm text-gray-800 truncate flex-1 mr-2">
+                  {profileUrl}
+                </code>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={copyUrl}
                   style={{ color: primary }}
                 >
@@ -383,14 +422,16 @@ const profileUrl = profile?.username
                 </Button>
               </div>
             </div>
+
             <div className="flex gap-2 w-full">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 style={{ borderColor: secondary, color: secondary }}
               >
                 <Download className="w-4 h-4 mr-2" /> Download
               </Button>
-              <Button 
+              
+              <Button
                 onClick={() => setIsQRModalOpen(false)}
                 style={{ backgroundColor: primary, color: "white" }}
               >

@@ -35,6 +35,7 @@
     ".next/types/**/*.ts",
     "src/components/templates",
     "src/app/templates/[templateId]/page.tsx",
+    "env",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [

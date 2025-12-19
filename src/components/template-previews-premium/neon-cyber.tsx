@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useParams } from "next/navigation"
-import React, { useEffect, useState } from "react"
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import {
   Mail,
   Phone,
@@ -17,63 +17,67 @@ import {
   Facebook,
   QrCode,
   Share2,
-  Heart,
   Download,
   User,
-} from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { QRCodeSVG } from "qrcode.react"
-import { usePathname } from "next/navigation"
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { QRCodeSVG } from "qrcode.react";
+import { usePathname } from "next/navigation";
 
 interface SocialLink {
-  id: string
-  username: string
-  platform: string
-  url: string
-  isVisible: boolean
+  id: string;
+  username: string;
+  platform: string;
+  url: string;
+  isVisible: boolean;
 }
 
 interface ProfileData {
-  username?: string
-  displayName?: string
-  location?: string
-  bio?: string
-  coverImage?: string
-  avatar?: string
-  website?: string
-  phone?: string
-  email?: string
-  socialLinks?: SocialLink[]
+  username?: string;
+  displayName?: string;
+  location?: string;
+  bio?: string;
+  coverImage?: string;
+  avatar?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  socialLinks?: SocialLink[];
   template?: {
-    backgroundColor?: string
-    textColor?: string
-    fontFamily?: string
-    primary?: string
-    secondary?: string
-    accent?: string
-  }
+    backgroundColor?: string;
+    textColor?: string;
+    fontFamily?: string;
+    primary?: string;
+    secondary?: string;
+    accent?: string;
+  };
 }
 
 export function NeonCyber() {
-  const { username } = useParams<{ username?: string }>()
-  const [profile, setProfile] = useState<ProfileData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [liked, setLiked] = useState(false)
-  const pathname = usePathname()
+  const { username } = useParams<{ username?: string }>();
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const pathname = usePathname();
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || ""
-  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || ""
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000"
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
   const profileUrl = profile?.username
     ? `${frontendUrl}/${profile.username}`
     : profile?.displayName
     ? `${frontendUrl}/${profile.displayName}`
-    : frontendUrl
+    : frontendUrl;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={14} />,
@@ -83,33 +87,36 @@ export function NeonCyber() {
     github: <Github size={14} />,
     youtube: <Youtube size={14} />,
     tiktok: <Music size={14} />,
-  }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        let endpoint = ""
-        let headers: HeadersInit = { Accept: "application/json" }
+        let endpoint = "";
+        let headers: HeadersInit = { Accept: "application/json" };
 
         if (username) {
-          endpoint = `${baseUrl}/profile/${username}`
+          endpoint = `${baseUrl}/profile/${username}`;
         } else {
-          const token = localStorage.getItem("token")
-          if (!token) throw new Error("No authentication token found")
-          endpoint = `${baseUrl}/user-profile`
-          headers = { ...headers, Authorization: `Bearer ${token}` }
+          const token = localStorage.getItem("token");
+          if (!token) throw new Error("No authentication token found");
+          endpoint = `${baseUrl}/user-profile`;
+          headers = { ...headers, Authorization: `Bearer ${token}` };
         }
 
-        const res = await fetch(endpoint, { headers })
-        if (!res.ok) throw new Error("Failed to fetch profile")
+        const res = await fetch(endpoint, { headers });
+        if (!res.ok) throw new Error("Failed to fetch profile");
 
-        const data = await res.json()
+        const data = await res.json();
         setProfile({
           username: data.username,
           displayName: data.display_name,
           location: data.profile?.location,
           bio: data.profile?.bio,
-          coverImage: data.profile?.background_type === "image" ? `${baseUrl}${data.profile?.background_value}` : undefined,
+          coverImage:
+            data.profile?.background_type === "image"
+              ? `${baseUrl}${data.profile?.background_value}`
+              : undefined,
           avatar: data.profile_image || undefined,
           website: data.profile?.website,
           phone: data.profile?.phone,
@@ -123,16 +130,16 @@ export function NeonCyber() {
             secondary: data.profile?.secondary || "#ff00ff",
             accent: data.profile?.accent || "#9d00ff",
           },
-        })
+        });
       } catch (err: any) {
-        setError(err.message)
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [username, baseUrl])
+    fetchProfile();
+  }, [username, baseUrl]);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -141,40 +148,42 @@ export function NeonCyber() {
           title: "Check this out!",
           text: "Here's something interesting for you.",
           url: window.location.href,
-        })
+        });
       } catch (err) {
-        console.error("Error sharing:", err)
+        console.error("Error sharing:", err);
       }
     } else {
-      alert("Sharing is not supported on this browser.")
+      alert("Sharing is not supported on this browser.");
     }
-  }
+  };
 
   const copyUrl = () => {
-    if (!profileUrl) return
-    navigator.clipboard.writeText(profileUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    if (!profileUrl) return;
+    navigator.clipboard.writeText(profileUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-  }
+    navigator.clipboard.writeText(text);
+  };
 
-  if (loading) return <p className="p-6 text-gray-500">Loading...</p>
-  if (error) return <p className="p-6 text-red-500">Error: {error}</p>
-  if (!profile) return <p className="p-6 text-gray-500">No profile found.</p>
+  if (loading) return <p className="p-6 text-gray-500">Loading...</p>;
+  if (error) return <p className="p-6 text-red-500">Error: {error}</p>;
+  if (!profile) return <p className="p-6 text-gray-500">No profile found.</p>;
 
-  const bg = profile?.template?.backgroundColor || "#0a0a0a"
-  const text = profile?.template?.textColor || "#ffffff"
-  const font = profile?.template?.fontFamily || "Orbitron, sans-serif"
-  const primary = profile?.template?.primary || "#00ffff"
-  const secondary = profile?.template?.secondary || "#ff00ff"
-  const accent = profile?.template?.accent || "#9d00ff"
+  const bg = profile?.template?.backgroundColor || "#0a0a0a";
+  const text = profile?.template?.textColor || "#ffffff";
+  const font = profile?.template?.fontFamily || "Orbitron, sans-serif";
+  const primary = profile?.template?.primary || "#00ffff";
+  const secondary = profile?.template?.secondary || "#ff00ff";
+  const accent = profile?.template?.accent || "#9d00ff";
 
   return (
     <div
-      className={`w-full p-4 flex justify-center items-center ${pathname.startsWith("/profile/") ? "min-h-screen" : ""}`}
+      className={`w-full p-4 flex justify-center items-center ${
+        pathname.startsWith("/profile/") ? "min-h-screen" : ""
+      }`}
       style={{
         background: `radial-gradient(circle at center, ${primary}15, ${secondary}15, ${bg})`,
         color: text,
@@ -193,7 +202,9 @@ export function NeonCyber() {
         <div
           className="h-28 w-full"
           style={{
-            background: profile?.coverImage ? `url(${profile.coverImage}) center/cover` : `linear-gradient(45deg, ${primary}, ${secondary})`,
+            background: profile?.coverImage
+              ? `url(${profile.coverImage}) center/cover`
+              : `linear-gradient(45deg, ${primary}, ${secondary})`,
           }}
         >
           {!profile?.coverImage && (
@@ -217,7 +228,11 @@ export function NeonCyber() {
             }}
           >
             {profile?.avatar ? (
-              <img src={`${imageUrl}/storage/${profile.avatar}`} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover" />
+              <img
+                src={`${imageUrl}/storage/${profile.avatar}`}
+                alt={profile.displayName || "Avatar"}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <User className="w-12 h-12 text-white/70" />
             )}
@@ -243,21 +258,33 @@ export function NeonCyber() {
           >
             {profile?.displayName || "Display Name"}
           </h1>
+
           {profile?.location && (
             <p className="flex items-center gap-1 text-xs text-white/70 mt-1">
               <MapPin size={12} style={{ color: secondary }} />
               {profile.location}
             </p>
           )}
-          {profile?.bio && <p className="mt-2 text-xs text-white/60 text-center leading-snug">{profile.bio}</p>}
+
+          {profile?.bio && (
+            <p className="mt-2 text-xs text-white/60 text-center leading-snug">
+              {profile.bio}
+            </p>
+          )}
         </div>
 
         {/* Contact Section */}
         {(profile?.email || profile?.phone || profile?.website) && (
           <>
-            <div className="border-t mt-4 mx-6" style={{ borderColor: `${primary}40` }}></div>
+            <div
+              className="border-t mt-4 mx-6"
+              style={{ borderColor: `${primary}40` }}
+            ></div>
             <div className="px-6 py-3 space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: primary }}>
+              <h3
+                className="text-xs font-bold uppercase tracking-widest"
+                style={{ color: primary }}
+              >
                 CONTACT
               </h3>
 
@@ -273,6 +300,7 @@ export function NeonCyber() {
                     <Mail size={14} style={{ color: primary }} />
                     <span className="text-white/90">{profile.email}</span>
                   </div>
+
                   <button
                     className="text-white/50 hover:text-white transition"
                     onClick={() => copyToClipboard(profile.email!)}
@@ -295,6 +323,7 @@ export function NeonCyber() {
                     <Phone size={14} style={{ color: secondary }} />
                     <span className="text-white/90">{profile.phone}</span>
                   </div>
+
                   <button
                     className="text-white/50 hover:text-white transition"
                     onClick={() => copyToClipboard(profile.phone!)}
@@ -315,7 +344,11 @@ export function NeonCyber() {
                 >
                   <Globe size={14} style={{ color: accent }} />
                   <a
-                    href={profile.website.startsWith("http") ? profile.website : `https://${profile.website}`}
+                    href={
+                      profile.website.startsWith("http")
+                        ? profile.website
+                        : `https://${profile.website}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline text-white/90 hover:text-white transition"
@@ -329,11 +362,17 @@ export function NeonCyber() {
         )}
 
         {/* Social Links */}
-        {profile?.socialLinks?.length && (
+        {profile?.socialLinks?.length > 0 && (
           <>
-            <div className="border-t mx-6" style={{ borderColor: `${primary}40` }}></div>
+            <div
+              className="border-t mx-6"
+              style={{ borderColor: `${primary}40` }}
+            ></div>
             <div className="px-6 py-3">
-              <h3 className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: secondary }}>
+              <h3
+                className="text-xs font-bold uppercase tracking-widest mb-3"
+                style={{ color: secondary }}
+              >
                 NETWORK
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -341,8 +380,12 @@ export function NeonCyber() {
                   .filter((link) => link.isVisible)
                   .map((link) => {
                     // normalize key: lowercase and trim
-                    const platformKey = (link.platform || link.id || "").trim().toLowerCase()
-                    const icon = socialIconMap[platformKey] || <Globe size={14} />
+                    const platformKey = (link.platform || link.id || "")
+                      .trim()
+                      .toLowerCase();
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
                     return (
                       <a
                         key={link.id}
@@ -359,7 +402,7 @@ export function NeonCyber() {
                         {icon}
                         {link.username}
                       </a>
-                    )
+                    );
                   })}
               </div>
             </div>
@@ -386,6 +429,7 @@ export function NeonCyber() {
               <QrCode className="w-4 h-4 mb-1" />
               <span>QR</span>
             </button>
+
             <button
               onClick={handleShare}
               className="flex flex-col items-center text-xs hover:opacity-70 transition"
@@ -461,9 +505,15 @@ export function NeonCyber() {
                 userSelect: "all",
               }}
             >
-              <p className="mb-2 text-sm uppercase tracking-wider text-white/80">PROFILE URL:</p>
+              <p className="mb-2 text-sm uppercase tracking-wider text-white/80">
+                PROFILE URL:
+              </p>
+
               <div className="flex items-center justify-between">
-                <code className="text-sm truncate flex-1 mr-3">{profileUrl}</code>
+                <code className="text-sm truncate flex-1 mr-3">
+                  {profileUrl}
+                </code>
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -496,6 +546,7 @@ export function NeonCyber() {
                 <Download className="w-5 h-5 mr-2" />
                 DOWNLOAD
               </Button>
+
               <Button
                 onClick={() => setIsQRModalOpen(false)}
                 className="flex-1 font-bold tracking-wider"
@@ -513,5 +564,5 @@ export function NeonCyber() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

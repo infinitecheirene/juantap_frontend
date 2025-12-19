@@ -8,7 +8,9 @@ interface TemplatePreviewHeaderProps {
   template: Template;
 }
 
-export function TemplatePreviewHeader({ template }: TemplatePreviewHeaderProps) {
+export function TemplatePreviewHeader({
+  template,
+}: TemplatePreviewHeaderProps) {
   const isPremium = template.category === "premium";
 
   return (
@@ -24,22 +26,30 @@ export function TemplatePreviewHeader({ template }: TemplatePreviewHeaderProps) 
               </Button>
             </Link>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{template.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-800">
+                {template.name}
+              </h1>
               <div className="flex flex-wrap gap-2">
                 {isPremium && (
-                  <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
+                  <Badge className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
                     <Crown className="w-3 h-3 mr-1" />
                     Premium
                   </Badge>
                 )}
                 {template.isNew && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                  <Badge
+                    variant="secondary"
+                    className="text-2xl bg-green-100 text-green-700 border-green-200"
+                  >
                     <Sparkles className="w-3 h-3 mr-1" />
                     New
                   </Badge>
                 )}
                 {template.isPopular && (
-                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                  <Badge
+                    variant="secondary"
+                    className="text-2xl bg-yellow-100 text-yellow-700 border-yellow-200"
+                  >
                     <Star className="w-3 h-3 mr-1" />
                     Popular
                   </Badge>
@@ -54,14 +64,20 @@ export function TemplatePreviewHeader({ template }: TemplatePreviewHeaderProps) 
               <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
                 {template.originalPrice && template.discount ? (
                   <>
-                    <span className="text-2xl font-bold text-gray-900">₱{template.price}</span>
-                    <span className="text-lg text-gray-500 line-through">₱{template.originalPrice}</span>
+                    <span className="text-2xl font-bold text-gray-900">
+                      ₱{template.price}
+                    </span>
+                    <span className="text-lg text-gray-500 line-through">
+                      ₱{template.originalPrice}
+                    </span>
                     <Badge variant="destructive" className="bg-red-500">
                       -{template.discount}%
                     </Badge>
                   </>
                 ) : (
-                  <span className="text-2xl font-bold text-gray-900">₱{template.price}</span>
+                  <span className="text-2xl font-bold text-gray-900">
+                    ₱{template.price}
+                  </span>
                 )}
               </div>
             ) : (

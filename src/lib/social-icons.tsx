@@ -11,7 +11,7 @@ import {
   MessageCircle,
   Facebook,
   Camera,
-} from "lucide-react"
+} from "lucide-react";
 
 export function getSocialIcon(iconName: string) {
   const icons: Record<string, any> = {
@@ -30,7 +30,7 @@ export function getSocialIcon(iconName: string) {
     dribbble: Camera,
     behance: Camera,
     default: Globe,
-  }
+  };
 
-  return icons[iconName.toLowerCase()] || icons.default
+  return icons[iconName.toLowerCase()] || icons.default;
 }

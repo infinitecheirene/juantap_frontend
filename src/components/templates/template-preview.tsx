@@ -1,8 +1,7 @@
-
+import type { Template } from "@/lib/template-data"
 import { TemplatePreviewHeader } from "@/components/templates/template-preview-header"
 import { TemplatePreviewContent } from "@/components/templates/template-preview-content"
 import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar"
-import { Template } from "@/types/template"
 
 interface TemplatePreviewProps {
   template: Template
@@ -17,6 +16,7 @@ export function TemplatePreview({ template }: TemplatePreviewProps) {
           <div className="lg:col-span-2">
             <TemplatePreviewContent template={template} />
           </div>
+          
           <div className="lg:col-span-1">
             <TemplatePreviewSidebar template={template} />
           </div>

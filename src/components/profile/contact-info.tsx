@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import type { ProfileData } from "@/lib/profile-data"
-import { Button } from "@/components/ui/button"
-import { Mail, Phone, Copy } from "lucide-react"
-import { useState } from "react"
+import type { ProfileData } from "@/lib/profile-data";
+import { Button } from "@/components/ui/button";
+import { Mail, Phone, Copy } from "lucide-react";
+import { useState } from "react";
 
 interface ContactInfoProps {
-  profile: ProfileData
+  profile: ProfileData;
 }
 
 export function ContactInfo({ profile }: ContactInfoProps) {
-  const [copiedField, setCopiedField] = useState<string | null>(null)
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
-      await navigator.clipboard.writeText(text)
-      setCopiedField(field)
-      setTimeout(() => setCopiedField(null), 2000)
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err)
+      console.error("Failed to copy:", err);
     }
-  }
+  };
 
   return (
     <div className="space-y-3">
@@ -66,5 +66,5 @@ export function ContactInfo({ profile }: ContactInfoProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

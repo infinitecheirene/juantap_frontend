@@ -1,14 +1,14 @@
-import type { SocialLink } from "@/lib/profile-data"
-import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
-import { getSocialIcon } from "@/lib/social-icons"
+import type { SocialLink } from "@/lib/profile-data";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
+import { getSocialIcon } from "@/lib/social-icons";
 
 interface SocialLinkCardProps {
-  link: SocialLink
+  link: SocialLink;
 }
 
 export function SocialLinkCard({ link }: SocialLinkCardProps) {
-  const Icon = getSocialIcon(link.icon)
+  const Icon = getSocialIcon(link.icon);
 
   return (
     <Button
@@ -31,5 +31,5 @@ export function SocialLinkCard({ link }: SocialLinkCardProps) {
         </div>
       </a>
     </Button>
-  )
+  );
 }

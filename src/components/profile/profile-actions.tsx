@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import type { ProfileData } from "@/lib/profile-data"
-import { Button } from "@/components/ui/button"
-import { QrCode, Share2, Heart, Download } from "lucide-react"
-import { useState } from "react"
-import { QRCodeModal } from "@/components/profile/qr-code-modal"
+import type { ProfileData } from "@/lib/profile-data";
+import { Button } from "@/components/ui/button";
+import { QrCode, Share2, Heart, Download } from "lucide-react";
+import { useState } from "react";
+import { QRCodeModal } from "@/components/profile/qr-code-modal";
 
 interface ProfileActionsProps {
-  profile: ProfileData
+  profile: ProfileData;
 }
 
 export function ProfileActions({ profile }: ProfileActionsProps) {
-  const [showQRCode, setShowQRCode] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/profile/${profile.username}`
+    const url = `${window.location.origin}/profile/${profile.username}`;
 
     if (navigator.share) {
       try {
@@ -23,35 +23,35 @@ export function ProfileActions({ profile }: ProfileActionsProps) {
           title: `${profile.displayName} - JuanTap`,
           text: profile.bio || `Check out ${profile.displayName}'s profile`,
           url: url,
-        })
+        });
       } catch (err) {
-        console.log("Share cancelled")
+        console.log("Share cancelled");
       }
     } else {
       // Fallback to clipboard
-      await navigator.clipboard.writeText(url)
-      alert("Profile link copied to clipboard!")
+      await navigator.clipboard.writeText(url);
+      alert("Profile link copied to clipboard!");
     }
-  }
+  };
 
   const handleSaveContact = () => {
     // Create vCard data
     const vCard = `BEGIN:VCARD
-VERSION:3.0
-FN:${profile.displayName}
-${profile.email ? `EMAIL:${profile.email}` : ""}
-${profile.phone ? `TEL:${profile.phone}` : ""}
-${profile.website ? `URL:${profile.website}` : ""}
-END:VCARD`
+    VERSION:3.0
+    FN:${profile.displayName}
+    ${profile.email ? `EMAIL:${profile.email}` : ""}
+    ${profile.phone ? `TEL:${profile.phone}` : ""}
+    ${profile.website ? `URL:${profile.website}` : ""}
+    END:VCARD`;
 
-    const blob = new Blob([vCard], { type: "text/vcard" })
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = `${profile.username}.vcf`
-    link.click()
-    window.URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([vCard], { type: "text/vcard" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${profile.username}.vcf`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -97,7 +97,11 @@ END:VCARD`
         </div>
       </div>
 
-      <QRCodeModal isOpen={showQRCode} onClose={() => setShowQRCode(false)} profile={profile} />
+      <QRCodeModal
+        isOpen={showQRCode}
+        onClose={() => setShowQRCode(false)}
+        profile={profile}
+      />
     </>
-  )
+  );
 }

@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Upload } from "lucide-react"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Upload } from "lucide-react";
 
 function ProfileModal({ open, onClose, refreshUser }: any) {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<any>(null);
   const [form, setForm] = useState({
     firstname: "",
     lastname: "",
@@ -32,34 +32,34 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
     paymaya: "",
     bpi: "",
     bdo: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [profileImage, setProfileImage] = useState<string | null>(null)
-  const [avatarFile, setAvatarFile] = useState<File | null>(null)
-  const [previewURL, setPreviewURL] = useState<string | null>(null)
-  const avatarInputRef = useRef<HTMLInputElement>(null)
+  });
+  const [loading, setLoading] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
+  // Convert backend path to full image URL
   const getProfileImageUrl = (path?: string) => {
-  if (!path) return "/avatar.png"
-  if (path.startsWith("http")) return path
-  // Path already includes 'avatars/' prefix from backend
-  return `${process.env.NEXT_PUBLIC_IMAGE_URL}/${path}`
-}
+    if (!path) return "/avatar.png";
+    if (path.startsWith("http")) return path;
+    return `${process.env.NEXT_PUBLIC_IMAGE_URL}/storage/${path}`;
+  };
 
   // Fetch user profile from /user-profile
   useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
-    const token = localStorage.getItem("token")
-    if (!token) return
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/user-profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => res.json())
-      .then(data => {
-        setUser(data)
-        const accounts = data.payment_accounts || {}
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data);
+        const accounts = data.payment_accounts || {};
         setForm({
           firstname: data.firstname || "",
           lastname: data.lastname || "",
@@ -75,66 +75,57 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
           paymaya: accounts?.paymaya || "",
           bpi: accounts?.bpi || "",
           bdo: accounts?.bdo || "",
-        })
-        setProfileImage(data.avatar_url || null)
-        setPreviewURL(null)
+        });
+        setProfileImage(data.avatar_url || null);
+        setPreviewURL(null);
       })
-      .catch(err => console.error(err))
-  }, [open])
+      .catch((err) => console.error(err));
+  }, [open]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSave = async () => {
-    const token = localStorage.getItem("token")
-    if (!token) return
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const fd = new FormData()
+      const fd = new FormData();
       Object.keys(form).forEach((key) => {
-        if (key !== "socialLinks") fd.append(key, (form as any)[key] || "")
-      })
+        if (key !== "socialLinks") fd.append(key, (form as any)[key] || "");
+      });
       form.socialLinks.forEach((link, idx) => {
-        fd.append(`socialLinks[${idx}][platform]`, link.platform)
-        fd.append(`socialLinks[${idx}][url]`, link.url)
-      })
-      if (avatarFile) fd.append("avatar", avatarFile)
+        fd.append(`socialLinks[${idx}][platform]`, link.platform);
+        fd.append(`socialLinks[${idx}][url]`, link.url);
+      });
+      if (avatarFile) fd.append("avatar", avatarFile);
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: fd,
-      })
+      });
 
       if (res.ok) {
-        toast.success("Profile updated successfully")
-        refreshUser?.()
-        onClose()
+        toast.success("Profile updated successfully");
+        refreshUser?.();
+        onClose();
       } else {
-        // Try to extract validation messages
-        const data = await res.json().catch(() => null)
-
-        if (res.status === 422 && data?.errors) {
-          const messages = Object.values(data.errors).flat().join("\n")
-          toast.error(messages)
-        } else if (data?.message) {
-          toast.error(data.message)
-        } else {
-          toast.error("Failed to update profile. Please try again.")
-        }
+        toast.error("Failed to update profile");
       }
-
     } catch (err) {
-      console.error(err)
-      toast.error("Something went wrong")
+      console.error(err);
+      toast.error("Something went wrong");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  if (!user) return null // wait for user data
+  if (!user) return null; // wait for user data
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -150,7 +141,11 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
             <AvatarFallback>{form.firstname?.[0] || "U"}</AvatarFallback>
           </Avatar>
           <div>
-            <Button variant="outline" size="sm" onClick={() => avatarInputRef.current?.click()}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => avatarInputRef.current?.click()}
+            >
               <Upload className="w-4 h-4 mr-2" />
               Upload Avatar
             </Button>
@@ -160,10 +155,10 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
               ref={avatarInputRef}
               className="hidden"
               onChange={(e) => {
-                const file = e.target.files?.[0]
-                if (!file) return
-                setAvatarFile(file)
-                setPreviewURL(URL.createObjectURL(file))
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setAvatarFile(file);
+                setPreviewURL(URL.createObjectURL(file));
               }}
             />
           </div>
@@ -171,18 +166,48 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
 
         {/* Form Fields */}
         <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-        
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <Label>First Name</Label>
+              <Input
+                name="firstname"
+                value={form.firstname}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <Label>Last Name</Label>
+              <Input
+                name="lastname"
+                value={form.lastname}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
           <div>
             <Label>Display Name</Label>
-            <Input name="display_name" value={form.display_name} onChange={handleChange} />
+            <Input
+              name="display_name"
+              value={form.display_name}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <Label>Username</Label>
-            <Input name="username" value={form.username} onChange={handleChange} />
+            <Input
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <Label>Email</Label>
-            <Input name="email" value={form.email} onChange={handleChange} disabled />
+            <Input
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              disabled
+            />
           </div>
           <div>
             <Label>Phone</Label>
@@ -190,7 +215,11 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
           </div>
           <div>
             <Label>Location</Label>
-            <Input name="location" value={form.location} onChange={handleChange} />
+            <Input
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+            />
           </div>
 
           {/* Payment Accounts */}
@@ -199,11 +228,19 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label>GCash</Label>
-                <Input name="gcash" value={form.gcash} onChange={handleChange} />
+                <Input
+                  name="gcash"
+                  value={form.gcash}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label>PayMaya</Label>
-                <Input name="paymaya" value={form.paymaya} onChange={handleChange} />
+                <Input
+                  name="paymaya"
+                  value={form.paymaya}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label>BPI</Label>
@@ -218,14 +255,16 @@ function ProfileModal({ open, onClose, refreshUser }: any) {
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
           <Button onClick={handleSave} disabled={loading}>
             {loading ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default ProfileModal
+export default ProfileModal;

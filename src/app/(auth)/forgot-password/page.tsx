@@ -1,35 +1,6 @@
-import { ForgotPasswordForm } from "@/app/(auth)/forgot-password/forgot-password-form"
-import Link from "next/link"
-
-import { cn } from "@/lib/utils"
-
-interface LogoProps {
-  variant?: "light" | "dark"
-  className?: string
-}
-
-export function Logo({ variant = "light", className }: LogoProps) {
-  return (
-    <div className={cn("flex items-center space-x-2", className)}>
-      {/* Gradient Circle with JT */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-400 flex items-center justify-center">
-        <span className="text-white font-serif font-bold text-sm">JT</span>
-      </div>
-
-      {/* Gradient JuanTap text */}
-      <span
-        className={cn(
-          "text-xl font-bold", 
-          variant === "light"
-            ? "bg-gradient-to-r from-cyan-500 to-indigo-300 bg-clip-text text-transparent"
-            : "text-white"
-        )}
-      >
-        JuanTap
-      </span>
-    </div>
-  )
-}
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
+import { Logo } from "@/components/blocks/logo";
+import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   return (
@@ -40,7 +11,9 @@ export default function ForgotPasswordPage() {
           <Link href="/" className="inline-block mb-6">
             <Logo />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Forgot your password?</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Forgot your password?
+          </h1>
           <p className="text-gray-600">
             Enter your email and we&apos;ll send you a reset link
           </p>
@@ -53,12 +26,15 @@ export default function ForgotPasswordPage() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Remember your password?{" "}
-            <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            <Link
+              href="/login"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
               Sign in
             </Link>
           </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

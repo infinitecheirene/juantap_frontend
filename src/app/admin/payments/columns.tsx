@@ -1,29 +1,40 @@
-"use client"
+"use client";
 
-import type { ColumnDef } from "@tanstack/react-table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Eye } from "lucide-react"
-import { toast } from "sonner"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
 // Types for payment
 export type Payment = {
-  id: number
-  user: { name: string; email: string; profile?: { phone?: string } }
-  template: { name: string; price: number }
-  payment_method: string
-  reference_number: string
-  notes: string
-  receipt_img?: string
-  status: "approved" | "disapproved" | "pending"
-  submitted_at: string
-}
+  id: number;
+  user: { name: string; email: string; profile?: { phone?: string } };
+  template: { name: string; price: number };
+  payment_method: string;
+  reference_number: string;
+  notes: string;
+  receipt_img?: string;
+  status: "approved" | "disapproved" | "pending";
+  submitted_at: string;
+};
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!
-const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL!
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const IMAGE_URL = process.env.NEXT_PUBLIC_IMAGE_URL!;
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -35,7 +46,13 @@ export const columns: ColumnDef<Payment>[] = [
         aria-label="Select all"
       />
     ),
-    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -44,18 +61,18 @@ export const columns: ColumnDef<Payment>[] = [
     id: "userName",
     header: "User",
     accessorFn: (row) => row.user?.name ?? "-",
-    cell: ({ row }) => <div className="truncate max-w-[100px] md:max-w-none">{row.original.user?.name ?? "-"}</div>,
   },
   {
     id: "templateName",
     header: "Template",
     accessorFn: (row) => row.template?.name ?? "-",
-    cell: ({ row }) => <div className="truncate max-w-[100px] md:max-w-none">{row.original.template?.name ?? "-"}</div>,
   },
   {
     accessorKey: "payment_method",
     header: "Method",
-    cell: ({ row }) => <span className="capitalize">{row.original.payment_method}</span>,
+    cell: ({ row }) => (
+      <span className="capitalize">{row.original.payment_method}</span>
+    ),
   },
   {
     accessorKey: "reference_number",
@@ -65,11 +82,11 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "notes",
     header: "Notes",
     cell: ({ row }) => {
-      const notes = row.original.notes
-      if (!notes) return "-"
+      const notes = row.original.notes;
+      if (!notes) return "-";
 
-      const isLong = notes.length > 50
-      const preview = isLong ? notes.substring(0, 50) + "..." : notes
+      const isLong = notes.length > 50;
+      const preview = isLong ? notes.substring(0, 50) + "..." : notes;
 
       return (
         <div>
@@ -85,12 +102,14 @@ export const columns: ColumnDef<Payment>[] = [
                 <DialogHeader>
                   <DialogTitle>Notes</DialogTitle>
                 </DialogHeader>
-                <div className="whitespace-pre-wrap text-sm text-gray-700">{notes}</div>
+                <div className="whitespace-pre-wrap text-sm text-gray-700">
+                  {notes}
+                </div>
               </DialogContent>
             </Dialog>
           )}
         </div>
-      )
+      );
     },
   },
 
@@ -108,34 +127,35 @@ export const columns: ColumnDef<Payment>[] = [
     id: "templatePrice",
     header: "Price",
     accessorFn: (row) => {
-      const price = row.template?.price
-      const numericPrice = typeof price === "string" ? Number.parseFloat(price) : price
-      return numericPrice ? `₱${numericPrice.toFixed(2)}` : "₱0.00"
+      const price = row.template?.price;
+      const numericPrice =
+        typeof price === "string" ? parseFloat(price) : price;
+      return numericPrice ? `₱${numericPrice.toFixed(2)}` : "₱0.00";
     },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status
+      const status = row.original.status;
       const styles: Record<string, string> = {
         approved: "bg-green-100 text-green-800 hover:bg-green-100",
         disapproved: "bg-red-100 text-red-800 hover:bg-red-100",
         pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
-      }
-      return <Badge className={`${styles[status]} text-[10px] md:text-sm px-1 md:px-2 py-0.5 md:py-1`}>{status}</Badge>
+      };
+      return <Badge className={styles[status]}>{status}</Badge>;
     },
   },
   {
     accessorKey: "submitted_at",
     header: "Submitted At",
     cell: ({ row }) => {
-      const date = new Date(row.original.submitted_at)
+      const date = new Date(row.original.submitted_at);
       return date.toLocaleDateString("en-US", {
         day: "2-digit",
         month: "short",
         year: "numeric",
-      })
+      });
     },
   },
   {
@@ -143,7 +163,16 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Receipt",
     cell: ({ row }) =>
       row.original.receipt_img ? (
-        <Button variant="ghost" size="sm" onClick={() => window.open(`${IMAGE_URL}/${row.original.receipt_img}`, "_blank")}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            window.open(
+              `${IMAGE_URL}/storage/${row.original.receipt_img}`,
+              "_blank"
+            )
+          }
+        >
           <Eye className="w-4 h-4" />
         </Button>
       ) : (
@@ -154,30 +183,39 @@ export const columns: ColumnDef<Payment>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row, table }) => {
-      const payment = row.original
+      const payment = row.original;
 
-      const handleAction = async (id: number, action: "approve" | "disapprove") => {
+      const handleAction = async (
+        id: number,
+        action: "approve" | "disapprove"
+      ) => {
         try {
           const res = await fetch(`${API_URL}/admin/payments/${id}/${action}`, {
             method: "POST",
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-          })
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
 
-          if (!res.ok) throw new Error("Failed to update payment status")
+          if (!res.ok) throw new Error("Failed to update payment status");
 
-          toast.success(action === "approve" ? "Payment approved successfully!" : "Payment disapproved successfully!")
+          toast.success(
+            action === "approve"
+              ? "Payment approved successfully!"
+              : "Payment disapproved successfully!"
+          );
 
-          if ((table.options.meta as any)?.refreshData) {
-            ;(table.options.meta as any).refreshData()
+          if (table.options.meta?.refreshData) {
+            table.options.meta.refreshData();
           }
         } catch (error: unknown) {
           if (error instanceof Error) {
-            toast.error(error.message)
+            toast.error(error.message);
           } else {
-            toast.error("Something went wrong")
+            toast.error("Something went wrong");
           }
         }
-      }
+      };
 
       return (
         <DropdownMenu>
@@ -186,24 +224,32 @@ export const columns: ColumnDef<Payment>[] = [
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="space-y-1">
+          <DropdownMenuContent align="end">
             {payment.status !== "approved" && (
               <DropdownMenuItem asChild>
-                <Button size="sm" className="w-full bg-green-400 hover:bg-green-700 text-white" onClick={() => handleAction(payment.id, "approve")}>
+                <Button
+                  size="sm"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => handleAction(payment.id, "approve")}
+                >
                   Approve
                 </Button>
               </DropdownMenuItem>
             )}
             {payment.status !== "disapproved" && (
               <DropdownMenuItem asChild>
-                <Button size="sm" className="w-full bg-red-400 hover:bg-red-700 text-white" onClick={() => handleAction(payment.id, "disapprove")}>
+                <Button
+                  size="sm"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  onClick={() => handleAction(payment.id, "disapprove")}
+                >
                   Disapprove
                 </Button>
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];

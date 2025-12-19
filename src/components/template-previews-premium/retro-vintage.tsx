@@ -3,15 +3,32 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
-  Mail, Phone, MapPin, Globe, Copy,
-  Instagram, Twitter, Linkedin, Github, Youtube, Music,
-  Facebook, QrCode, Share2, Heart, Download, User
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Copy,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Github,
+  Youtube,
+  Music,
+  Facebook,
+  QrCode,
+  Share2,
+  Download,
+  User,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { usePathname } from "next/navigation";
-
 
 interface SocialLink {
   id: string;
@@ -49,18 +66,18 @@ export function RetroVintage() {
   const [error, setError] = useState("");
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [liked, setLiked] = useState(false);
-const pathname = usePathname();
+  const pathname = usePathname();
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
   const imageUrl = process.env.NEXT_PUBLIC_IMAGE_URL || "";
-  const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
-const profileUrl = profile?.username
-  ? `${frontendUrl}/${profile.username}`
-  : profile?.displayName
-  ? `${frontendUrl}/${profile.displayName}`
-  : frontendUrl;
+  const profileUrl = profile?.username
+    ? `${frontendUrl}/${profile.username}`
+    : profile?.displayName
+    ? `${frontendUrl}/${profile.displayName}`
+    : frontendUrl;
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={14} />,
@@ -164,9 +181,10 @@ const profileUrl = profile?.username
 
   return (
     <div
- className={`w-full p-4 flex justify-center items-center ${
-    pathname.startsWith("/profile/") ? "min-h-screen" : ""
-  }`}      style={{
+      className={`w-full p-4 flex justify-center items-center ${
+        pathname.startsWith("/profile/") ? "min-h-screen" : ""
+      }`}
+      style={{
         background: bg,
         color: text,
         fontFamily: font,
@@ -182,22 +200,21 @@ const profileUrl = profile?.username
         }}
       >
         {/* Cover Image / Neon Banner */}
-        <div 
-          className="h-28 w-full" 
+        <div
+          className="h-28 w-full"
           style={{
-            background: profile?.coverImage 
+            background: profile?.coverImage
               ? `url(${profile.coverImage}) center/cover`
               : `linear-gradient(135deg, ${primary}, ${secondary})`,
           }}
         >
           {!profile?.coverImage && (
-            <div 
+            <div
               className="w-full h-full flex items-center justify-center text-white/80 text-sm"
               style={{
                 background: `linear-gradient(135deg, ${primary}, ${secondary})`,
               }}
-            >
-            </div>
+            ></div>
           )}
         </div>
 
@@ -230,9 +247,9 @@ const profileUrl = profile?.username
           </div>
 
           {/* Online Status */}
-          <span 
+          <span
             className="absolute top-16 right-[30%] text-black text-xs px-2 py-0.5 rounded-full font-bold animate-pulse"
-            style={{ 
+            style={{
               backgroundColor: accent,
               boxShadow: `0 0 15px ${accent}`,
               textShadow: `0 0 5px rgba(0,0,0,0.8)`,
@@ -251,12 +268,14 @@ const profileUrl = profile?.username
           >
             {profile?.displayName || "Display Name"}
           </h1>
+
           {profile?.location && (
             <p className="flex items-center gap-1 text-xs opacity-80 mt-1">
               <MapPin size={12} style={{ color: accent }} />
               {profile.location}
             </p>
           )}
+
           {profile?.bio && (
             <p className="mt-2 text-xs opacity-80 text-center leading-snug">
               {profile.bio}
@@ -267,25 +286,25 @@ const profileUrl = profile?.username
         {/* Contact Section */}
         {(profile?.email || profile?.phone || profile?.website) && (
           <>
-            <div 
-              className="border-t mt-4 mx-6" 
+            <div
+              className="border-t mt-4 mx-6"
               style={{ borderColor: primary }}
             ></div>
             <div className="px-6 py-3 space-y-2">
-              <h3 
+              <h3
                 className="text-xs font-bold uppercase tracking-wider"
-                style={{ 
+                style={{
                   color: accent,
                   textShadow: `0 0 5px ${accent}`,
                 }}
               >
                 Contact
               </h3>
-              
+
               {profile?.email && (
-                <div 
+                <div
                   className="flex items-center justify-between rounded-lg p-2 text-xs border"
-                  style={{ 
+                  style={{
                     background: `rgba(255, 107, 157, 0.1)`,
                     borderColor: `${primary}50`,
                     boxShadow: `inset 0 0 10px ${primary}20`,
@@ -295,8 +314,9 @@ const profileUrl = profile?.username
                     <Mail size={14} style={{ color: primary }} />
                     <span className="opacity-90">{profile.email}</span>
                   </div>
-                  <button 
-                    className="opacity-60 hover:opacity-100 transition" 
+
+                  <button
+                    className="opacity-60 hover:opacity-100 transition"
                     onClick={() => copyToClipboard(profile.email!)}
                     style={{ filter: `drop-shadow(0 0 3px ${accent})` }}
                   >
@@ -306,9 +326,9 @@ const profileUrl = profile?.username
               )}
 
               {profile?.phone && (
-                <div 
+                <div
                   className="flex items-center justify-between rounded-lg p-2 text-xs border"
-                  style={{ 
+                  style={{
                     background: `rgba(196, 69, 105, 0.1)`,
                     borderColor: `${secondary}50`,
                     boxShadow: `inset 0 0 10px ${secondary}20`,
@@ -318,8 +338,9 @@ const profileUrl = profile?.username
                     <Phone size={14} style={{ color: secondary }} />
                     <span className="opacity-90">{profile.phone}</span>
                   </div>
-                  <button 
-                    className="opacity-60 hover:opacity-100 transition" 
+
+                  <button
+                    className="opacity-60 hover:opacity-100 transition"
                     onClick={() => copyToClipboard(profile.phone!)}
                     style={{ filter: `drop-shadow(0 0 3px ${accent})` }}
                   >
@@ -329,9 +350,9 @@ const profileUrl = profile?.username
               )}
 
               {profile?.website && (
-                <div 
+                <div
                   className="flex items-center gap-2 rounded-lg p-2 text-xs border"
-                  style={{ 
+                  style={{
                     background: `rgba(248, 181, 0, 0.1)`,
                     borderColor: `${accent}50`,
                     boxShadow: `inset 0 0 10px ${accent}20`,
@@ -356,27 +377,32 @@ const profileUrl = profile?.username
         {/* Social Links */}
         {profile?.socialLinks?.length > 0 && (
           <>
-            <div 
-              className="border-t mx-6" 
+            <div
+              className="border-t mx-6"
               style={{ borderColor: primary }}
             ></div>
             <div className="px-6 py-3">
-              <h3 
+              <h3
                 className="text-xs font-bold uppercase tracking-wider mb-3"
-                style={{ 
+                style={{
                   color: secondary,
                   textShadow: `0 0 5px ${secondary}`,
                 }}
               >
                 Social
               </h3>
+
               <div className="flex flex-wrap justify-center gap-2">
-                  {profile.socialLinks
-                               .filter(link => link.isVisible)
-                               .map(link => {
-                                 // normalize key: lowercase and trim
-                                 const platformKey = (link.platform || link.id || "").trim().toLowerCase();
-                                 const icon = socialIconMap[platformKey] || <Globe size={14} />;
+                {profile.socialLinks
+                  .filter((link) => link.isVisible)
+                  .map((link) => {
+                    // normalize key: lowercase and trim
+                    const platformKey = (link.platform || link.id || "")
+                      .trim()
+                      .toLowerCase();
+                    const icon = socialIconMap[platformKey] || (
+                      <Globe size={14} />
+                    );
                     return (
                       <a
                         key={link.id}
@@ -401,18 +427,18 @@ const profileUrl = profile?.username
         )}
 
         {/* Bottom Actions */}
-        <div 
+        <div
           className="border-t"
-          style={{ 
+          style={{
             borderColor: primary,
             background: `rgba(45, 27, 105, 0.8)`,
           }}
         >
           <div className="flex justify-around p-3">
-            <button 
-              onClick={() => setIsQRModalOpen(true)} 
+            <button
+              onClick={() => setIsQRModalOpen(true)}
               className="flex flex-col items-center text-xs hover:scale-110 transition transform font-bold"
-              style={{ 
+              style={{
                 color: primary,
                 textShadow: `0 0 5px ${primary}`,
               }}
@@ -420,10 +446,11 @@ const profileUrl = profile?.username
               <QrCode className="w-4 h-4 mb-1" />
               <span>QR</span>
             </button>
+
             <button
               onClick={handleShare}
               className="flex flex-col items-center text-xs hover:scale-110 transition transform font-bold"
-              style={{ 
+              style={{
                 color: secondary,
                 textShadow: `0 0 5px ${secondary}`,
               }}
@@ -431,14 +458,13 @@ const profileUrl = profile?.username
               <Share2 className="w-4 h-4 mb-1" />
               <span>SHARE</span>
             </button>
-           
           </div>
         </div>
       </div>
 
       {/* QR Modal */}
       <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
-        <DialogContent 
+        <DialogContent
           className="sm:max-w-md border-4 rounded-2xl"
           style={{
             background: `rgba(45, 27, 105, 0.98)`,
@@ -447,9 +473,9 @@ const profileUrl = profile?.username
           }}
         >
           <DialogHeader>
-            <DialogTitle 
+            <DialogTitle
               className="flex items-center gap-2 font-bold text-lg"
-              style={{ 
+              style={{
                 color: primary,
                 textShadow: `0 0 15px ${primary}, 0 0 30px ${accent}`,
                 fontFamily: font,
@@ -458,8 +484,9 @@ const profileUrl = profile?.username
               <QrCode className="w-6 h-6" /> RETRO QR: {profile.displayName}
             </DialogTitle>
           </DialogHeader>
+
           <div className="flex flex-col items-center space-y-4">
-            <div 
+            <div
               className="p-4 rounded-2xl border-4"
               style={{
                 borderColor: accent,
@@ -481,7 +508,8 @@ const profileUrl = profile?.username
                 }}
               />
             </div>
-            <div 
+
+            <div
               className="w-full p-4 rounded-xl border-2"
               style={{
                 background: `rgba(255, 107, 157, 0.1)`,
@@ -489,23 +517,27 @@ const profileUrl = profile?.username
                 boxShadow: `inset 0 0 20px ${primary}20`,
               }}
             >
-              <p 
+              <p
                 className="text-sm mb-2 font-bold uppercase tracking-wide"
-                style={{ 
+                style={{
                   color: accent,
                   textShadow: `0 0 5px ${accent}`,
                 }}
               >
                 Profile URL:
               </p>
+
               <div className="flex items-center justify-between">
-                <code className="text-sm opacity-90 truncate flex-1 mr-2">{profileUrl}</code>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <code className="text-sm opacity-90 truncate flex-1 mr-2">
+                  {profileUrl}
+                </code>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={copyUrl}
                   className="font-bold hover:scale-105 transition transform"
-                  style={{ 
+                  style={{
                     color: primary,
                     border: `2px solid ${primary}60`,
                     textShadow: `0 0 5px ${primary}`,
@@ -515,11 +547,12 @@ const profileUrl = profile?.username
                 </Button>
               </div>
             </div>
+
             <div className="flex gap-3 w-full">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="flex-1 font-bold text-sm hover:scale-105 transition transform border-2"
-                style={{ 
+                style={{
                   borderColor: secondary,
                   color: secondary,
                   textShadow: `0 0 3px ${secondary}`,
@@ -527,10 +560,11 @@ const profileUrl = profile?.username
               >
                 <Download className="w-4 h-4 mr-2" /> DOWNLOAD
               </Button>
-              <Button 
+
+              <Button
                 onClick={() => setIsQRModalOpen(false)}
                 className="flex-1 font-bold text-sm hover:scale-105 transition transform border-2"
-                style={{ 
+                style={{
                   background: primary,
                   color: "#ffffff",
                   borderColor: accent,

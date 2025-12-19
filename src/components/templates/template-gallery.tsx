@@ -1,81 +1,88 @@
-"use client"
+"use client";
 
-import React, { useEffect, useState } from "react"
-import { TemplateCard } from "@/components/templates/template-card"
-import { TemplateFilters } from "@/components/templates/template-filters"
-import type { Template } from "@/types/template"
-import PreviewRenderer from "./PreviewRenderer"
+import React, { useEffect, useState } from "react";
+import { TemplateCard } from "@/components/templates/template-card";
+import { TemplateFilters } from "@/components/templates/template-filters";
+import type { Template } from "@/types/template";
 
 // ----- Types -----
 interface SocialLink {
-  id: string
-  platform: string
-  username: string
-  url: string
-  isVisible?: boolean
+  id: string;
+  platform: string;
+  username: string;
+  url: string;
+  isVisible?: boolean;
 }
 
 interface UserData {
-  id: number
-  name: string
-  firstname?: string
-  lastname?: string
-  display_name?: string
-  username: string
-  email: string
-  is_admin: boolean
-  avatar_url: string
+  id: number;
+  name: string;
+  firstname?: string;
+  lastname?: string;
+  display_name?: string;
+  username: string;
+  email: string;
+  is_admin: boolean;
+  avatar_url: string;
   profile?: {
-    bio?: string
-    phone?: string
-    website?: string
-    location?: string
-    template_id?: number
-    background_type?: string
-    background_value?: string
-    font_style?: string
-    font_size?: string
-    button_style?: string
-    accent_color?: string
-    nfc_redirect_url?: string
-    is_published?: boolean
-    socialLinks?: SocialLink[]
-  }
+    bio?: string;
+    phone?: string;
+    website?: string;
+    location?: string;
+    template_id?: number;
+    background_type?: string;
+    background_value?: string;
+    font_style?: string;
+    font_size?: string;
+    button_style?: string;
+    accent_color?: string;
+    nfc_redirect_url?: string;
+    is_published?: boolean;
+    socialLinks?: SocialLink[];
+  };
 }
 
 interface TemplateGalleryProps {
-  templates: Template[]
+  templates: Template[];
 }
 
 // ----- API -----
-const API_URL = process.env.NEXT_PUBLIC_API_URL as string
+const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 // ----- Component -----
 export function TemplateGallery({ templates }: TemplateGalleryProps) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [user, setUser] = useState<UserData | null>(null)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState<UserData | null>(null);
 
   // Filter templates
-  const freeTemplates = templates.filter((t) => t.category === "free" && t.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const freeTemplates = templates.filter(
+    (t) =>
+      t.category === "free" &&
+      t.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const premiumTemplates = templates.filter((t) => t.category === "premium" && t.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const premiumTemplates = templates.filter(
+    (t) =>
+      t.category === "premium" &&
+      t.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Fetch logged-in user
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token")
-        if (!token) return
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
         const res = await fetch(`${API_URL}/user-profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
-        })
+        });
 
-        if (!res.ok) throw new Error("Failed to fetch user")
-        const data = await res.json()
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = await res.json();
 
         setUser({
           id: data.id,
@@ -92,14 +99,14 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
             location: data.profile?.location ?? "",
             socialLinks: data.profile?.socialLinks ?? [],
           },
-        })
+        });
       } catch (err) {
-        console.error("Error fetching user:", err)
+        console.error("Error fetching user:", err);
       }
-    }
+    };
 
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
   return (
     <section className="relative py-12 px-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-hidden">
@@ -117,7 +124,10 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-r from-blue-300/30 to-indigo-300/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
 
       <div className="container mx-auto relative z-10">
-        <TemplateFilters searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <TemplateFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
         {/* Free Templates */}
         <div className="mb-16">
@@ -125,13 +135,16 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
             <h2 className="text-3xl font-bold mb-2 leading-tight bg-gradient-to-r from-purple-700 via-purple-700 to-pink-700 bg-clip-text text-transparent drop-shadow-lg animate-puls">
               Free Templates
             </h2>
-            <span className="text-sm text-gray-500">{freeTemplates.length} templates</span>
+
+            <span className="text-sm text-gray-500">
+              {freeTemplates.length} templates
+            </span>
           </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {freeTemplates.map((template) =>
-                <TemplateCard key={template.id} template={template} user={user}/>
-             
-            )}
+            {freeTemplates.map((template) => (
+              <TemplateCard key={template.id} template={template} user={user} />
+            ))}
           </div>
         </div>
 
@@ -141,15 +154,19 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
             <h2 className="text-3xl font-bold mb-2 leading-tight bg-gradient-to-r from-purple-700 via-purple-700 to-pink-700 bg-clip-text text-transparent drop-shadow-lg animate-puls">
               Premium Templates
             </h2>
-            <span className="text-sm text-gray-500">{premiumTemplates.length} templates</span>
+
+            <span className="text-sm text-gray-500">
+              {premiumTemplates.length} templates
+            </span>
           </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {premiumTemplates.map((template) =>
-              <TemplateCard key={template.id} template={template} user={user}/>
-            )}
+            {premiumTemplates.map((template) => (
+              <TemplateCard key={template.id} template={template} user={user} />
+            ))}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

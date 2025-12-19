@@ -1,7 +1,7 @@
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { TemplateHeader } from "@/components/templates/template-header"
-import TemplateGalleryServer from "@/components/templates/template-gallery-server"
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { TemplateHeader } from "@/components/templates/template-header";
+import TemplateGalleryServer from "@/components/templates/template-gallery-server";
 
 export default function HomePage() {
   return (
@@ -13,5 +13,5 @@ export default function HomePage() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }

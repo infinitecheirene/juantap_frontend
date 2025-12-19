@@ -1,57 +1,28 @@
-import { RegisterForm } from "@/app/(auth)/register/register-form"
-import { Card, CardContent } from "@/components/ui/card"
-import Link from "next/link"
-
-import { cn } from "@/lib/utils"
-
-interface LogoProps {
-  variant?: "light" | "dark"
-  className?: string
-}
-
-export function Logo({ variant = "light", className }: LogoProps) {
-  return (
-    <div className={cn("flex items-center space-x-2", className)}>
-      {/* Gradient Circle with JT */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-400 flex items-center justify-center">
-        <span className="text-white font-serif font-bold text-sm">JT</span>
-      </div>
-
-      {/* Gradient JuanTap text */}
-      <span
-        className={cn(
-          "text-xl font-bold", 
-          variant === "light"
-            ? "bg-gradient-to-r from-cyan-500 to-indigo-300 bg-clip-text text-transparent"
-            : "text-white"
-        )}
-      >
-        JuanTap
-      </span>
-    </div>
-  )
-}
+import { RegisterForm } from "@/components/auth/register-form";
+import { Logo } from "@/components/blocks/logo";
+import Link from "next/link";
 
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* ✅ Everything inside one card */}
-        <Card className="border border-gray-200 shadow-lg rounded-2xl bg-white">
-          <CardContent className="p-8">
-            {/* Header */}
-            <div className="text-center mb-6">
-              <Link href="/" className="inline-block mb-4">
-                <Logo />
-              </Link>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Create your account</h1>
-              <p className="text-gray-600 text-sm">Start building your digital profile today</p>
-            </div>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-block mb-6">
+            <Logo />
+          </Link>
 
-            {/* Register Form */}
-            <RegisterForm />
-          </CardContent>
-        </Card>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Create your account
+          </h1>
+          
+          <p className="text-gray-600">
+            Start building your digital profile today
+          </p>
+        </div>
+
+        {/* Register Form */}
+        <RegisterForm />
 
         {/* Footer */}
         <div className="text-center mt-6">
@@ -67,5 +38,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

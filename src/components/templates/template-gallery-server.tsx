@@ -1,8 +1,8 @@
 // app/(wherever)/TemplateGalleryServer.tsx
-import { getAllTemplates } from "@/lib/template-data"
-import { TemplateGallery } from "./template-gallery"
+import { getAllTemplates } from "@/lib/template-data";
+import { TemplateGallery } from "./template-gallery";
 
 export default async function TemplateGalleryServer() {
-  const templates = await getAllTemplates()
-  return <TemplateGallery key="template-gallery" templates={templates} />
+  const templates = await getAllTemplates();
+  return <TemplateGallery templates={templates} />;
 }

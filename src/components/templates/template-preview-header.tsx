@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import type { Template } from "@/lib/template-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +17,25 @@ export function TemplatePreviewHeader({
 }: TemplatePreviewHeaderProps) {
   const isPremium = template.category === "premium";
 
+  const router = useRouter();
+  const params = useParams();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      router.push("/");
+      return;
+    }
+    const user = JSON.parse(userData);
+
+    console.log("user admin ", user.is_admin);
+
+    if (!user.is_admin) {
+      router.push(`/templates/template-by-id/${params.slug}`);
+    } else {
+      router.push("/admin/");
+    }
+  }, [router]);
   return (
     <header className="bg-white border-b sticky top-0 z-20">
       <div className="container mx-auto px-4 py-4">

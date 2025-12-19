@@ -444,16 +444,21 @@ export default function AdminPage() {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
+    const data = userData ? JSON.parse(userData) : null;
     if (!userData) {
       router.push("/");
       return;
     }
-
     const user = JSON.parse(userData);
+
+    console.log("user admin ", user.is_admin);
 
     if (!user.is_admin) {
       router.push("/");
+    } else {
+      router.push("/admin/");
     }
+
   }, [router]);
 
   return (

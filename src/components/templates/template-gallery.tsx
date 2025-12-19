@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { TemplateCard } from "@/components/templates/template-card";
 import { TemplateFilters } from "@/components/templates/template-filters";
 import type { Template } from "@/types/template";
@@ -66,6 +67,7 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
       t.category === "premium" &&
       t.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const router = useRouter();
 
   // Fetch logged-in user
   useEffect(() => {
@@ -106,7 +108,25 @@ export function TemplateGallery({ templates }: TemplateGalleryProps) {
     };
 
     fetchUser();
-  }, []);
+
+
+
+     const userData = localStorage.getItem("user");
+    const data = userData ? JSON.parse(userData) : null;
+    if (!userData) {
+      router.push("/");
+      return;
+    }
+    const user = JSON.parse(userData);
+
+    console.log("user admin ", user.is_admin);
+
+    if (!user.is_admin) {
+      router.push("/templates/");
+    } else {
+      router.push("/admin/");
+    }
+  }, [router]);
 
   return (
     <section className="relative py-12 px-4 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-hidden">

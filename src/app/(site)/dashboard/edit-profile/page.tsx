@@ -1,72 +1,68 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Save, User, Globe, MapPin, Phone, Mail, Upload, Plus, ArrowLeft, X } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState, useRef } from "react"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+  Save,
+  User,
+  Globe,
+  MapPin,
+  Phone,
+  Mail,
+  Upload,
+  Plus,
+  ArrowLeft,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState, useRef } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Profile {
-  name: string
-  firstname?: string
-  lastname?: string
-  email: string
-  display_name?: string
-  username?: string
-  bio?: string
-  phone?: string
-  website?: string
-  location?: string
-  profile_image?: string
+  name: string;
+  firstname?: string;
+  lastname?: string;
+  email: string;
+  display_name?: string;
+  username?: string;
+  bio?: string;
+  phone?: string;
+  website?: string;
+  location?: string;
+  profile_image?: string;
 }
 
 interface SocialLink {
-  id: number | null
-  platform: string
-  url: string
-  display_name: string
-  is_visible: boolean
+  id: number | null;
+  platform: string;
+  url: string;
+  display_name: string;
+  is_visible: boolean;
 }
 
 interface User {
-  profile: Profile
-  profile_image?: string
-  email: string
-  display_name?: string
-  username?: string
-  name?: string
-  firstname?: string
-  lastname?: string
+  profile: Profile;
+  profile_image?: string;
+  email: string;
+  display_name?: string;
+  username?: string;
+  name?: string;
+  firstname?: string;
+  lastname?: string;
 }
 
 export default function EditProfilePage() {
-  const [isCheckingUsername, setIsCheckingUsername] = useState(false)
-  const [usernameError, setUsernameError] = useState<string | null>(null)
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [socialLinkToDelete, setSocialLinkToDelete] = useState<number | null>(null)
-  const [avatarFile, setAvatarFile] = useState<File | null>(null)
-  const [previewURL, setPreviewURL] = useState<string | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile>({
     name: "",
     email: "",
-  })
+  });
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
     {
       id: null,
@@ -75,40 +71,46 @@ export default function EditProfilePage() {
       display_name: "@username",
       is_visible: true,
     },
-  ])
+  ]);
 
-  const router = useRouter()
-  const [isSaving, setIsSaving] = useState(false)
-  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = async () => {
-    const token = localStorage.getItem("token")
-    if (!token) return
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    setIsSaving(true)
+    setIsSaving(true);
 
-    const formData = new FormData()
-    if (avatarFile) formData.append("avatar", avatarFile)
+    const formData = new FormData();
+    if (avatarFile) formData.append("avatar", avatarFile);
 
-    formData.append("name", profile.name || "")
-    formData.append("firstname", profile.firstname || "")
-    formData.append("lastname", profile.lastname || "")
-    formData.append("display_name", profile.display_name || "")
-    formData.append("username", profile.username || "")
-    formData.append("bio", profile.bio || "")
-    formData.append("phone", profile.phone || "")
-    formData.append("website", profile.website || "")
-    formData.append("location", profile.location || "")
+    formData.append("name", profile.name || "");
+    formData.append("firstname", profile.firstname || "");
+    formData.append("lastname", profile.lastname || "");
+    formData.append("display_name", profile.display_name || "");
+    formData.append("username", profile.username || "");
+    formData.append("bio", profile.bio || "");
+    formData.append("phone", profile.phone || "");
+    formData.append("website", profile.website || "");
+    formData.append("location", profile.location || "");
 
     socialLinks.forEach((link, index) => {
       if (link.id !== null && link.id !== undefined) {
-        formData.append(`social_links[${index}][id]`, String(link.id))
+        formData.append(`social_links[${index}][id]`, String(link.id));
       }
-      formData.append(`social_links[${index}][platform]`, link.platform)
-      formData.append(`social_links[${index}][url]`, link.url)
-      formData.append(`social_links[${index}][display_name]`, link.display_name || "")
-      formData.append(`social_links[${index}][is_visible]`, link.is_visible ? "1" : "0")
-    })
+      formData.append(`social_links[${index}][platform]`, link.platform);
+      formData.append(`social_links[${index}][url]`, link.url);
+      formData.append(
+        `social_links[${index}][display_name]`,
+        link.display_name || ""
+      );
+      formData.append(
+        `social_links[${index}][is_visible]`,
+        link.is_visible ? "1" : "0"
+      );
+    });
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
         method: "POST",
@@ -116,67 +118,50 @@ export default function EditProfilePage() {
           Authorization: `Bearer ${token}`,
         },
         body: formData,
-      })
+      });
 
       if (res.ok) {
-        const data = await res.json()
-        setProfile((prev: Profile) => ({ ...prev, ...data }))
-        toast.success("Profile saved!")
+        const data = await res.json();
+        setProfile((prev: Profile) => ({ ...prev, ...data }));
+        toast.success("Profile saved!");
 
         // Update cached user in localStorage so Header can read the latest info
-        localStorage.setItem("user", JSON.stringify(data))
+        localStorage.setItem("user", JSON.stringify(data));
 
         // Soft reload everything (including Header)
-        window.location.reload()
+        window.location.reload();
       } else if (res.status === 422) {
-        const err = await res.json()
-        if (err.errors?.username) {
-          toast.error("Username is already taken. Please choose another.")
+        const err = await res.json();
+
+        // Type assertion: each key maps to an array of strings
+        const errors = err.errors as Record<string, string[]> | undefined;
+
+        if (errors?.username) {
+          toast.error("Username is already taken. Please choose another.");
         } else {
-          const firstError = Object.values(err.errors || {})[0]?.[0]
-          toast.error(firstError || "Validation error. Please check your input.")
+          const firstError = errors ? Object.values(errors)[0]?.[0] : undefined;
+          toast.error(
+            firstError || "Validation error. Please check your input."
+          );
         }
       } else {
-        const err = await res.json()
-        toast.error("Error: " + JSON.stringify(err))
+        const err = await res.json();
+        toast.error("Error: " + JSON.stringify(err));
       }
     } catch (err) {
-      console.error("Failed to save profile", err)
-      toast.error("Failed to save profile. Username maybe already taken. Please try again.")
+      console.error("Failed to save profile", err);
+      toast.error(
+        "Failed to save profile. Username maybe already taken. Please try again."
+      );
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
-
-  const handleDeleteSocial = async () => {
-    const token = localStorage.getItem("token")
-    if (!token) return
-
-    if (!socialLinkToDelete) return
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/social-links/${socialLinkToDelete}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      })
-
-      if (!res.ok) throw new Error("Failed to delete")
-
-      setSocialLinks((prev) => prev.filter((link) => link.id !== socialLinkToDelete))
-      setDeleteModalOpen(false)
-      setSocialLinkToDelete(null)
-    } catch (err) {
-      console.error(err)
-    }
-  }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token")
-      if (!token) return
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
@@ -184,13 +169,22 @@ export default function EditProfilePage() {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
-        })
+        });
 
         if (res.ok) {
-          const userData = await res.json()
+          const userData = await res.json();
 
-          const { profile, profile_image, email, display_name, username, name, firstname, lastname } = userData
-          const socialLinks = userData?.profile?.social_links || []
+          const {
+            profile,
+            profile_image,
+            email,
+            display_name,
+            username,
+            name,
+            firstname,
+            lastname,
+          } = userData;
+          const socialLinks = userData?.profile?.social_links || [];
 
           setProfile((prev: Profile) => ({
             ...prev,
@@ -202,71 +196,79 @@ export default function EditProfilePage() {
             name,
             firstname,
             lastname,
-          }))
+          }));
 
           setSocialLinks(
             socialLinks.map((link: SocialLink) => ({
               ...link,
               is_visible: !!link.is_visible,
-            })),
-          )
+            }))
+          );
 
-          setCurrentUser(userData)
+          setCurrentUser(userData);
         }
       } catch (error) {
-        console.error("Error fetching profile:", error)
+        console.error("Error fetching profile:", error);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     const checkUsername = async () => {
-      const username = profile.username?.trim()
+      const username = profile.username?.trim();
 
       if (!username) {
-        setUsernameError(null)
-        return
+        setUsernameError(null);
+        return;
       }
 
       if (username === currentUser?.username) {
-        setUsernameError(null)
-        return
+        setUsernameError(null);
+        return;
       }
 
-      setIsCheckingUsername(true)
+      setIsCheckingUsername(true);
 
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profile/${username}`)
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/profile/${username}`
+        );
         if (res.ok) {
-          setUsernameError("Username is already taken")
+          setUsernameError("Username is already taken");
         } else {
-          setUsernameError(null)
+          setUsernameError(null);
         }
       } catch {
-        setUsernameError(null)
+        setUsernameError(null);
       } finally {
-        setIsCheckingUsername(false)
+        setIsCheckingUsername(false);
       }
-    }
+    };
 
-    const timeout = setTimeout(checkUsername, 500)
-    return () => clearTimeout(timeout)
-  }, [profile.username, currentUser?.username])
+    const timeout = setTimeout(checkUsername, 500);
+    return () => clearTimeout(timeout);
+  }, [profile.username, currentUser?.username]);
+
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
     if (!token) {
-      router.push("/login")
+      router.push("/login");
     } else {
-      setIsAuthenticated(true)
+      setIsAuthenticated(true);
     }
-  }, [router])
+  }, [router]);
 
-  if (isAuthenticated === null) return null
-  if (!profile) return <div className="p-8 text-white">Loading profile...</div>
+  if (isAuthenticated === null) return null;
+  if (!profile) return <div className="p-8 text-white">Loading profile...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white">
@@ -282,7 +284,10 @@ export default function EditProfilePage() {
               </Link>
               <div>
                 <h1 className="text-3xl font-bold text-white">Edit Profile</h1>
-                <p className="text-white">Update your profile information and customize your digital presence.</p>
+                <p className="text-white">
+                  Update your profile information and customize your digital
+                  presence.
+                </p>
               </div>
             </div>
           </div>
@@ -299,10 +304,17 @@ export default function EditProfilePage() {
                 <div className="flex items-center gap-4">
                   <Avatar className="w-20 h-20">
                     <AvatarImage
-                      src={previewURL || (profile.profile_image ? `${process.env.NEXT_PUBLIC_IMAGE_URL}/${profile.profile_image}` : "/avatar.png")}
+                      src={
+                        previewURL ||
+                        (profile.profile_image
+                          ? `${process.env.NEXT_PUBLIC_IMAGE_URL}/${profile.profile_image}`
+                          : "/avatar.png")
+                      }
                     />
 
-                    <AvatarFallback className="text-lg">{profile?.name?.[0] ?? ""}</AvatarFallback>
+                    <AvatarFallback className="text-lg">
+                      {profile?.name?.[0] ?? ""}
+                    </AvatarFallback>
                   </Avatar>
 
                   <div className="space-y-2">
@@ -311,32 +323,41 @@ export default function EditProfilePage() {
                       accept="image/png, image/jpeg"
                       ref={avatarInputRef}
                       onChange={(e) => {
-                        const file = e.target.files?.[0]
+                        const file = e.target.files?.[0];
 
                         if (file) {
-                          const fileSizeMB = file.size / (1024 * 1024)
-                          const validTypes = ["image/jpeg", "image/png"]
+                          const fileSizeMB = file.size / (1024 * 1024);
+                          const validTypes = ["image/jpeg", "image/png"];
 
                           if (!validTypes.includes(file.type)) {
-                            toast.error("Invalid file type. Only JPG and PNG are allowed.")
-                            e.target.value = ""
-                            return
+                            toast.error(
+                              "Invalid file type. Only JPG and PNG are allowed."
+                            );
+                            e.target.value = "";
+                            return;
                           }
 
                           if (fileSizeMB > 5) {
-                            toast.error("File size exceeds 5MB. Please choose a smaller image.")
-                            e.target.value = ""
-                            return
+                            toast.error(
+                              "File size exceeds 5MB. Please choose a smaller image."
+                            );
+                            e.target.value = "";
+                            return;
                           }
 
-                          setAvatarFile(file)
-                          setPreviewURL(URL.createObjectURL(file))
+                          setAvatarFile(file);
+                          setPreviewURL(URL.createObjectURL(file));
                         }
                       }}
                       className="hidden"
                     />
 
-                    <Button variant="outline" size="sm" className="bg-transparent" onClick={() => avatarInputRef.current?.click()}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-transparent"
+                      onClick={() => avatarInputRef.current?.click()}
+                    >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload New Picture
                     </Button>
@@ -358,7 +379,9 @@ export default function EditProfilePage() {
                     <Input
                       id="firstName"
                       value={profile.firstname || ""}
-                      onChange={(e) => setProfile({ ...profile, firstname: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, firstname: e.target.value })
+                      }
                       placeholder="Enter your first name"
                     />
                   </div>
@@ -367,7 +390,9 @@ export default function EditProfilePage() {
                     <Input
                       id="lastname"
                       value={profile.lastname || ""}
-                      onChange={(e) => setProfile({ ...profile, lastname: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, lastname: e.target.value })
+                      }
                       placeholder="Enter your last name"
                     />
                   </div>
@@ -378,7 +403,9 @@ export default function EditProfilePage() {
                   <Input
                     id="displayName"
                     value={profile.display_name || ""}
-                    onChange={(e) => setProfile({ ...profile, display_name: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, display_name: e.target.value })
+                    }
                     placeholder="How your name appears on your profile"
                   />
                 </div>
@@ -387,7 +414,10 @@ export default function EditProfilePage() {
                   <Label htmlFor="username">Username</Label>
                   <div className="flex">
                     <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                      {(process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(/^https?:\/\//, "") ?? "localhost:3000") + "/"}
+                      {(process.env.NEXT_PUBLIC_FRONTEND_URL?.replace(
+                        /^https?:\/\//,
+                        ""
+                      ) ?? "localhost:3000") + "/"}
                     </span>
 
                     <div className="flex items-center gap-2">
@@ -395,18 +425,30 @@ export default function EditProfilePage() {
                         id="username"
                         value={profile.username || ""}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/[^a-zA-Z0-9_]/g, "").slice(0, 10)
-                          setProfile({ ...profile, username: value })
+                          const value = e.target.value
+                            .replace(/[^a-zA-Z0-9_]/g, "")
+                            .slice(0, 10);
+                          setProfile({ ...profile, username: value });
                         }}
                         placeholder="username"
                         maxLength={15}
-                        className={usernameError ? "border-red-500 focus:ring-red-500 focus:border-red-500" : ""}
+                        className={
+                          usernameError
+                            ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                            : ""
+                        }
                       />
 
-                      {isCheckingUsername && <span className="text-sm text-gray-400">Checking...</span>}
+                      {isCheckingUsername && (
+                        <span className="text-sm text-gray-400">
+                          Checking...
+                        </span>
+                      )}
                     </div>
                   </div>
-                  {usernameError && <p className="text-red-500 text-sm mt-1">{usernameError}</p>}
+                  {usernameError && (
+                    <p className="text-red-500 text-sm mt-1">{usernameError}</p>
+                  )}
                 </div>
 
                 <div className="space-y-1">
@@ -414,7 +456,9 @@ export default function EditProfilePage() {
                   <Textarea
                     id="bio"
                     value={profile.bio || ""}
-                    onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, bio: e.target.value })
+                    }
                     placeholder="Tell people about yourself..."
                     rows={3}
                   />
@@ -456,8 +500,10 @@ export default function EditProfilePage() {
                       id="phone"
                       value={profile.phone || ""}
                       onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, "").slice(0, 11)
-                        setProfile({ ...profile, phone: digits })
+                        const digits = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 11);
+                        setProfile({ ...profile, phone: digits });
                       }}
                       placeholder="09156277266"
                       maxLength={11}
@@ -468,26 +514,36 @@ export default function EditProfilePage() {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <Label htmlFor="website" className="flex items-center gap-2">
+                    <Label
+                      htmlFor="website"
+                      className="flex items-center gap-2"
+                    >
                       <Globe className="w-4 h-4" />
                       Website
                     </Label>
                     <Input
                       id="website"
                       value={profile.website || ""}
-                      onChange={(e) => setProfile({ ...profile, website: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, website: e.target.value })
+                      }
                       placeholder="https://yourwebsite.com"
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="location" className="flex items-center gap-2">
+                    <Label
+                      htmlFor="location"
+                      className="flex items-center gap-2"
+                    >
                       <MapPin className="w-4 h-4" />
                       Location
                     </Label>
                     <Input
                       id="location"
                       value={profile.location || ""}
-                      onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({ ...profile, location: e.target.value })
+                      }
                       placeholder="City, Country"
                     />
                   </div>
@@ -522,108 +578,129 @@ export default function EditProfilePage() {
               <CardContent>
                 {socialLinks.map((link, index) => {
                   // Check if platform is a messaging app that needs phone number (INCLUDING VIBER)
-                  const isMessagingApp = /^(whatsapp|whats\s*app|viber|kakaotalk|kakao\s*talk|wechat|we\s*chat|telegram)$/i.test(link.platform.trim())
+                  const isMessagingApp =
+                    /^(whatsapp|whats\s*app|viber|kakaotalk|kakao\s*talk|wechat|we\s*chat|telegram)$/i.test(
+                      link.platform.trim()
+                    );
 
                   return (
-                    <div key={index} className="mb-4 border p-4 rounded-md space-y-2 relative">
-                      <button
-                        className="absolute top-3 right-4"
-                        onClick={() => {
-                          if (link.id === null) {
-                            setSocialLinks((prev) => prev.filter((_, i) => i !== index)) //no confirmation if null id
-                            return
-                          }
-
-                          setSocialLinkToDelete(link.id)
-                          setDeleteModalOpen(true)
-                        }}
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                      <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Platform */}
+                    <div
+                      key={index}
+                      className="mb-4 border p-4 rounded-md space-y-2 relative"
+                    >
+                      <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-1">
                           <Label>Platform</Label>
                           <Input
                             value={link.platform}
                             onChange={(e) => {
-                              const updated = [...socialLinks]
-                              updated[index].platform = e.target.value
+                              const updated = [...socialLinks];
+                              updated[index].platform = e.target.value;
 
                               // Check if new platform is messaging app (INCLUDING VIBER)
-                              const newIsMessaging = /^(whatsapp|whats\s*app|viber|kakaotalk|kakao\s*talk|wechat|we\s*chat|telegram)$/i.test(
-                                e.target.value.trim(),
-                              )
+                              const newIsMessaging =
+                                /^(whatsapp|whats\s*app|viber|kakaotalk|kakao\s*talk|wechat|we\s*chat|telegram)$/i.test(
+                                  e.target.value.trim()
+                                );
 
                               // Clear display_name and url if switching to/from messaging app
                               if (newIsMessaging) {
-                                updated[index].display_name = ""
-                                updated[index].url = ""
+                                updated[index].display_name = "";
+                                updated[index].url = "";
                               }
 
-                              setSocialLinks(updated)
+                              setSocialLinks(updated);
                             }}
                             placeholder="e.g., Instagram, WhatsApp, Viber"
                           />
                         </div>
-
-                        {/* URL */}
                         <div className="space-y-1">
                           <Label>URL</Label>
                           <Input
                             value={link.url}
                             onChange={(e) => {
-                              const updated = [...socialLinks]
-                              updated[index].url = e.target.value
-                              setSocialLinks(updated)
+                              const updated = [...socialLinks];
+                              updated[index].url = e.target.value;
+                              setSocialLinks(updated);
                             }}
                             placeholder="https://instagram.com/username"
                             disabled={isMessagingApp}
-                            className={isMessagingApp ? "bg-gray-100 cursor-not-allowed" : ""}
+                            className={
+                              isMessagingApp
+                                ? "bg-gray-100 cursor-not-allowed"
+                                : ""
+                            }
                           />
                         </div>
-
-                        {/* Display Name / Contact Number */}
-                        <div className="space-y-1 md:col-span-2">
-                          <Label>{isMessagingApp ? "Contact Number" : "Display Name"}</Label>
+                        <div className="col-span-2">
+                          <Label className="space-y-1">
+                            {isMessagingApp ? "Contact Number" : "Display Name"}
+                          </Label>
                           <Input
                             value={link.display_name}
                             onChange={(e) => {
-                              const updated = [...socialLinks]
+                              const updated = [...socialLinks];
 
                               if (isMessagingApp) {
                                 // Only allow digits for messaging apps
-                                const digits = e.target.value.replace(/\D/g, "").slice(0, 11)
-                                updated[index].display_name = digits
+                                const digits = e.target.value
+                                  .replace(/\D/g, "")
+                                  .slice(0, 11);
+                                updated[index].display_name = digits;
 
                                 // Auto-generate URL based on platform (INCLUDING VIBER)
-                                const platform = link.platform.toLowerCase().replace(/\s+/g, "")
+                                const platform = link.platform
+                                  .toLowerCase()
+                                  .replace(/\s+/g, "");
                                 if (digits) {
-                                  if (platform.includes("whatsapp") || platform.includes("whats")) {
-                                    updated[index].url = `https://wa.me/${digits}`
+                                  if (
+                                    platform.includes("whatsapp") ||
+                                    platform.includes("whats")
+                                  ) {
+                                    updated[
+                                      index
+                                    ].url = `https://wa.me/${digits}`;
                                   } else if (platform.includes("viber")) {
-                                    updated[index].url = `viber://chat?number=${digits}`
+                                    updated[
+                                      index
+                                    ].url = `viber://chat?number=${digits}`;
                                   } else if (platform.includes("telegram")) {
-                                    updated[index].url = `https://t.me/${digits}`
+                                    updated[
+                                      index
+                                    ].url = `https://t.me/${digits}`;
                                   } else if (platform.includes("kakao")) {
-                                    updated[index].url = `https://open.kakao.com/o/${digits}`
-                                  } else if (platform.includes("wechat") || platform.includes("we")) {
-                                    updated[index].url = `weixin://dl/chat?${digits}`
+                                    updated[
+                                      index
+                                    ].url = `https://open.kakao.com/o/${digits}`;
+                                  } else if (
+                                    platform.includes("wechat") ||
+                                    platform.includes("we")
+                                  ) {
+                                    updated[
+                                      index
+                                    ].url = `weixin://dl/chat?${digits}`;
                                   }
                                 } else {
-                                  updated[index].url = ""
+                                  updated[index].url = "";
                                 }
                               } else {
-                                updated[index].display_name = e.target.value
+                                updated[index].display_name = e.target.value;
                               }
 
-                              setSocialLinks(updated)
+                              setSocialLinks(updated);
                             }}
-                            placeholder={isMessagingApp ? "09125255222" : "@username"}
+                            placeholder={
+                              isMessagingApp ? "09125255222" : "@username"
+                            }
                             maxLength={isMessagingApp ? 11 : undefined}
                             inputMode={isMessagingApp ? "numeric" : "text"}
                           />
-                          {isMessagingApp && <p className="text-xs text-gray-500 mt-1">Enter phone number (URL will be generated automatically)</p>}
+                          {isMessagingApp && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Enter phone number (URL will be generated
+                              automatically)
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -633,17 +710,20 @@ export default function EditProfilePage() {
                             type="checkbox"
                             checked={link.is_visible}
                             onChange={() => {
-                              const updated = [...socialLinks]
-                              updated[index].is_visible = !updated[index].is_visible
-                              setSocialLinks(updated)
-                              toast("Please save changes to update visibility.")
+                              const updated = [...socialLinks];
+                              updated[index].is_visible =
+                                !updated[index].is_visible;
+                              setSocialLinks(updated);
+                              toast(
+                                "Please save changes to update visibility."
+                              );
                             }}
                           />
                           <span className="text-sm">Visible</span>
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </CardContent>
             </Card>
@@ -670,25 +750,6 @@ export default function EditProfilePage() {
           </div>
         </div>
       </main>
-
-      {/* Delete Social Link Confirmation Modal */}
-      <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete social media link</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to delete this social media link? This action cannot be undone.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700"
-              onClick={handleDeleteSocial} 
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
-  )
+  );
 }

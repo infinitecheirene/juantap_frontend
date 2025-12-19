@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,8 @@ interface User {
   id: number;
   firstname: string;
   lastname: string;
-  name: string;
   username: string;
+  name: string;
   email: string;
   is_admin: boolean;
   profile_image: string;
@@ -32,10 +33,26 @@ export default function AdminUsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     fetchUsers();
-  }, []);
+
+    const userData = localStorage.getItem("user");
+    const data = userData ? JSON.parse(userData) : null;
+    if (!userData) {
+      router.push("/");
+      return;
+    }
+    const user = JSON.parse(userData);
+
+    console.log("user admin ", user.is_admin);
+
+    if (!user.is_admin) {
+      router.push("/");
+    } else {
+      router.push("/admin/users");
+    }
+  }, [router]);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -109,18 +126,18 @@ export default function AdminUsersPage() {
 
       <Card>
         <CardContent>
-          {/* {isLoading ? (
+          {users.length === 0 ? (
             <div className="flex justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
             </div>
-          ) : ( */}
+          ) : (
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b">
                   <th className="py-2">#</th>
                   <th className="py-2">Name</th>
                   <th className="py-2">Email</th>
-                  <th className="py-2">Role</th>
+                  <th className="py-2 px-4">Role</th>
                   <th className="py-2">View Profile</th>
                 </tr>
               </thead>
@@ -128,30 +145,30 @@ export default function AdminUsersPage() {
                 {users.length > 0 ? (
                   users.map((user, idx) => (
                     <tr key={user.id} className="border-b hover:bg-gray-50">
-                      <td className="py-2">{idx + 1}</td>
-                      <td className="py-2 flex items-center gap-2">
+                      <td className="py-4">{idx + 1}</td>
+                      <td className="py-4 flex items-center gap-2">
                         <Image
-                          src={user.profile_image || "/defaults/avatar.png"}
+                          src={user.profile_image ?? "/defaults/avatar.png"}
                           alt={user.name}
                           width={32}
                           height={32}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-12 h-12 rounded-full object-cover"
                         />
 
                         {user.name}
                       </td>
-                      <td className="py-2">{user.email}</td>
-                      <td className="py-2">
+                      <td className="py-4">{user.email}</td>
+                      <td className="py-4 px-4">
                         {user.is_admin ? (
-                          <Badge variant="destructive">Admin</Badge>
+                          <Badge variant="destructive"  className="py-2 px-4">Admin</Badge>
                         ) : (
-                          <Badge>User</Badge>
+                          <Badge className="text-sm py-2 px-4">User</Badge>
                         )}
                       </td>
-                      <td className="py-2 flex gap-2">
+                      <td className="flex py-4 px-4 gap-2">
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="outline" className="flex items-center justify-center w-12 h-9"
                           onClick={() => fetchUserProfile(user.id)}
                         >
                           <Eye size={16} />
@@ -168,7 +185,7 @@ export default function AdminUsersPage() {
                 )}
               </tbody>
             </table>
-          {/* )} */}
+          )}
         </CardContent>
       </Card>
 
@@ -191,7 +208,7 @@ export default function AdminUsersPage() {
               <div className="flex flex-col items-center gap-4">
                 <Image
                   src={
-                    selectedUser.profile_image ||
+                    selectedUser.profile_image_url ||
                     "https://play-lh.googleusercontent.com/y85Wq41fBfoivml6J3lTqB-WINrb2dbUTGVbYkRG12vIbiJXO97Y6N4y3JWA2rcFiQ=w480-h960-rw"
                   }
                   alt={selectedUser.name}

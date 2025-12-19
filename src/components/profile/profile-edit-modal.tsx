@@ -208,7 +208,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <User className="w-5 h-5" />
-                    Profile Picture
+                    {profile.avatar}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

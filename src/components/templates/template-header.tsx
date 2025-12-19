@@ -1,9 +1,30 @@
 "use client";
 
+import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Palette, Crown, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function TemplateHeader() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      router.push("/");
+      return;
+    }
+    const user = JSON.parse(userData);
+
+    console.log("user admin ", user.is_admin);
+
+    if (!user.is_admin) {
+      router.push("/templates/");
+    } else {
+      router.push("/admin/");
+    }
+  }, [router]);
+
   return (
     <section className="relative py-24 px-6 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white overflow-hidden">
       {/* Floating particles (reused from Hero) */}

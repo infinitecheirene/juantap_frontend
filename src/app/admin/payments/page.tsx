@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
@@ -10,10 +11,27 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     fetchPayments();
-  }, []);
+
+    const userData = localStorage.getItem("user");
+    const data = userData ? JSON.parse(userData) : null;
+    if (!userData) {
+      router.push("/");
+      return;
+    }
+    const user = JSON.parse(userData);
+
+    console.log("user admin ", user.is_admin);
+
+    if (!user.is_admin) {
+      router.push("/");
+    } else {
+      router.push("/admin/payments");
+    }
+  }, [router]);
 
   const fetchPayments = async () => {
     setIsLoading(true);

@@ -45,89 +45,89 @@ export function Logo({ variant = "light", className }: LogoProps) {
 }
 
 export default function HomePage() {
-   // ✅ Move all hooks **inside** the component
-    const [user, setUser] = useState<any>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [hash, setHash] = useState("");
-    const [loadingNav, setLoadingNav] = useState<string | null>(null);
-    const [loadingItem, setLoadingItem] = useState<string | null>(null);
-    const [loadingAction, setLoadingAction] = useState<string | null>(null);
-  
-    const router = useRouter();
-    const pathname = usePathname();
-  
-    const handleNavClick = (path: string) => {
-      setLoadingNav(path);
-      router.push(path);
-    };
-  
-    useEffect(() => {
-      const token = localStorage.getItem("token");
-      const cachedUser = localStorage.getItem("user");
-  
-      if (cachedUser) {
-        try {
-          const parsed = JSON.parse(cachedUser);
-          setUser(parsed);
-          setIsLoggedIn(true);
-        } catch (e) {
-          console.error("Invalid cached user:", e);
+  const [user, setUser] = useState<any>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hash, setHash] = useState("");
+  const [loadingNav, setLoadingNav] = useState<string | null>(null);
+  const [loadingItem, setLoadingItem] = useState<string | null>(null);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleNavClick = (path: string) => {
+    setLoadingNav(path);
+    router.push(path);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setIsLoggedIn(false);
+      setUser(null);
+      return;
+    }
+
+    setIsLoggedIn(true);
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Unauthorized");
         }
-      } else if (token) {
-        setIsLoggedIn(true);
-      }
-  
-      if (token) {
-        const fetchUser = async () => {
-          try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/json",
-              },
-            });
-            if (res.ok) {
-              const userData = await res.json();
-              setUser(userData);
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        };
-        fetchUser();
-      }
-    }, []);
-  
-    useEffect(() => {
-      const updateHash = () => setHash(window.location.hash);
-      updateHash();
-      window.addEventListener("hashchange", updateHash);
-      return () => window.removeEventListener("hashchange", updateHash);
-    }, []);
-  
-    const getProfileImageUrl = (path?: string) => {
-      if (!path) return "/placeholder.svg?height=40&width=40";
-      if (path.startsWith("http")) return path;
-      return `${process.env.NEXT_PUBLIC_IMAGE_URL}/storage/${path}`;
-    };
-  
-    const handleLogout = async () => {
-      setLoadingAction("logout");
-      setTimeout(() => {
+
+        const userData = await res.json();
+        setUser(userData);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+
+        // Optional: force logout if token is invalid
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        setIsLoggedIn(false);
         setUser(null);
-        setLoadingAction(null);
-        router.push("/login");
-      }, 300);
-    };
-  
-    const isActive = (path: string) => {
-      if (path === "/") return pathname === "/" && hash === "";
-      return pathname.startsWith(path);
+        setIsLoggedIn(false);
+      }
     };
 
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const updateHash = () => setHash(window.location.hash);
+    updateHash();
+    window.addEventListener("hashchange", updateHash);
+    return () => window.removeEventListener("hashchange", updateHash);
+  }, []);
+
+  const getProfileImageUrl = (path?: string) => {
+    if (!path) return "/placeholder.svg?height=40&width=40";
+    if (path.startsWith("http")) return path;
+    return `${process.env.NEXT_PUBLIC_IMAGE_URL}/storage/${path}`;
+  };
+
+  const handleLogout = async () => {
+    setLoadingAction("logout");
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      setUser(null);
+      setLoadingAction(null);
+      router.push("/login");
+    }, 300);
+  };
+
+  const isActive = (path: string) => {
+    if (path === "/") return pathname === "/" && hash === "";
+    return pathname.startsWith(path);
+  };
 
   const [templates, setTemplates] = useState<any[]>([]);
 

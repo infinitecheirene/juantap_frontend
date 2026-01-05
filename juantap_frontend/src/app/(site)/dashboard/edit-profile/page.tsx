@@ -59,7 +59,7 @@ export default function EditProfilePage() {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<Profile>({
     name: "",
     email: "",

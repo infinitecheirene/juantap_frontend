@@ -141,7 +141,7 @@ public function me(Request $request)
         'display_name' => $user->display_name,
         'username'     => $user->username,
         'email'        => $user->email,
-       'avatar_url' => $user->profile_image
+        'avatar_url' => $user->profile_image
         ? asset($user->profile_image)
         : asset("avatars/default.png"),
         'is_admin'     => $user->is_admin,
@@ -174,7 +174,6 @@ public function me(Request $request)
 
     return response()->json($response, 200);
 }
-
 
 public function show($username)
 {

@@ -55,26 +55,25 @@ class AuthController extends Controller
     }
 
     public function getUserById($id)
-{
-    $user = User::with('profile.socialLinks')->find($id);
+    {
+        $user = User::with('profile.socialLinks')->find($id);
 
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json([
+        'id' => $user->id,
+        'name' => $user->name,
+        'username' => $user->username ?? null, // ✅ include username for the frontend
+        'email' => $user->email,
+        'is_admin' => (bool)$user->is_admin,
+        'avatar_url' => $user->profile_image
+            ? asset($user->profile_image)
+            : asset('avatars/default.png'),
+        'profile' => $user->profile,
+        ]);
     }
-
-    return response()->json([
-    'id' => $user->id,
-    'name' => $user->name,
-    'username' => $user->username ?? null, // ✅ include username for the frontend
-    'email' => $user->email,
-    'is_admin' => (bool)$user->is_admin,
-    'avatar_url' => $user->profile_image
-        ? asset($user->profile_image)
-        : asset('avatars/default.png'),
-    'profile' => $user->profile,
-]);
-
-}
 
 
     // Login
@@ -95,8 +94,7 @@ class AuthController extends Controller
         'token_type' => 'Bearer',
         'user' => [
             'is_admin' => (bool)$user->is_admin,
-    ],
-        ]);
+        ],]);
     }
 
 public function index()

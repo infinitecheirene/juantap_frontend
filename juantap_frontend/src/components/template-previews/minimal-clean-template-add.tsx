@@ -18,6 +18,7 @@ import {
   Download,
   Camera,
   Edit3,
+  AtSign,
 } from "lucide-react";
 import {
   Dialog,
@@ -31,32 +32,48 @@ import { QRCodeSVG } from "qrcode.react";
 interface MinimalCleanProps {
   socialStyle?: "default" | "circles" | "fullblock";
   connectStyle?: "grid" | "list" | "compact";
+  profileStyle?: "left" | "centered" | "right";
   colors?: {
     primary: string;
     secondary: string;
     accent: string;
+    coverBackground: string;
+    icon: string;
     background: string;
-    text: string;
+    title: string;
+    description: string;
   };
   fonts?: {
-    heading: string;
-    body: string;
+    title: string;
+    description: string;
+  };
+  fontSizes?: {
+    title: number;
+    description: number;
   };
 }
 
 export function MinimalClean({
   socialStyle = "default",
   connectStyle = "grid",
+  profileStyle = "centered",
   colors = {
     primary: "#1f2937",
     secondary: "#6b7280",
     accent: "#3b82f6",
+    coverBackground: "#f3f4f6",
+    icon: "#3b82f6",
     background: "#ffffff",
-    text: "#111827",
+    title: "#111827",
+    description: "#6b7280",
   },
   fonts = {
-    heading: "Inter",
-    body: "Inter",
+    title: "Inter",
+    description: "Inter",
+  },
+  fontSizes = {
+    title: 16,
+    description: 12,
   },
 }: MinimalCleanProps) {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
@@ -69,22 +86,28 @@ export function MinimalClean({
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const staticProfile = {
-    displayName: "example_displayname",
-    location: "Manila PH",
-    handle: "@username",
-    bio: "this is bui",
-    email: "admin.example@gmail.com",
+    displayName: "John Doe",
+    location: "Manila, PH",
+    handle: "john_doe",
+    bio: "Bio goes here. This is an example bio for the minimal clean template.",
+    email: "john.doe@gmail.com",
     socialLinks: [
       {
         id: "instagram",
         platform: "instagram",
-        username: "instagram_account",
+        username: "john_doe",
         url: "https://instagram.com/2eub2e",
+      },
+      {
+        id: "facebook",
+        platform: "facebook",
+        username: "john_doe",
+        url: "https://facebook.com/2eub2e",
       },
     ],
   };
 
-  const profileUrl = "https://example.com/example_displayname";
+  const profileUrl = "https://example.com/john_doe";
 
   const socialIconMap: Record<string, React.ReactNode> = {
     facebook: <Facebook size={16} />,
@@ -231,6 +254,68 @@ export function MinimalClean({
     }
   };
 
+  const getProfileStyleClass = () => {
+    switch (profileStyle) {
+      case "left":
+        return "items-start";
+      case "centered":
+        return "items-center";
+      case "right":
+        return "items-end";
+      default:
+        return "items-center";
+    }
+  };
+
+  const getTextAlignClass = () => {
+    switch (profileStyle) {
+      case "left":
+        return "text-left";
+      case "right":
+        return "text-right";
+      default:
+        return "text-center";
+    }
+  };
+
+  const getInfoJustifyClass = () => {
+    switch (profileStyle) {
+      case "left":
+        return "justify-start";
+      case "right":
+        return "justify-end";
+      default:
+        return "justify-center";
+    }
+  };
+
+  const getCameraPositionClass = () => {
+    switch (profileStyle) {
+      case "left":
+        return "left-0";
+      case "centered":
+        // center horizontally and offset correctly
+        return "left-1/2 -translate-x-1/2";
+      case "right":
+        return "right-0";
+      default:
+        return "right-0";
+    }
+  };
+
+  // Available fonts used across the template preview
+  const fontOptions = [
+    "Inter",
+    "Poppins",
+    "Roboto",
+    "Playfair Display",
+    "Merriweather",
+    "Open Sans",
+    "Lato",
+    "Source Sans Pro",
+    "Nunito",
+  ];
+
   return (
     <div
       className="w-full flex justify-center"
@@ -240,7 +325,7 @@ export function MinimalClean({
         className="w-full max-w-lg shadow-lg rounded-2xl overflow-hidden flex flex-col"
         style={{
           backgroundColor: colors.background,
-          fontFamily: fonts.body,
+          fontFamily: `${fonts.description}, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
         }}
       >
         {/* Cover Photo Section */}
@@ -255,7 +340,13 @@ export function MinimalClean({
             <div
               className="w-full h-full"
               style={{
-                background: `linear-gradient(135deg, ${colors.accent}, ${colors.primary})`,
+                background: (colors.coverBackground && colors.accent)
+                  ? `linear-gradient(135deg, ${colors.coverBackground}, ${colors.accent})`
+                  : (colors.primary && colors.secondary)
+                    ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
+                    : (colors.accent && colors.primary)
+                      ? `linear-gradient(135deg, ${colors.accent}, ${colors.primary})`
+                      : '#f3f4f6',
               }}
             ></div>
           )}
@@ -280,7 +371,7 @@ export function MinimalClean({
         </div>
 
         {/* Avatar & Bio */}
-        <div className="relative flex flex-col items-center mt-2 px-6">
+        <div className={`relative flex flex-col ${getProfileStyleClass()} mt-2 px-6`}>
           <div className="relative -mt-14">
             <div
               className="w-28 h-28 rounded-full border-4 shadow-lg overflow-hidden bg-gray-200 flex items-center justify-center"
@@ -296,10 +387,9 @@ export function MinimalClean({
             {/* Camera Icon Button */}
             <button
               onClick={handleImageClick}
-              className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center shadow-lg hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: colors.accent }}
+              className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center shadow-lg border border-gray-200 opacity-90 transition-opacity"
             >
-              <Camera size={18} className="text-white" />
+              <Camera size={18} className="text-gray-400" />
             </button>
 
             {/* Hidden Profile Input */}
@@ -313,44 +403,51 @@ export function MinimalClean({
           </div>
 
           <h1
-            className="mt-4 text-xl font-bold"
+            className={`mt-4 text-2xl font-bold ${getTextAlignClass()}`}
             style={{
-              fontFamily: fonts.heading,
-              color: colors.text,
+              fontFamily: `${fonts.title}, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`,
+              color: colors.title,
+              fontSize: `${fontSizes.title}px`,
             }}
           >
             {staticProfile.displayName}
           </h1>
           <div
-            className="flex flex-wrap items-center gap-3 text-xs mt-2 justify-center"
+            className={`flex flex-wrap items-center gap-3 text-sm my-2 ${getInfoJustifyClass()}`}
             style={{
               color: colors.secondary,
-              fontFamily: fonts.body,
+              fontFamily: fonts.description,
             }}
           >
-            <span className="flex items-center gap-1">
-              <MapPin size={12} /> {staticProfile.location}
-            </span>
-            <span style={{ color: colors.accent }}>{staticProfile.handle}</span>
+            <div className="flex items-center gap-1">
+              <MapPin size={15} style={{ color: colors.icon }} />
+              <span className="opacity-70 font-bold" style={{ color: colors.description }}>{staticProfile.location}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <AtSign size={15} style={{ color: colors.icon }} />
+              <span className="opacity-70 font-bold" style={{ color: colors.description }}>{staticProfile.handle} </span>
+            </div>
           </div>
           <p
-            className="text-sm text-center mt-1"
+            className={`text-sm mt-1 ${getTextAlignClass()}`}
             style={{
-              color: colors.secondary,
-              fontFamily: fonts.body,
+              color: colors.description,
+              fontFamily: fonts.description,
             }}
           >
             {staticProfile.bio}
           </p>
         </div>
 
+        <div className="border-t mx-5 mt-5" style={{ borderColor: `${colors.primary}20` }}></div>
+
         {/* Contact */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-2">
           <h2
-            className="text-sm font-semibold uppercase"
+            className="text-md font-bold uppercase"
             style={{
-              color: colors.secondary,
-              fontFamily: fonts.heading,
+              color: colors.title,
+              fontFamily: fonts.title,
             }}
           >
             Contact
@@ -359,19 +456,19 @@ export function MinimalClean({
             className="flex justify-between items-center rounded-lg p-3 text-sm"
             style={{
               backgroundColor: `${colors.primary}10`,
-              fontFamily: fonts.body,
+              fontFamily: fonts.description,
             }}
           >
             <div
               className="flex items-center gap-2"
-              style={{ color: colors.text }}
+              style={{ color: colors.description }}
             >
-              <Mail size={16} style={{ color: colors.accent }} />{" "}
+              <Mail size={16} style={{ color: colors.icon }} />{" "}
               {staticProfile.email}
             </div>
             <button
               className="hover:opacity-70"
-              style={{ color: colors.secondary }}
+              style={{ color: colors.icon }}
               onClick={() => navigator.clipboard.writeText(staticProfile.email)}
             >
               <Copy size={16} />
@@ -382,10 +479,10 @@ export function MinimalClean({
         {/* Social Links */}
         <div className="px-6 pb-6">
           <h2
-            className="text-sm font-semibold uppercase mb-3"
+            className="text-md font-bold uppercase mb-3"
             style={{
-              color: colors.secondary,
-              fontFamily: fonts.heading,
+              color: colors.title,
+              fontFamily: fonts.title,
             }}
           >
             Connect with me
@@ -403,15 +500,15 @@ export function MinimalClean({
                   className={getSocialLinkClass()}
                   style={{
                     backgroundColor: `${colors.accent}15`,
-                    color: colors.text,
-                    fontFamily: fonts.body,
+                    color: colors.description,
+                    fontFamily: fonts.description,
                   }}
                 >
                   {(socialStyle as string) === "circles" ? (
-                    <span style={{ color: colors.accent }}>{icon}</span>
+                    <span style={{ color: colors.icon }}>{icon}</span>
                   ) : (
                     <>
-                      <span style={{ color: colors.accent }}>{icon}</span>
+                      <span style={{ color: colors.icon }}>{icon}</span>
                       {(socialStyle as string) !== "circles" && (
                         <span>{link.username}</span>
                       )}
@@ -429,24 +526,24 @@ export function MinimalClean({
           style={{
             backgroundColor: `${colors.primary}08`,
             borderColor: `${colors.primary}20`,
-            fontFamily: fonts.body,
+            fontFamily: fonts.description,
           }}
         >
           <button
             onClick={() => setIsQRModalOpen(true)}
             className="flex flex-col items-center text-sm hover:opacity-70"
-            style={{ color: colors.text }}
+            style={{ color: colors.title }}
           >
-            <QrCode className="w-5 h-5 mb-1" style={{ color: colors.accent }} />{" "}
+            <QrCode className="w-5 h-5 mb-1" style={{ color: colors.icon }} />{" "}
             QR Code
           </button>
 
           <button
             onClick={handleShare}
             className="flex flex-col items-center text-sm hover:opacity-70"
-            style={{ color: colors.text }}
+            style={{ color: colors.title }}
           >
-            <Share2 className="w-5 h-5 mb-1" style={{ color: colors.accent }} />{" "}
+            <Share2 className="w-5 h-5 mb-1" style={{ color: colors.icon }} />{" "}
             Share
           </button>
         </div>

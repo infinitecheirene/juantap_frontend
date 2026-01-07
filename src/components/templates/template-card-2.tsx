@@ -274,7 +274,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
                   ? "flex flex-row"
                   : "grid grid-cols-1"
               } 
-                 gap-3`}
+                gap-3`}
               style={{
                 color: template?.colors?.secondary,
                 fontFamily: template?.fonts?.heading,

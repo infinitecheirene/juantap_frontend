@@ -1,14 +1,42 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react"; // use() for unwrapping Promise
-import { useRouter } from "next/navigation";
-import { TemplateCard } from "@/components/templates/template-card-2";
-import { TemplatePreviewHeader } from "@/components/templates/template-preview-header";
-import { TemplatePreviewContent } from "@/components/templates/template-preview-content";
-import { TemplatePreviewSidebar } from "@/components/templates/template-preview-sidebar";
+import React, { useEffect, useState, use } from "react";
+import { useRouter, useParams, usePathname } from "next/navigation";
+import Link from "next/link";
+
+import type { Template } from "@/lib/template-data";
+import type { User } from "@/types/template";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Loading } from "@/components/loading";
 
+import { TemplateCard } from "@/components/templates/template-card-2";
+import { PaymentModal } from "@/components/templates/payment-modal";
 import type { Template as TemplateType, User as UserType } from "@/types/template";
+
+import {
+    ArrowLeft,
+    Crown,
+    Star,
+    Sparkles,
+    Palette,
+    Type,
+    Layout,
+    Smartphone,
+    Download,
+    Share2,
+    CheckCircle,
+    Loader2,
+} from "lucide-react";
+
+import { toast, Toaster } from "sonner";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
@@ -25,12 +53,211 @@ const defaultFonts = {
     body: "Inter",
 };
 
-interface Props {
-    params: Promise<{ slug: string }>; // params is a Promise
+/* HEADER */
+function TemplatePreviewHeader({ template }: { template: Template }) {
+    const isPremium = template.category === "premium";
+    const router = useRouter();
+    const params = useParams();
+
+    useEffect(() => {
+        const userData = localStorage.getItem("user");
+        if (!userData) {
+            router.push("/");
+            return;
+        }
+
+        const user = JSON.parse(userData);
+        if (!user.is_admin) {
+            router.push(`/templates/template-by-id/${params.slug}`);
+        } else {
+            router.push("/admin/");
+        }
+    }, [router, params.slug]);
+
+    return (
+        <header className="bg-white border-b sticky top-0 z-20">
+            <div className="container mx-auto px-4 py-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <Link href="/templates">
+                            <Button variant="ghost" size="sm">
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Back to Templates
+                            </Button>
+                        </Link>
+
+                        <div>
+                            <h1 className="text-2xl font-bold">{template.name}</h1>
+                            <div className="flex gap-2 mt-1">
+                                {isPremium && (
+                                    <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                                        <Crown className="w-3 h-3 mr-1" /> Premium
+                                    </Badge>
+                                )}
+                                {template.isNew && (
+                                    <Badge className="bg-green-100 text-green-700">
+                                        <Sparkles className="w-3 h-3 mr-1" /> New
+                                    </Badge>
+                                )}
+                                {template.isPopular && (
+                                    <Badge className="bg-yellow-100 text-yellow-700">
+                                        <Star className="w-3 h-3 mr-1" /> Popular
+                                    </Badge>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        {isPremium ? (
+                            <span className="text-2xl font-bold">₱{template.price}</span>
+                        ) : (
+                            <span className="text-2xl font-bold text-green-600">Free</span>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
+}
+
+/* CONTENT */
+function TemplatePreviewContent({ template }: { template: Template }) {
+    return (
+        <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+                <Card className="p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Palette className="w-5 h-5 text-purple-600" />
+                        <h3 className="font-semibold">Color Palette</h3>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-2">
+                        {Object.entries(template.colors ?? {}).map(([key, value]) => (
+                            <div key={key} className="text-center">
+                                <div
+                                    className="w-12 h-12 rounded-lg border mx-auto mb-1"
+                                    style={{ backgroundColor: value }}
+                                />
+                                <span className="text-xs capitalize">{key}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+
+                <Card className="p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Type className="w-5 h-5 text-blue-600" />
+                        <h3 className="font-semibold">Typography</h3>
+                    </div>
+
+                    <p style={{ fontFamily: template.fonts?.heading }}>
+                        Heading: {template.fonts?.heading ?? "N/A"}
+                    </p>
+                    <p style={{ fontFamily: template.fonts?.body }}>
+                        Body: {template.fonts?.body ?? "N/A"}
+                    </p>
+                </Card>
+            </div>
+
+            <Card className="p-6">
+                <div className="flex items-center gap-2 mb-2">
+                    <Layout className="w-5 h-5 text-green-600" />
+                    <h3 className="font-semibold">Features</h3>
+                </div>
+
+                {(template.features ?? []).length > 0 ? (
+                    (template?.features ?? []).map((feature) => (
+                        <div key={feature} className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <span>{feature}</span>
+                        </div>
+                    ))
+                ) : (
+                    <span className="text-gray-500">No features listed</span>
+                )}
+            </Card>
+
+            <Card className="p-6">
+                <div className="flex items-center gap-2 mb-2">
+                    <Smartphone className="w-5 h-5 text-orange-600" />
+                    <h3 className="font-semibold">Tags</h3>
+                </div>
+
+                <div className="flex gap-2 flex-wrap">
+                    {(template.tags ?? []).length > 0 ? (
+                        (template?.tags ?? []).map((tag) => (
+                            <Badge key={tag} variant="outline">
+                                {tag}
+                            </Badge>
+                        ))
+                    ) : (
+                        <span className="text-gray-500">No tags</span>
+                    )}
+                </div>
+            </Card>
+        </div>
+    );
+}
+
+/* SIDEBAR */
+function TemplatePreviewSidebar({ template }: { template: Template }) {
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const isPremium = template.category === "premium";
+
+    const handleAction = () => {
+        if (isPremium) setShowPaymentModal(true);
+        else toast.success("Template saved!");
+    };
+
+    return (
+        <>
+            <Toaster position="top-center" richColors />
+
+            <Card className="p-4">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        {isPremium && <Crown className="w-5 h-5 text-yellow-600" />}
+                        {isPremium ? "Premium Template" : "Free Template"}
+                    </CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                    <Button
+                        onClick={handleAction}
+                        disabled={isSaving}
+                        className="w-full"
+                    >
+                        {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+                        <Download className="w-4 h-4 mr-2" />
+                        {isPremium ? "Purchase Template" : "Save Template"}
+                    </Button>
+                </CardContent>
+            </Card>
+
+            <PaymentModal
+                isOpen={showPaymentModal}
+                onClose={() => setShowPaymentModal(false)}
+                template={template}
+                onPaymentSuccess={() => {
+                    setShowPaymentModal(false);
+                    toast.success("Payment successful!");
+                }}
+            />
+        </>
+    );
+}
+
+/* PAGE COMPONENT */
+export interface Props {
+    params: {
+        slug: string;
+    };
 }
 
 export default function TemplatePage({ params }: Props) {
-    const { slug } = use(params); // unwrap Promise
+    const { slug } = params; // ✅ direct access
 
     const [template, setTemplate] = useState<TemplateType | null>(null);
     const [user, setUser] = useState<UserType | null>(null);
@@ -49,8 +276,10 @@ export default function TemplatePage({ params }: Props) {
         }
     }, [router]);
 
-    // 🔄 Fetch template data
+    // 🔄 Fetch template
     useEffect(() => {
+        if (!slug) return;
+
         const fetchTemplate = async () => {
             try {
                 const token = localStorage.getItem("token");
@@ -92,10 +321,15 @@ export default function TemplatePage({ params }: Props) {
     // 🔄 Fetch logged-in user
     useEffect(() => {
         const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) return;
+            const token = localStorage.getItem("token");
 
+            if (!token) {
+                setIsAuthenticated(false);
+                router.push("/login");
+                return;
+            }
+
+            try {
                 const res = await fetch(`${API_URL}/user-profile`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -103,7 +337,15 @@ export default function TemplatePage({ params }: Props) {
                     },
                 });
 
-                if (!res.ok) throw new Error("Failed to fetch user");
+                if (res.status === 401) {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    router.push("/login");
+                    return;
+                }
+
+                if (!res.ok) throw new Error("User fetch failed");
+
                 const data = await res.json();
 
                 setUser({
@@ -124,21 +366,20 @@ export default function TemplatePage({ params }: Props) {
                 });
             } catch (err) {
                 console.error("Error fetching user:", err);
+                setUser(null);
             }
         };
 
         fetchUser();
-    }, []);
+    }, [router]);
 
-    // 🌀 Show loading state using custom Loading component
+    // 🌀 Loading
     if (isAuthenticated === null || loading) {
         return <Loading />;
     }
 
     if (!template) {
-        return (
-            <div className="p-6 text-center text-gray-600">Template not found.</div>
-        );
+        return <div className="p-6 text-center text-gray-600">Template not found.</div>;
     }
 
     return (
@@ -147,26 +388,17 @@ export default function TemplatePage({ params }: Props) {
                 <TemplatePreviewHeader template={template} />
             </header>
 
-            {/* Background wrapper with gradient + orbs */}
             <div className="min-h-screen relative bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-hidden">
-                {/* Animated orbs */}
-                <div className="absolute inset-0 opacity-30 pointer-events-none">
-                    <div className="absolute top-10 left-10 w-2 h-2 bg-gray-800 rounded-full animate-pulse"></div>
-                    <div className="absolute top-20 right-20 w-1 h-1 bg-purple-700 rounded-full animate-ping"></div>
-                    <div className="absolute bottom-20 left-20 w-3 h-3 bg-pink-600 rounded-full animate-bounce"></div>
-                    <div className="absolute top-1/2 right-10 w-2 h-2 bg-blue-700 rounded-full animate-pulse delay-1000"></div>
-                    <div className="absolute bottom-10 right-1/3 w-1 h-1 bg-gray-800 rounded-full animate-ping delay-500"></div>
-                </div>
-
-                {/* Soft blurred circles */}
-                <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-purple-300/30 to-pink-300/30 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-r from-blue-300/30 to-indigo-300/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-
-                {/* Main content */}
-                <div className="flex flex-col lg:flex-row gap-6 p-6 relative z-10">
+                <div className="flex flex-col lg:flex-row gap-6 p-6">
                     <main className="flex-1">
-                        <TemplateCard template={template} user={user} slug={slug} />
-                        <div className="container mx-auto px-4 py-10">
+                        <TemplateCard
+                            template={template}
+                            user={user}
+                            slug={slug}
+                            className="bg-white rounded-2xl shadow-xl ring-1 ring-black/5"
+                        />
+
+                        <div className="mt-8">
                             <TemplatePreviewContent template={template} />
                         </div>
                     </main>
@@ -179,3 +411,4 @@ export default function TemplatePage({ params }: Props) {
         </>
     );
 }
+

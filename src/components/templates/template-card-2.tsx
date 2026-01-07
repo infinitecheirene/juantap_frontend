@@ -43,12 +43,14 @@ interface TemplateCardProps {
   template: Template;
   user: User | null;
   slug: string;
+  className?: string;
 }
 
 export const TemplateCard: React.FC<TemplateCardProps> = ({
   template,
   user,
   slug,
+  className,
 }) => {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -117,9 +119,9 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
       style={{ backgroundColor: "transparent" }}
     >
       <div
-        className="w-full max-w-lg shadow-lg rounded-2xl overflow-hidden flex flex-col"
+        className={`w-full max-w-lg overflow-hidden flex flex-col rounded-2xl ${className ?? ""}`}
         style={{
-          backgroundColor: template?.colors?.background,
+          backgroundColor: template?.colors?.background ?? "#ffffff",
           fontFamily: template?.fonts?.body,
         }}
       >
